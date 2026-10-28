@@ -1,0 +1,12 @@
+# Store text files with LF line endings in the repo (Windows checkouts still work)
+* text=auto eol=lf
+
+# Binary files
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.avif binary
+*.ico binary
+*.woff2 binary

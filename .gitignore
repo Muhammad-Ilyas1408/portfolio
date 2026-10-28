@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+.venv/
+
+# Builds
+.next/
+out/
+dist/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+coverage/
+playwright-report/
+test-results/
+
+# Environment — never commit real secrets
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
