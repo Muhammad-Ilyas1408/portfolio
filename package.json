@@ -1,0 +1,14 @@
+{
+  "name": "portfolio",
+  "private": true,
+  "packageManager": "pnpm@12.16.1",
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter web build",
+    "lint": "pnpm --filter web lint",
+    "typecheck": "pnpm --filter web typecheck",
+    "test": "pnpm --filter web test",
+    "api": "uv run --directory apps/api fastapi dev app/main.py",
+    "api:test": "uv run --directory apps/api pytest"
+  }
+}
