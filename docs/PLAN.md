@@ -42,6 +42,12 @@ The Flood-Aware CV line also merges three separate measurements into one. The si
 
 Every item on the site carries one of three evidence labels. **Verified** means a public source confirms it. **Self-reported** means it comes from you and is shown without a proof link. **Pending** means it stays hidden until proof arrives.
 
+### Official profile links
+
+- **Email:** [muhammadilyas.ai.eng@gmail.com](mailto:muhammadilyas.ai.eng@gmail.com)
+- **LinkedIn:** <https://www.linkedin.com/in/muhammad-ilyas-ds/>
+- **Kaggle:** <https://www.kaggle.com/muhammadilyasm>
+
 ### Projects (featured order)
 
 | # | Project | Your role | Status | Evidence | Facts we can show |
@@ -109,9 +115,9 @@ Sources: [Flood-Aware changelog](https://github.com/Muhammad-Ilyas1408/flood-awa
 | `signal-soft` | #5EEAD4 at 10% | Engineering tints, chip backgrounds |
 | `ember` | #F5B454 | Leadership accent: timeline nodes, community highlights, awards |
 | `ember-soft` | #F5B454 at 10% | Leadership tints |
-| `verified` | #6EE7A0 | Verified dot on evidence chips only |
+| `verified` | #6EE7A0 | Verified dot on evidence chips, and the Live status pill |
 
-Rules: an accent stays under about 10% of any screen; text never sits on a full-strength accent fill; focus rings use `signal` everywhere. A light theme comes from the same token names in phase 2. The tokens make it a one-file change.
+Rules: an accent stays under about 10% of any screen; only bg-colored text may sit on a full-strength accent fill, and only on primary buttons; focus rings use `signal` everywhere. A light theme comes from the same token names in phase 2. The tokens make it a one-file change.
 
 ### Typography
 
@@ -149,9 +155,9 @@ Sitemap
 └── /cv.pdf            Static file
 ```
 
-**Main navigation (desktop):** Work · Experience · Leadership · Credentials · About, with a Contact link and a filled "Download CV" button on the right. On mobile it becomes a full-screen sheet with the same order and a sticky CV button. The active page is marked with `aria-current="page"`.
+**Main navigation (desktop):** Work · Experience · Leadership · Credentials · About, with a Contact link and a filled "Download CV" button on the right. On mobile it becomes a full-width disclosure panel (not a sheet) with the same links in the same order and the CV button. The active page is marked with `aria-current="page"`.
 
-**Footer:** email, GitHub, LinkedIn, Kaggle, Devpost, CV, a "Built with Next.js + FastAPI — source on GitHub" link, and the last-updated date.
+**Footer:** email, GitHub, LinkedIn, Kaggle, a "Source on GitHub" link, and the current year.
 
 **Other routes:** `/projects/[slug]` for each case study, `/cv.pdf` (a static file), a custom 404 page, `sitemap.xml`, `robots.txt`, and a generated Open Graph image for each page.
 
@@ -292,7 +298,7 @@ Visitor ──HTTPS──▶ Vercel · Next.js
 
 ### Frontend — `apps/web`
 
-- **Next.js 16 (App Router), TypeScript in strict mode, Tailwind CSS v4.** shadcn/ui is used only for accessible primitives (Sheet, Dialog, Tooltip). Every other component is our own, so the site doesn't look like a template.
+- **Next.js 16 (App Router), TypeScript in strict mode, Tailwind CSS v4.** No UI component library in v1; primitives are hand-built and accessible (the mobile menu is a disclosure, not a dialog). Every component is our own, so the site doesn't look like a template.
 - **Rendering:** all routes are statically generated from the content files. v1 fetches no data at runtime. Repos appear as plain links, and live GitHub stats are deferred to v1.1.
 - **Motion:** CSS transitions only, with no animation library in v1.
 - **Images:** `next/image` serves AVIF/WebP. Your portrait is at most 1200px at the source.
@@ -479,7 +485,7 @@ Do NOT commit, push, deploy or create any external account or service; I review 
 **M1 — design system**
 
 ```text
-Implement section 3 of docs/PLAN.md. Define every color token as a CSS variable in globals.css and map it into Tailwind's theme; no raw hex anywhere else. Load Bricolage Grotesque, Inter and JetBrains Mono with next/font. Build components/ui: Button (filled, outline, ghost), Chip, EvidenceChip (kind, label, url, verified dot), Pill (status), Card, Section (mono label + heading), Container. Build SiteHeader (nav from section 4, active state with aria-current, CV button), a MobileNav sheet and SiteFooter. Add a /styleguide page that renders every component and the type scale, and exclude it from the sitemap. Add a skip link and visible focus rings. Run axe through Playwright on /styleguide and fix every violation.
+Implement section 3 of docs/PLAN.md. Define every color token as a CSS variable in globals.css and map it into Tailwind's theme; no raw hex anywhere else. Load Bricolage Grotesque, Inter and JetBrains Mono with next/font. Build components/ui: Button (filled, outline, ghost), Chip, EvidenceChip (kind, label, url, verified dot), Pill (status), Card, Section (mono label + heading), Container. Build SiteHeader (nav from section 4, active state with aria-current, CV button), a MobileNav full-width disclosure panel (not a sheet) and SiteFooter (current year, not a last-updated date). Add a /styleguide page that renders every component and the type scale, and exclude it from the sitemap. Add a skip link and visible focus rings. Run axe through Playwright on /styleguide and fix every violation.
 ```
 
 **M2 — content layer**

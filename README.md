@@ -61,7 +61,7 @@ portfolio/
 ## Roadmap
 
 - [x] M0 — Scaffold, tooling, CI
-- [ ] M1 — Design system and layout shell
+- [x] M1 — Design system and layout shell
 - [ ] M2 — Content layer
 - [ ] M3 — Home page
 - [ ] M4 — Projects and case studies

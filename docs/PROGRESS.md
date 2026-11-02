@@ -7,7 +7,7 @@ Running log of the portfolio build. Claude Code updates this at the end of every
 | # | Milestone | Status | Completed |
 | --- | --- | --- | --- |
 | M0 | Scaffold, tooling, CI | Done | 2026-10-29 | |
-| M1 | Design system and layout shell | Not started | |
+| M1 | Design system and layout shell | Done | 2026-11-02 |
 | M2 | Content layer | Not started | |
 | M3 | Home page | Not started | |
 | M4 | Projects and case studies | Not started | |
@@ -26,6 +26,30 @@ See section 11 of `PLAN.md`. Items resolved during the build are noted in the se
 ## Session log
 
 Newest first. One entry per Claude Code session.
+
+### 2026-11-02 — M1 final touches
+- Mobile Menu button now has a neutral border and text-colored label; the signal outline stays on actions such as the CV buttons.
+- `PLAN.md` section 3: the `verified` token now covers evidence-chip dots and the Live status pill, which resolves the open conflict in the entry below.
+- M1 → Done; ticked in `README.md`.
+
+### 2026-11-02 — M1 design review fixes
+- **Buttons:** the outline variant now has a signal border and text-colored label. The header and mobile CV buttons use it; filled is reserved for a page's single primary action.
+- **Pills:** each status has a 6px leading dot plus its text label, with the specified borders.
+- **Footer:** Email, GitHub, LinkedIn, Kaggle, Source on GitHub, from `content/profile.ts`. Devpost removed. External links open in a new tab; mailto does not. This supersedes the footer note in the entry below.
+- **`PLAN.md`:** official profile links recorded in section 2; accent-fill rule updated in section 3; mobile menu and footer descriptions updated in sections 4 and 10. The section 4 footer line also dropped Devpost, CV and the "Built with" wording so it matches the footer.
+- **Tests:** no-horizontal-scroll now also runs at 390px on `/` and `/styleguide`; added a footer link order and attributes test.
+- **Open conflict:** `PLAN.md` section 3 still limits `verified` to evidence-chip dots, while the Live pill now uses it for its dot and border.
+- Screenshots regenerated. M1 stays In review.
+
+### 2026-11-02 — M1 Design system and layout shell
+- **Tokens and type:** every section 3 color token is a CSS variable in `globals.css`, exposed through `@theme`; Tailwind's default palette and type sizes are cleared, so only tokens and the 14/17/20/28/40/64 scale exist. Fonts are Bricolage Grotesque, Inter and JetBrains Mono through `next/font/google`. Geist and the light/dark block are gone.
+- **Components:** `components/ui` (Button, Chip, Pill, Card, Container, Section), `components/evidence/EvidenceChip`, `components/layout` (SiteHeader, DesktopNav, MobileNav, SiteFooter, shared `nav.ts`).
+- **Pages:** shell and skip link in `app/layout.tsx`, placeholder `app/page.tsx`, `app/not-found.tsx`, noindex `app/styleguide/page.tsx`.
+- **Plan update:** section 7 of `PLAN.md` now says "No UI component library in v1; primitives are hand-built and accessible (the mobile menu is a disclosure, not a dialog)." The next sentence changed from "Every other component" to "Every component" so it still reads correctly.
+- **Footer links:** only GitHub, Devpost and the source repo render. `PLAN.md` has no email, LinkedIn or Kaggle URL, so those are `TODO`s in `content/profile.ts`. The only Devpost link in `PLAN.md` is the StoryWeave project page, so that is the target for now.
+- **Year:** cached at build time with `"use cache"`, because Cache Components rejects a bare `new Date()` during prerender. It updates on each build.
+- **Tests:** `smoke.spec.ts` replaced by `a11y`, `navigation` and `screenshots` specs. `tests/unit/setup.ts` now cleans up the DOM after each test, because Vitest globals are off.
+- **Known gap:** nav targets don't exist yet, so a click reloads into the 404 page. The link-click focus test blocks the request, and focus after a real client-side navigation can only be tested once the routes exist (M3–M5).
 
 ### 2026-10-29 — M0 Scaffold, tooling, CI (recovery and finish)
 - **Clean reinstall:** deleted the root and `apps/web` `node_modules` (`apps/web/.next` was already absent). `pnpm install --frozen-lockfile` succeeded with no lockfile changes, so a plain `pnpm install` was not needed.
