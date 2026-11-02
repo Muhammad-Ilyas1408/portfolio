@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { profile } from "@/content/profile";
+import { getProfile } from "@/content";
 
 export const metadata: Metadata = {
-  title: `Page not found — ${profile.name}`,
+  title: `Page not found — ${getProfile().name}`,
 };
 
 export default function NotFound() {

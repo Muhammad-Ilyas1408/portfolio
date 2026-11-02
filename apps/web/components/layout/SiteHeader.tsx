@@ -2,13 +2,15 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { profile } from "@/content/profile";
+import { getProfile } from "@/content";
 
 import { DesktopNav } from "./DesktopNav";
 import { MobileNav } from "./MobileNav";
 import { cvHref } from "./nav";
 
 export function SiteHeader() {
+  const profile = getProfile();
+
   return (
     <header className="relative border-b border-border">
       <Container className="flex min-h-16 items-center justify-between gap-4">

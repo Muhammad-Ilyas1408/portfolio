@@ -3,9 +3,11 @@ import { Bricolage_Grotesque, Inter, JetBrains_Mono } from "next/font/google";
 
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
-import { profile } from "@/content/profile";
+import { getProfile } from "@/content";
 
 import "./globals.css";
+
+const profile = getProfile();
 
 const bricolage = Bricolage_Grotesque({
   variable: "--font-bricolage",

@@ -52,16 +52,15 @@ Every item on the site carries one of three evidence labels. **Verified** means 
 
 | # | Project | Your role | Status | Evidence | Facts we can show |
 | --- | --- | --- | --- | --- | --- |
-| 1 | [Flood-Aware](https://github.com/Muhammad-Ilyas1408/flood-aware) | Co-developer (team of 2), FYP | Complete, deployed | Repo, changelog, thesis photo, live app | 7 evidence tools; 150 villages and 51 shelters; 348 backend tests passing; golden-set evaluation with real API calls; startup cut from 5–6 min to 39 s; production GIS warm-up about 2 s; data files cut 97–98% |
+| 1 | [Flood-Aware](https://github.com/Muhammad-Ilyas1408/flood-aware) | Co-developer (team of 2), FYP | Complete, deployed | Repo, changelog, thesis photo, live app | 7 evidence tools; 150 villages and 51 shelters; 348 backend tests passing (53 skipped) in the latest recorded run; golden-set evaluation with real API calls; startup cut from 5–6 min to 39 s; production GIS warm-up about 2 s; data files cut from 147.2 MiB to 4.2 MiB (OSM) and 134.9 MiB to 2.0 MiB (WorldPop) |
 | 2 | [StoryWeave](https://github.com/JawadGigyani/StoryWeave) | Full-Stack Developer: Docker, deployment, infrastructure (team of 4) | Complete, demo live | Repo README, [Devpost](https://devpost.com/software/story-weave) | 1st place at HackVortex Codestorm 5; 6-stage LangGraph pipeline (Gemini, ElevenLabs, FFmpeg); deployed with Docker on DigitalOcean |
 | 3 | Internship: fine-tuning and DP-SGD | Intern | Done, Jan–Apr 2025 | Self-reported (CV) | TinyLlama with Unsloth and LoRA/QLoRA; Opacus DP-SGD with gradient clipping and noise injection. No metrics shown. |
-| 4 | [Inventory System](https://github.com/Muhammad-Ilyas1408/inventory-system) | Solo | v1.0.0 | Repo | Layered architecture; 214 tests passing |
 | — | Lab grid: ReAct agent, RAG tools, Personality Search, AI Chatbot, File Intelligence, Spendly, spam classifier | Solo | Mixed | Only Spendly and the spam classifier are public | Each card appears only once its repo is public, labelled *Experiment*, *In progress* or *Concept* |
 
 **Flood-Aware performance, shown as three separate facts:**
 
 - **Per-request GIS collection** went from about 90 s–4 min to about 30 s. This came from caching the parsed data at startup (changelog, Sprint 14.1.5).
-- **Regional data extraction** shrank the OSM file from 147 MB to 4 MB and the WorldPop raster from 135 MB to 2 MB. Local startup dropped from 5–6 min to 39 s, with analysis results bit-for-bit identical (Hotfix 14.4).
+- **Regional data extraction** shrank the OSM file from 147.2 MiB to 4.2 MiB and the WorldPop raster from 134.9 MiB to 2.0 MiB. Local startup dropped from 5–6 min to 39 s, with analysis results bit-for-bit identical (Hotfix 14.4).
 - **Production GIS warm-up** takes about 2 s on Railway (Sprint 16.1).
 
 Sources: [Flood-Aware changelog](https://github.com/Muhammad-Ilyas1408/flood-aware/blob/main/docs/CHANGELOG.md).
@@ -145,8 +144,7 @@ Sitemap
 /                      Home (previews every section)
 ├── /projects          All work (Signal / teal)
 │   ├── /projects/flood-aware
-│   ├── /projects/storyweave
-│   └── /projects/inventory-system
+│   └── /projects/storyweave
 ├── /experience        Internship (Signal / teal)
 ├── /leadership        Timeline (Ember / amber)
 ├── /credentials       Certificates
@@ -174,7 +172,7 @@ Sitemap
 
 ### Projects `/projects`
 
-- Filter chips: All · Agentic/RAG · Full-stack · ML · Engineering fundamentals. Filters are client-side and the URL keeps the state (`?tag=rag`).
+- Filter chips: All · Agentic/RAG · Full-stack · ML. Filters are client-side and the URL keeps the state (`?tag=rag`).
 - Each card shows a title, one-line problem, role ("Co-developer, team of 2"), stack tags in mono, a status pill (*Live* · *Complete* · *In progress* · *Experiment* · *Concept*) and evidence chips.
 - A **Lab** section at the bottom holds a compact list for smaller public repos.
 
@@ -204,7 +202,7 @@ A card for the DeepCognishann internship (Jan–Apr 2025) with three subsections
 
 ### Credentials `/credentials`
 
-Four groups in this order: **Degree** · **Specializations** · **Courses and training** · **Awards**. Each row shows the name, issuer, date and a "Verify ↗" link. Items without proof are hidden until their proof arrives. A small note explains the rule: "Every credential here links to its issuer's verification page."
+Four groups in this order: **Degree** · **Specializations** · **Courses and training** · **Awards**. Each row shows the name, issuer, date and a "Verify ↗" link. Items without proof are hidden until their proof arrives. A small note explains the rule: "Certificates link to their issuer's verification page; the degree is shown with my final-year thesis."
 
 ### About `/about`
 
@@ -227,10 +225,13 @@ All content lives in typed files under `apps/web/content/`. Zod schemas check ev
 
 ```ts
 // content/schema.ts — the single source of truth for content shape
+const HttpsUrl = z.url({ protocol: /^https$/ });
+const YearMonth = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/); // "YYYY-MM"; unknown months stay empty
+
 export const Evidence = z.object({
   kind: z.enum(['repo', 'live', 'devpost', 'cert', 'changelog', 'thesis', 'post', 'photo']),
   label: z.string(),
-  url: z.string().url(),
+  url: HttpsUrl,
 });
 
 export const Claim = z.object({        // any number or result shown on the site
@@ -241,42 +242,47 @@ export const Claim = z.object({        // any number or result shown on the site
 
 export const Project = z.object({
   slug: z.string(), title: z.string(), summary: z.string(),
-  role: z.string(), team: z.array(z.object({ name: z.string(), role: z.string() })),
+  role: z.string(),
+  team: z.array(z.object({ name: z.string(), role: z.string().optional() })).default([]),
   supervisor: z.string().optional(),
-  period: z.object({ start: z.string(), end: z.string().optional() }),
+  period: z.object({ start: YearMonth.optional(), end: YearMonth.optional() }).optional(),
   status: z.enum(['live', 'complete', 'in-progress', 'experiment', 'concept']),
   tags: z.array(z.enum(['agentic-rag', 'full-stack', 'ml', 'fundamentals'])),
   stack: z.array(z.string()),
-  myContribution: z.array(z.string()),  // what I did
-  teamContribution: z.array(z.string()).optional(), // what the team did
-  results: z.array(Claim),
-  links: z.array(Evidence),
-  featured: z.boolean(), order: z.number(),
+  myContributions: z.array(z.string()).default([]), // what I did
+  teamOutcomes: z.array(z.string()).default([]),    // what the team did
+  results: z.array(Claim).default([]),
+  links: z.array(Evidence).default([]),
+  featured: z.boolean(), order: z.number().int(),   // slugs and orders are unique across projects
   caseStudy: z.string().optional(),     // path to the MDX file
 });
 
 export const Role = z.object({
-  org: z.string(), title: z.string(), start: z.string(), end: z.string().optional(),
+  org: z.string(), title: z.string(), start: YearMonth, end: YearMonth.optional(),
   track: z.enum(['community', 'industry']),
-  iLed: z.array(z.string()), weDelivered: z.array(z.string()),
+  myContributions: z.array(z.string()).default([]),
+  teamOutcomes: z.array(z.string()).default([]),
   evidence: z.array(Evidence).default([]),
+  published: z.boolean(),
 });
 
 export const Initiative = z.object({ // TechRise '26, Summer Bootcamp 2026, workshops
-  name: z.string(), date: z.string(), myRole: z.string(),
+  name: z.string(), date: YearMonth.optional(), myRole: z.string(),
   scale: Claim.optional(), summary: z.string(),
   photos: z.array(z.string()).default([]), evidence: z.array(Evidence).default([]),
+  published: z.boolean(),
 });
 
 export const Credential = z.object({
-  name: z.string(), issuer: z.string(), date: z.string().optional(),
+  name: z.string(), issuer: z.string(), date: YearMonth.optional(),
+  years: z.string().regex(/^\d{4}–\d{4}$/).optional(), // a span known only in whole years
   kind: z.enum(['degree', 'specialization', 'course', 'training', 'award']),
-  verifyUrl: z.string().url().optional(),
+  verifyUrl: HttpsUrl.optional(),
   published: z.boolean(),               // false until proof exists
 });
 ```
 
-**Files:** `profile.ts` (name, positioning, links, availability), `projects.ts`, `roles.ts`, `initiatives.ts`, `credentials.ts`, `skills.ts` (each skill lists the project slugs where it was used), and `case-studies/*.mdx`.
+**Files:** `profile.ts` (name, positioning, location, links, availability), `projects.ts`, `roles.ts`, `initiatives.ts`, `credentials.ts`, `skills.ts` (each skill lists the project slugs where it was used), and `case-studies/*.mdx`.
 
 ## 7. Technical architecture
 
@@ -363,7 +369,7 @@ portfolio/
 │   │   ├── content/                 # ← the only folder you edit to update the site
 │   │   │   ├── schema.ts  profile.ts  projects.ts  roles.ts
 │   │   │   ├── initiatives.ts  credentials.ts  skills.ts
-│   │   │   └── case-studies/        # flood-aware.mdx, storyweave.mdx, inventory-system.mdx
+│   │   │   └── case-studies/        # flood-aware.mdx, storyweave.mdx
 │   │   ├── lib/                     # api-client.ts, seo.ts
 │   │   ├── public/                  # cv.pdf, portrait, images/ (events, logos)
 │   │   ├── tests/unit/  tests/e2e/  # Vitest / Playwright
@@ -430,7 +436,7 @@ Run the milestones in order, one Claude Code session each. After M1 and M3, brin
 | M1 | Design system and layout shell | Tokens, fonts, UI primitives, header/footer/mobile nav, `/styleguide` page; axe is clean |
 | M2 | Content layer | Schemas plus real content for every item marked Verified or Self-reported; the build fails on a bad claim |
 | M3 | Home page | All 6 home sections built from content; works at 360–1536 px — **design review** |
-| M4 | Projects and case studies | Index with filters; template; Flood-Aware case study with an interactive architecture diagram; StoryWeave and Inventory |
+| M4 | Projects and case studies | Index with filters; template; Two case studies: Flood-Aware (with an interactive architecture diagram) and StoryWeave |
 | M5 | Experience, Leadership, Credentials, About | All four pages; a static leadership timeline; axe clean on every route |
 | M6 | Contact API | FastAPI endpoints, security and the full pytest suite passing |
 | M7 | Contact form integration | Form wired to the API with every state; e2e tests with the API mocked |
@@ -503,7 +509,7 @@ Build the Home page per section 5 ("Home") of docs/PLAN.md, reading only from co
 **M4 — projects and case studies**
 
 ```text
-Build /projects and /projects/[slug] per section 5 of docs/PLAN.md. Filters are chips synced to ?tag=. The case-study template renders the header, At a glance, Architecture, Key decisions, Hard problems, Results (Claims with EvidenceChips), Team & credit ("What I did" and "What the team did" kept separate), What I'd do next, and prev/next links. ArchitectureDiagram is a static, accessible inline SVG (role="img" with an aria-label) with a numbered list below explaining each component; nothing is hover-only. Write the Flood-Aware MDX using only facts in section 2 and the public Flood-Aware README and CHANGELOG. Leave "What I did" as an explicit TODO for me: never infer personal contributions. StoryWeave describes only the role stated in its README and Devpost. Generate static params for all slugs.
+Build /projects and /projects/[slug] per section 5 of docs/PLAN.md, with two case studies: Flood-Aware and StoryWeave. Filters are chips synced to ?tag=. The case-study template renders the header, At a glance, Architecture, Key decisions, Hard problems, Results (Claims with EvidenceChips), Team & credit ("What I did" and "What the team did" kept separate), What I'd do next, and prev/next links. ArchitectureDiagram is a static, accessible inline SVG (role="img" with an aria-label) with a numbered list below explaining each component; nothing is hover-only. Write the Flood-Aware MDX using only facts in section 2 and the public Flood-Aware README and CHANGELOG. Leave "What I did" as an explicit TODO for me: never infer personal contributions. StoryWeave describes only the role stated in its README and Devpost. Generate static params for all slugs.
 ```
 
 **M5 — experience, leadership, credentials, about**
@@ -544,7 +550,7 @@ None of these block M0–M2. Each one fills in or unhides a piece of content whe
 - [ ] **2. TechRise '26 details.** The date, venue, your role during the October event (after your term ended on 30 Sep), scale (attendees, speakers, sponsors), 3–6 photos, and the official post link.
 - [ ] **3. Credential verify links.** On Coursera, open each certificate and copy its `coursera.org/verify/...` (or `/verify/specialization/...`) link. The org dashboard link needs a login. Also send the Kaggle certificate URL and images of the SMIT, CSS award and Certificate of Excellence certificates.
 - [ ] **4. Summer Bootcamp 2026.** What you taught, how many sessions, and the source of the "70+ participants" figure (a registration list, a post or an organizer's statement).
-- [ ] **5. GDG and Connected Pakistan.** 1–2 concrete things you did in each role, e.g. sessions you led or a workshop topic.
+- [ ] **5. GDG, Connected Pakistan and CSS AI/DS Club Lead.** 2–3 concrete things you did in each role, e.g. sessions you led or a workshop topic.
 - [ ] **6. Availability line.** Your wording for the hero, e.g. "Open to AI/ML Engineer roles — remote or Pakistan".
 - [ ] **7. Portrait.** A high-resolution headshot, at least 1200px, plain or blurred background. The thesis photo can go on the Flood-Aware case study.
 - [ ] **8. Final CV PDF.** Fix the StoryWeave bullet and split the Flood-Aware performance line first (section 1).
@@ -557,6 +563,5 @@ None of these block M0–M2. Each one fills in or unhides a piece of content whe
 
 - [Flood-Aware repository](https://github.com/Muhammad-Ilyas1408/flood-aware) and [CHANGELOG](https://github.com/Muhammad-Ilyas1408/flood-aware/blob/main/docs/CHANGELOG.md)
 - [StoryWeave repository](https://github.com/JawadGigyani/StoryWeave) and [Devpost: Story Weave](https://devpost.com/software/story-weave)
-- [Inventory System repository](https://github.com/Muhammad-Ilyas1408/inventory-system)
 - [GitHub profile](https://github.com/Muhammad-Ilyas1408)
 - Your CV (PDF) and Flood-Aware thesis cover photo, provided in chat

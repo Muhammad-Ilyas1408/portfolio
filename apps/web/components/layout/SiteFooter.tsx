@@ -1,5 +1,7 @@
 import { Container } from "@/components/ui/Container";
-import { profile } from "@/content/profile";
+import { getProfile } from "@/content";
+
+const profile = getProfile();
 
 const links = [
   { href: profile.links.email, label: "Email", external: false },

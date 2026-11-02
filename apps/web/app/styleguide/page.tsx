@@ -7,10 +7,10 @@ import { Chip } from "@/components/ui/Chip";
 import { Container } from "@/components/ui/Container";
 import { Pill, type PillStatus } from "@/components/ui/Pill";
 import { Section } from "@/components/ui/Section";
-import { profile } from "@/content/profile";
+import { getProfile } from "@/content";
 
 export const metadata: Metadata = {
-  title: `Styleguide — ${profile.name}`,
+  title: `Styleguide — ${getProfile().name}`,
   robots: { index: false, follow: false },
 };
 

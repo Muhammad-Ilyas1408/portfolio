@@ -1,7 +1,9 @@
 import { Container } from "@/components/ui/Container";
-import { profile } from "@/content/profile";
+import { getProfile } from "@/content";
 
 export default function Home() {
+  const profile = getProfile();
+
   return (
     <Container className="py-16">
       <h1 className="md:text-3xl">{profile.name}</h1>

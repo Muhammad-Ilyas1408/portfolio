@@ -8,7 +8,7 @@ Running log of the portfolio build. Claude Code updates this at the end of every
 | --- | --- | --- | --- |
 | M0 | Scaffold, tooling, CI | Done | 2026-10-29 | |
 | M1 | Design system and layout shell | Done | 2026-11-02 |
-| M2 | Content layer | Not started | |
+| M2 | Content layer | Done | 2026-11-02 |
 | M3 | Home page | Not started | |
 | M4 | Projects and case studies | Not started | |
 | M5 | Experience, Leadership, Credentials, About | Not started | |
@@ -26,6 +26,25 @@ See section 11 of `PLAN.md`. Items resolved during the build are noted in the se
 ## Session log
 
 Newest first. One entry per Claude Code session.
+
+### 2026-11-02 — M2 owner updates
+- **Dates (self-reported by the owner):** Flood-Aware period 2026-06 to 2026-08; StoryWeave period 2025-10 to 2025-10; HackVortex Codestorm 5 award date 2025-10. Matching TODOs removed.
+- **Inventory System removed (owner decision; it may return as a new entry):** gone from `projects.ts`, Python's `usedIn` and the content tests. `PLAN.md` updated in section 2 (projects table, Sources), section 4 (sitemap), section 5, section 8 (case-study list) and section 10 (M4 row and prompt, now two case studies).
+- **Filters:** the "Engineering fundamentals" chip is removed from section 5, since Inventory System was its only project. The `fundamentals` tag stays in the schema for when it returns.
+- M2 stays Done.
+
+### 2026-11-02 — M2 review fixes
+- **Flood-Aware figures:** content and `PLAN.md` section 2 now use the changelog's exact sizes (147.2 → 4.2 MiB, 134.9 → 2.0 MiB) and "348 backend tests passing (53 skipped) in the latest recorded run". This resolves the mismatch in the entry below. The section 2 "data files cut 97–98%" fact now gives the same MiB figures.
+- **`PLAN.md`:** section 5 credentials note reworded; section 11 item 5 now includes CSS AI/DS Club Lead and asks for 2–3 contributions per role. The `roles.ts` TODOs for that role are now open item 5.
+- M2 → Done; ticked in `README.md`.
+
+### 2026-11-02 — M2 Content layer
+- **Schemas and getters:** `content/schema.ts` and `content/index.ts` parse every content file at module load. A temporary verified claim without evidence made `pnpm build` fail (exit 1); the file was then restored.
+- **Content:** `profile`, `projects`, `roles`, `initiatives`, `credentials` and `skills`. Every Flood-Aware result was checked against the public README and CHANGELOG before being marked verified.
+- **Imports:** every `profile` import, including the home placeholder and footer, now goes through `@/content`. No visual changes.
+- **`PLAN.md` section 6, as requested:** `iLed`/`weDelivered` and `myContribution`/`teamContribution` → `myContributions`/`teamOutcomes`; `Role` and `Initiative` gain `published`; dates are `YYYY-MM`; evidence URLs must be https.
+- **`PLAN.md` section 6, needed so nothing is guessed:** `Initiative.date`, `Project.period` and team-member `role` are optional; `Credential.years` holds "2022–2026", which has no months.
+- **Source mismatch:** the plan says 147, 135 and 4 MB; the changelog says 147.2, 134.9 and 4.2 MiB. The site copy follows the plan.
 
 ### 2026-11-02 — M1 final touches
 - Mobile Menu button now has a neutral border and text-colored label; the signal outline stays on actions such as the CV buttons.
