@@ -1,12 +1,16 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+
 import { describe, expect, it } from "vitest";
 
 import {
+  getFeaturedInitiatives,
   getFeaturedProjects,
+  getInitiatives,
   getProfile,
   getProject,
   getProjects,
   getPublishedCredentials,
-  getPublishedInitiatives,
   getRoles,
   getSkills,
 } from "@/content";
@@ -45,6 +49,16 @@ const project = {
   order: 1,
 };
 
+const initiative = {
+  name: "Event",
+  start: "2026-10-22",
+  format: "online",
+  focus: "technical",
+  myRole: "Organizer",
+  featured: false,
+  published: true,
+};
+
 const role = {
   org: "Org",
   title: "Member",
@@ -72,7 +86,7 @@ describe("content files", () => {
   it("have the expected counts", () => {
     expect(projects).toHaveLength(2);
     expect(roles).toHaveLength(7);
-    expect(initiatives).toHaveLength(2);
+    expect(initiatives).toHaveLength(20);
     expect(credentials).toHaveLength(11);
     expect(skills).toHaveLength(6);
     expect(skills.flatMap((group) => group.skills)).toHaveLength(30);
@@ -105,6 +119,30 @@ describe("schema rules", () => {
     expect(Role.safeParse(role).success).toBe(true);
   });
 
+  it("accepts initiative dates as YYYY-MM-DD or YYYY-MM only", () => {
+    const parse = (start: string) =>
+      Initiative.safeParse({ ...initiative, start }).success;
+
+    expect(parse("2026-10-22")).toBe(true);
+    expect(parse("2026-10")).toBe(true);
+    expect(parse("2026/10/22")).toBe(false);
+    expect(parse("2026-02-30")).toBe(false);
+    expect(parse("2026-13")).toBe(false);
+  });
+
+  it("rejects an initiative that ends before it starts", () => {
+    expect(
+      Initiative.safeParse({ ...initiative, end: "2026-10-21" }).success,
+    ).toBe(false);
+    expect(
+      Initiative.safeParse({ ...initiative, end: "2026-10-23" }).success,
+    ).toBe(true);
+  });
+
+  it("defaults an initiative's org to the Computing Students Society", () => {
+    expect(Initiative.parse(initiative).org).toBe("Computing Students Society");
+  });
+
   it("rejects duplicate slugs and duplicate orders", () => {
     expect(
       ProjectList.safeParse([project, { ...project, order: 2 }]).success,
@@ -120,9 +158,13 @@ describe("schema rules", () => {
 });
 
 describe("getters", () => {
-  it("returns the profile without an availability line", () => {
-    expect(getProfile().location).toBe("Peshawar, Pakistan");
-    expect(getProfile().availability).toBeUndefined();
+  it("returns the profile with a headline and intro, and no availability line", () => {
+    const result = getProfile();
+
+    expect(result.location).toBe("Pakistan");
+    expect(result.headline).toMatch(/^AI\/ML Engineer \| Generative AI/);
+    expect(result.intro).toContain("President (2025–26)");
+    expect(result).not.toHaveProperty("availability");
   });
 
   it("never returns unpublished credentials", () => {
@@ -137,8 +179,29 @@ describe("getters", () => {
     expect(getPublishedCredentials("specialization")).toHaveLength(0);
   });
 
-  it("never returns unpublished initiatives", () => {
-    expect(getPublishedInitiatives()).toHaveLength(0);
+  it("returns published initiatives, newest first", () => {
+    const result = getInitiatives();
+    const starts = result.map((item) => item.start);
+
+    expect(result).toHaveLength(20);
+    expect(result.every((item) => item.published)).toBe(true);
+    expect(starts).toEqual(starts.toSorted().toReversed());
+    expect(result[0].name).toBe("TechRise '26");
+    expect(result.at(-1)?.name).toBe("CSS AI Bootcamp 2025");
+  });
+
+  it("features exactly three initiatives", () => {
+    expect(
+      getFeaturedInitiatives()
+        .map((item) => item.name)
+        .toSorted(),
+    ).toEqual(
+      [
+        "TechRise '26",
+        "CSS Summer Bootcamp 2026 (3 tracks)",
+        "CSS AI Bootcamp 2025",
+      ].toSorted(),
+    );
   });
 
   it("sorts projects by order", () => {
@@ -164,7 +227,10 @@ describe("getters", () => {
     expect(result).toHaveLength(7);
     expect(starts).toEqual(starts.toSorted().toReversed());
     expect(result[0].title).toBe("President");
-    expect(result.at(-1)?.title).toBe("AI/ML Team Lead");
+    expect(result.at(-1)?.title).toBe("AI/ML Team Member");
+    expect(result.at(-1)?.org).toBe(
+      "Google Developer Student Clubs (GDSC), University of Peshawar",
+    );
   });
 
   it("links skills only to known projects or the internship", () => {
@@ -187,7 +253,33 @@ describe("evidence", () => {
     ).toBe(true);
   });
 
-  it("does not invent personal contributions for Flood-Aware", () => {
-    expect(getProject("flood-aware")?.myContributions).toEqual([]);
+  it("credits both Flood-Aware members and lists the owner's six contributions", () => {
+    const floodAware = getProject("flood-aware");
+
+    expect(floodAware?.team).toEqual([
+      { name: "Muhammad Ilyas" },
+      { name: "Abdullah Ahmad" },
+    ]);
+    expect(floodAware?.myContributions).toHaveLength(6);
+    expect(floodAware?.myContributions).toEqual(
+      expect.arrayContaining([
+        "Designed and built the LangGraph decision agent with severity-based tool routing and citation validation",
+        "Built the GIS analysis pipeline (GeoPandas, Rasterio) for population and infrastructure exposure, including regional data extraction and in-memory caching",
+        "Built the ChromaDB RAG pipeline over PDMA/NDMP disaster-management documents with relevance-thresholded retrieval",
+        "Built the Next.js production frontend: Flood Guide, Policy Advisor and Situation Room",
+        "Deployed the FastAPI backend to Railway and the frontend to Vercel, including production CORS hardening",
+        "Wrote the backend test suite and the real-API golden-set evaluation",
+      ]),
+    );
+  });
+
+  it("every initiative photo exists under public/", () => {
+    const publicDir = join(process.cwd(), "public");
+    const photos = getInitiatives().flatMap((item) => item.photos);
+
+    expect(photos.length).toBeGreaterThan(0);
+    for (const { src } of photos) {
+      expect(existsSync(join(publicDir, src)), src).toBe(true);
+    }
   });
 });

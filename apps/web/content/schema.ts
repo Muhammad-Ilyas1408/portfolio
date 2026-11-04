@@ -7,6 +7,24 @@ const YearMonth = z
   .string()
   .regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'dates must be "YYYY-MM"');
 
+// "YYYY-MM-DD" when the day is known, otherwise "YYYY-MM".
+const EventDate = z
+  .string()
+  .regex(
+    /^\d{4}-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?$/,
+    'dates must be "YYYY-MM-DD" or "YYYY-MM"',
+  )
+  .refine(
+    (value) => {
+      const [year, month, day] = value.split("-").map(Number);
+      return (
+        day === undefined ||
+        day <= new Date(Date.UTC(year, month, 0)).getUTCDate()
+      );
+    },
+    { error: "day does not exist in that month" },
+  );
+
 export const Evidence = z.object({
   kind: z.enum([
     "repo",
@@ -36,9 +54,11 @@ export const Claim = z
 export const Profile = z.object({
   name: z.string().min(1),
   title: z.string().min(1),
+  headline: z.string().min(1),
+  intro: z.string().min(1),
+  // Used for page metadata.
   positioning: z.string().min(1),
   location: z.string().min(1),
-  availability: z.string().min(1).optional(),
   links: z.object({
     email: z.string().regex(/^mailto:[^@\s]+@[^@\s]+$/),
     github: HttpsUrl,
@@ -110,16 +130,36 @@ export const Role = z.object({
   published: z.boolean(),
 });
 
-export const Initiative = z.object({
-  name: z.string().min(1),
-  date: YearMonth.optional(),
-  myRole: z.string().min(1),
-  scale: Claim.optional(),
-  summary: z.string().min(1),
-  photos: z.array(z.string()).default([]),
-  evidence: z.array(Evidence).default([]),
-  published: z.boolean(),
-});
+export const Initiative = z
+  .object({
+    name: z.string().min(1),
+    org: z.string().min(1).default("Computing Students Society"),
+    start: EventDate,
+    end: EventDate.optional(),
+    format: z.enum(["online", "on-campus"]),
+    focus: z.enum(["technical", "career", "community"]),
+    venue: z.string().min(1).optional(),
+    myRole: z.string().min(1),
+    summary: z.string().min(1).optional(),
+    // Self-reported unless they carry evidence.
+    stats: z.array(Claim).default([]),
+    featured: z.boolean(),
+    // `src` is a path under apps/web/public, e.g. "/images/events/...".
+    photos: z
+      .array(
+        z.object({
+          src: z.string().regex(/^\/[^\s]+$/),
+          alt: z.string().min(1),
+        }),
+      )
+      .default([]),
+    evidence: z.array(Evidence).default([]),
+    published: z.boolean(),
+  })
+  .refine((item) => !item.end || item.end >= item.start, {
+    error: "end must not be before start",
+    path: ["end"],
+  });
 
 export const Credential = z.object({
   name: z.string().min(1),
@@ -163,6 +203,7 @@ export type Credential = z.output<typeof Credential>;
 export type Skill = z.output<typeof Skill>;
 export type SkillGroup = z.output<typeof SkillGroup>;
 
+export type ClaimInput = z.input<typeof Claim>;
 export type ProfileInput = z.input<typeof Profile>;
 export type ProjectInput = z.input<typeof Project>;
 export type RoleInput = z.input<typeof Role>;

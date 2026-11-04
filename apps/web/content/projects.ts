@@ -9,8 +9,8 @@ export const projects: ProjectInput[] = [
     slug: "flood-aware",
     title: "Flood-Aware",
     summary: "Grounded flood decision-support system for the Swat River Basin.",
-    role: "Co-developer (team of 2), BS CS Final Year Project",
-    // TODO: each member's role, and confirm Abdullah is fine being named (open item 1).
+    role: "BS CS Final Year Project (team of 2)",
+    // Abdullah's role was not given, so it stays empty.
     team: [{ name: "Muhammad Ilyas" }, { name: "Abdullah Ahmad" }],
     supervisor: "Dr. Asim Jalal",
     // Self-reported by the owner.
@@ -33,7 +33,15 @@ export const projects: ProjectInput[] = [
       "Railway",
       "Vercel",
     ],
-    myContributions: [], // TODO: owner to provide (open item 1).
+    // Self-reported by the owner: the owner's own work only.
+    myContributions: [
+      "Designed and built the LangGraph decision agent with severity-based tool routing and citation validation",
+      "Built the GIS analysis pipeline (GeoPandas, Rasterio) for population and infrastructure exposure, including regional data extraction and in-memory caching",
+      "Built the ChromaDB RAG pipeline over PDMA/NDMP disaster-management documents with relevance-thresholded retrieval",
+      "Built the Next.js production frontend: Flood Guide, Policy Advisor and Situation Room",
+      "Deployed the FastAPI backend to Railway and the frontend to Vercel, including production CORS hardening",
+      "Wrote the backend test suite and the real-API golden-set evaluation",
+    ],
     teamOutcomes: ["Complete and deployed"],
     results: [
       {
@@ -115,9 +123,9 @@ export const projects: ProjectInput[] = [
   {
     slug: "storyweave",
     title: "StoryWeave",
-    // TODO: owner to confirm this summary; it reuses the PLAN.md section 2 facts (no open item yet).
+    // Describes the project per its README, not the owner's personal work.
     summary:
-      "6-stage LangGraph pipeline (Gemini, ElevenLabs, FFmpeg), deployed with Docker on DigitalOcean.",
+      "Multimodal wellness-story generator: a six-stage LangGraph pipeline turns a single prompt into a personalized, narrated story with background music (Gemini, ElevenLabs, FFmpeg).",
     role: "Full-Stack Developer — Docker, deployment, infrastructure (team of 4)",
     team: [
       { name: "Muhammad Jawad", role: "AI Engineer" },
@@ -137,6 +145,7 @@ export const projects: ProjectInput[] = [
       "Docker",
       "DigitalOcean",
     ],
+    // Follows the repo README; confirmed by the owner.
     myContributions: ["Docker containerization, deployment and infrastructure"],
     results: [
       {

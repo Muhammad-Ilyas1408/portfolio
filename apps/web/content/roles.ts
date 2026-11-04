@@ -2,8 +2,11 @@ import type { RoleInput } from "./schema";
 
 const css = "Computing Students Society (CSS), University of Peshawar";
 const gdg = "GDG on Campus University of Peshawar";
+// The program's name before it became GDG on Campus.
+const gdsc = "Google Developer Student Clubs (GDSC), University of Peshawar";
 const connectedPakistan = "Connected Pakistan";
 
+// Community myContributions are self-reported by the owner.
 export const roles: RoleInput[] = [
   {
     org: "DeepCognishann Software Services",
@@ -25,18 +28,27 @@ export const roles: RoleInput[] = [
     start: "2025-10",
     end: "2026-09",
     track: "community",
-    myContributions: [], // TODO: owner to provide (open items 2 and 4).
-    teamOutcomes: [], // TODO: owner to provide (open items 2 and 4).
+    myContributions: [
+      "Led the CSS executive team and the Department of Computer Science's student activities as president of the department's official society",
+      "Organized 18 events during the term — technical, career and community sessions, online and on campus — from the Supabase Meetup Peshawar (Nov 2025) to a Pentesting Masterclass (Sep 2026)",
+      "Initiated and planned TechRise '26 (held 22 Oct 2026, 300+ attendees)",
+    ],
+    teamOutcomes: [],
     published: true,
   },
   {
     org: css,
     title: "AI/DS Club Lead",
+    // Start and end confirmed by the owner.
     start: "2024-12",
     end: "2025-09",
     track: "community",
-    myContributions: [], // TODO: owner to provide (open item 5).
-    teamOutcomes: [], // TODO: owner to provide (open item 5).
+    myContributions: [
+      "Delivered a three-part AI session series: foundations of AI, Machine Learning and Deep Learning",
+      "Co-led a GitHub session for students",
+      "Co-led and taught the CSS AI Bootcamp 2025 (Jun–Aug 2025)",
+    ],
+    teamOutcomes: [],
     published: true,
   },
   {
@@ -45,18 +57,23 @@ export const roles: RoleInput[] = [
     start: "2024-10",
     end: "2025-05",
     track: "community",
-    myContributions: [], // TODO: owner to provide (open item 5).
-    teamOutcomes: [], // TODO: owner to provide (open item 5).
+    myContributions: [
+      "Co-led a career guidance and LinkedIn session",
+      "Co-led a New Year session",
+    ],
+    teamOutcomes: [],
     published: true,
   },
   {
-    org: gdg,
-    title: "AI/ML Team Lead",
+    org: gdsc,
+    title: "AI/ML Team Member",
     start: "2023-09",
     end: "2024-05",
     track: "community",
-    myContributions: [], // TODO: owner to provide (open item 5).
-    teamOutcomes: [], // TODO: owner to provide (open item 5).
+    myContributions: [
+      "Co-led a LinkedIn session and the GDSC Solution Challenge event",
+    ],
+    teamOutcomes: [],
     published: true,
   },
   {
@@ -65,8 +82,8 @@ export const roles: RoleInput[] = [
     start: "2024-10",
     end: "2024-12",
     track: "community",
-    myContributions: [], // TODO: owner to provide (open item 5).
-    teamOutcomes: [], // TODO: owner to provide (open item 5).
+    myContributions: [],
+    teamOutcomes: [],
     published: true,
   },
   {
@@ -75,8 +92,10 @@ export const roles: RoleInput[] = [
     start: "2024-12",
     end: "2025-01",
     track: "community",
-    myContributions: [], // TODO: owner to provide (open item 5).
-    teamOutcomes: [], // TODO: owner to provide (open item 5).
+    myContributions: [
+      "Worked on the team for the Connected Pakistan Conference 2024 (CPC 2024)",
+    ],
+    teamOutcomes: [],
     published: true,
   },
 ];

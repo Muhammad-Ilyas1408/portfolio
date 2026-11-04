@@ -32,7 +32,12 @@ const roles = z
 const initiatives = z
   .array(Initiative)
   .parse(rawInitiatives)
-  .filter((initiative) => initiative.published);
+  .filter((initiative) => initiative.published)
+  .toSorted(
+    (a, b) =>
+      b.start.localeCompare(a.start) ||
+      (b.end ?? b.start).localeCompare(a.end ?? a.start),
+  );
 const credentials = z
   .array(Credential)
   .parse(rawCredentials)
@@ -58,7 +63,9 @@ export const getFeaturedProjects = () =>
 export const getProject = (slug: string) =>
   projects.find((project) => project.slug === slug);
 export const getRoles = () => roles;
-export const getPublishedInitiatives = () => initiatives;
+export const getInitiatives = () => initiatives;
+export const getFeaturedInitiatives = () =>
+  initiatives.filter((initiative) => initiative.featured);
 export const getPublishedCredentials = (kind?: Credential["kind"]) =>
   kind
     ? credentials.filter((credential) => credential.kind === kind)

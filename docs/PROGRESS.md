@@ -9,6 +9,7 @@ Running log of the portfolio build. Claude Code updates this at the end of every
 | M0 | Scaffold, tooling, CI | Done | 2026-10-29 | |
 | M1 | Design system and layout shell | Done | 2026-11-02 |
 | M2 | Content layer | Done | 2026-11-02 |
+| M2.1 | Content update (owner-provided facts) | Done | 2026-11-04 |
 | M3 | Home page | Not started | |
 | M4 | Projects and case studies | Not started | |
 | M5 | Experience, Leadership, Credentials, About | Not started | |
@@ -26,6 +27,23 @@ See section 11 of `PLAN.md`. Items resolved during the build are noted in the se
 ## Session log
 
 Newest first. One entry per Claude Code session.
+
+### 2026-11-04 — M2.1 final touches
+- **StoryWeave summary:** now "Multimodal wellness-story generator: a six-stage LangGraph pipeline turns a single prompt into a personalized, narrated story with background music (Gemini, ElevenLabs, FFmpeg)." It describes the project per its README, not the owner's own work. TODO removed.
+- **TechRise '26 photos:** the owner confirmed the `.png` files are correct.
+- M2.1 → Done.
+
+### 2026-11-04 — M2.1 Content update
+- **Source:** every new fact comes from the owner's M2.1 prompt and is self-reported; no evidence URLs were given. No page or visual changes.
+- **Profile:** `availability` removed from the schema and content; `headline` and `intro` added; `location` is now "Pakistan". The positioning line stays for metadata.
+- **Flood-Aware:** role "BS CS Final Year Project (team of 2)"; team Muhammad Ilyas and Abdullah Ahmad, no role for Abdullah; the owner's six contributions added. Open item 1 TODOs removed.
+- **StoryWeave:** role and contributions unchanged, now confirmed by the owner. The separate summary TODO stays (see Needs owner input).
+- **Roles:** contributions for every community role except Ambassador, which stays empty. The 2023–24 role is now "AI/ML Team Member" at "Google Developer Student Clubs (GDSC), University of Peshawar". `teamOutcomes` stay empty. All role TODOs removed.
+- **Initiative schema:** `start`/`end` take "YYYY-MM-DD" or "YYYY-MM" and the day must exist; `end` cannot precede `start`; adds `org` (default "Computing Students Society"), `format`, `focus`, `venue`, `stats: Claim[]`, `featured` and `photos: { src, alt }[]`. `scale` and `date` are gone, and `summary` is optional. `getPublishedInitiatives()` is replaced by `getInitiatives()` (published, newest first) and `getFeaturedInitiatives()`. `ClaimInput` type exported.
+- **Initiatives:** the 20 owner-provided entries, all published, with 3 featured: TechRise '26, CSS Summer Bootcamp 2026 (3 tracks), CSS AI Bootcamp 2025.
+- **TechRise '26 photos:** the prompt listed `.jpg` files, but the folder holds `banner.png`, `audience.png`, `panel.png` and `keynote.png`, so the content points at the `.png` files with the given alt text. `my_award.jpg` is also in the folder but came with no alt text, so it is not used (TODO in `initiatives.ts`).
+- **Tests:** content parses; 20 initiatives sorted newest first; exactly 3 featured; "YYYY-MM-DD" and "YYYY-MM" accepted, "2026/10/22", "2026-02-30" and "2026-13" rejected; end before start rejected; org default; every photo exists under `public/`; Flood-Aware has 2 members and the six contributions; profile headline/intro and no availability; GDSC role title and org.
+- **`PLAN.md`:** section 1 Flood-Aware row; section 2 hero copy, Flood-Aware team and contributions, StoryWeave confirmation, leadership timeline and a new initiatives table; section 5 hero label `AI/ML ENGINEER` and no availability chip, leadership preview now starts at "GDSC AI/ML Team Member", project role example and initiative cards; section 6 `Initiative` schema, getters and `profile.ts` fields; section 11 items 1, 2, 4, 5 and 6 resolved, new item 13 (About text), plus the other M2.1 resolutions.
 
 ### 2026-11-02 — M2 owner updates
 - **Dates (self-reported by the owner):** Flood-Aware period 2026-06 to 2026-08; StoryWeave period 2025-10 to 2025-10; HackVortex Codestorm 5 award date 2025-10. Matching TODOs removed.
