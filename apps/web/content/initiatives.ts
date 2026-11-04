@@ -180,7 +180,7 @@ export const initiatives: InitiativeInput[] = [
     focus: "technical",
     myRole: "Instructor, AI track",
     summary:
-      "Co-delivered an end-to-end AI curriculum taking students from Python fundamentals to Machine Learning, Deep Learning, NLP and Agentic AI, with exposure to FastAPI and Docker. Participants came from the department and other universities.",
+      "Taught Machine Learning (classification, regression, evaluation), Deep Learning (neural networks, RNNs, LSTMs) and NLP as part of an end-to-end AI curriculum, and judged the final Project Exhibition, scoring projects on technical implementation and problem-solving. Participants came from the department and other universities.",
     stats: [
       selfReported("70+ participants across 3 tracks"),
       selfReported("30+ students in the AI track"),

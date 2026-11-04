@@ -10,7 +10,7 @@ Running log of the portfolio build. Claude Code updates this at the end of every
 | M1 | Design system and layout shell | Done | 2026-11-02 |
 | M2 | Content layer | Done | 2026-11-02 |
 | M2.1 | Content update (owner-provided facts) | Done | 2026-11-04 |
-| M3 | Home page | Not started | |
+| M3 | Home page | Done | 2026-11-04 |
 | M4 | Projects and case studies | Not started | |
 | M5 | Experience, Leadership, Credentials, About | Not started | |
 | M6 | Contact API | Not started | |
@@ -27,6 +27,23 @@ See section 11 of `PLAN.md`. Items resolved during the build are noted in the se
 ## Session log
 
 Newest first. One entry per Claude Code session.
+
+### 2026-11-04 — M3 design review fixes
+- **EvidenceChip:** the visible text is now only the kind in mono caps, plus the verified dot when verified. The label becomes the accessible name: "<label> (opens in a new tab)". A verified chip also carries `data-verified`. Unit tests updated.
+- **Home highlights:** project results take an optional `highlight`. Flood-Aware highlights the 348 backend tests, production GIS warm-up and 7 evidence tools results. To get that order from a boolean, those three now come first in `projects.ts` (the other results keep their order). The home card shows only highlighted results, or else the first 3 verified ones. New unit tests cover both paths.
+- **CredentialsRow:** the "Verify ↗" link uses signal.
+- **`PLAN.md` section 5 (Home):** rewritten to match what was built. The earlier "Differences from PLAN.md" note in the M3 entry below no longer applies.
+- Screenshots regenerated. M3 → Done; ticked in `README.md`.
+
+### 2026-11-04 — M3 Home page
+- **Small updates:** CSS Summer Bootcamp 2026 summary replaced with the owner's CV text; `timeout-minutes: 15` on both CI jobs; `profile.portrait` added to the schema (optional) and set to `/portrait.jpeg`. The prompt named `portrait.jpg`, but the owner's file is `portrait.jpeg`; the owner chose to use it as is.
+- **Content:** new `content/home.ts` (validated by a new `Home` schema): the 4 proof-strip claims from the prompt (2 verified, reusing the changelog and Devpost URLs now exported from `projects.ts`; 2 self-reported) and the leadership-preview roles, matched by org and title against `roles.ts` (build fails if one is missing). New getters `getHomeProof()` and `getLeadershipPath()` (oldest first).
+- **Page:** `app/page.tsx` composes `components/home/` — Hero, ProofStrip, FeaturedWork, LeadershipPreview, CredentialsRow, ContactBand, MoreLink. Date helpers in `lib/format.ts`. Faint `dot-grid` utility in `globals.css`, used behind the hero only. EvidenceChip now wraps, so it no longer clips in the 2-column proof strip at 390px.
+- **Next.js 16:** `priority` is deprecated on `next/image`; the portrait uses its replacement, `preload`.
+- **UI labels I added (no facts):** section headings "Featured work", "Leadership", "Credentials", a screen-reader-only "Highlights" heading for the proof strip, "Case study →", "Experience →", "Verify ↗", and a "Self-reported" note under initiative stats (per PLAN section 5, Leadership).
+- **SEO:** title, description, canonical "/" and OG title/description. `metadataBase` is not set yet (no domain), so absolute URLs resolve to localhost; TODO in `app/page.tsx` for M8/M9.
+- **Tests:** unit — roleLine, Hero portrait shown/hidden, ProofStrip chips only on verified items, leadership path order and dates, date formatting, all six section headings. E2E — `home.spec.ts` (sections, CTA hrefs, Tab order after the header, `/cv.pdf` 200, portrait above the label on mobile, metadata); no-horizontal-scroll now also at 1280px; axe on `/` (existing). Screenshots regenerated.
+- **Differences from PLAN.md section 5 (Home), following the owner's M3 prompt:** h1 is the name, not "I build AI systems that show their evidence."; the role line comes from the headline; Contact is a ghost button; proof-strip wording differs and self-reported items have no link; the leadership preview has 4 roles plus 3 initiative cards; credentials show the degree and award only (specializations are unpublished); no architecture thumbnail or logos (no assets). PLAN.md was not edited.
 
 ### 2026-11-04 — M2.1 final touches
 - **StoryWeave summary:** now "Multimodal wellness-story generator: a six-stage LangGraph pipeline turns a single prompt into a personalized, narrated story with background music (Gemini, ElevenLabs, FFmpeg)." It describes the project per its README, not the owner's own work. TODO removed.

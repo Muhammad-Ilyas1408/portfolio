@@ -212,12 +212,14 @@ Sitemap
 
 ### Home `/`
 
-1. **Hero.** On the left: a mono label `AI/ML ENGINEER` (no city or country), then the h1 "I build AI systems that show their evidence." Below it, one line: "Grounded LLM agents, RAG and GIS pipelines — and the student communities that build them." Buttons: **View work** (filled, signal), **Download CV** (outline), and a text link to Contact. On the right: your portrait in a rounded-square frame with a thin signal border. There is no availability chip (dropped in M2.1).
-2. **Proof strip.** Four facts with no counters: "Flood-Aware — live, 348 tests" · "HackVortex Codestorm 5 — 1st place" · "CSS President 2025–26" · "AI/ML Intern — LLM fine-tuning + DP-SGD". Each links to its source.
-3. **Featured work.** One large Flood-Aware card with an architecture thumbnail, then two smaller cards for StoryWeave and the internship. A link reads "All projects →".
-4. **Leadership preview.** A horizontal mini-timeline in ember: GDSC AI/ML Team Member → CSS AI/DS Club Lead → CSS President, with a link reading "See the full story →".
-5. **Credentials row.** Small logos and names for the degree and the top 3 specializations, with a link to "All credentials →".
-6. **Contact band.** "Building something with LLMs, or running a tech community? Let's talk." Buttons for Email and the contact form.
+Every fact comes from `content/` (`profile.ts`, `home.ts`, `projects.ts`, `roles.ts`, `initiatives.ts`, `credentials.ts`).
+
+1. **Hero.** A mono label `AI/ML ENGINEER` (no city or country), then the h1 with your name. Below it, a mono role line built from `profile.headline`: the first segment ("AI/ML Engineer") is dropped and the rest are joined with " · ". Then the intro paragraph (`profile.intro`, max 68ch). Buttons: **View work** (filled, `/projects`), **Download CV** (outline, `/cv.pdf`, downloads) and **Contact** (ghost, `/contact`). On desktop your portrait sits on the right in a rounded-square frame with a thin signal border; on mobile it sits above the label at a modest size. With no portrait, the hero is a single column with no placeholder. A faint dot grid sits behind the hero only. There is no availability chip (dropped in M2.1).
+2. **Proof strip.** Four facts with no counters, in a compact row (2×2 on mobile): "Flood-Aware — live, 348 backend tests passing" (verified, Changelog) · "HackVortex Codestorm 5 — 1st place" (verified, Devpost) · "President, Computing Students Society 2025–26" (self-reported) · "AI/ML Engineering Intern — LLM fine-tuning and DP-SGD" (self-reported). Verified items show an evidence chip linking to their proof; self-reported items show no chip.
+3. **Featured work (`01 — Work`, signal).** One large Flood-Aware card: title, summary, role, status pill, up to 6 stack chips, the results marked `highlight` (348 backend tests · production GIS warm-up about 2 s on Railway · 7 evidence tools) with evidence chips, and links to the case study, the live site and the repo. Then two smaller cards: StoryWeave (same structure, compact) and the internship (title, org, dates, contributions, link to `/experience`). A link reads "All projects →".
+4. **Leadership preview (`02 — Leadership`, ember).** A progression, horizontal on desktop and vertical on mobile, oldest to newest: GDSC AI/ML Team Member (2023–24) → GDG on Campus Executive Team Member (2024–25) → CSS AI/DS Club Lead (2024–25) → CSS President (2025–26). Below it, cards for the 3 featured initiatives (TechRise '26 with its banner photo, CSS Summer Bootcamp 2026 (3 tracks), CSS AI Bootcamp 2025): name, date, your role and stats (labelled self-reported). A link reads "See the full story →".
+5. **Credentials row (`03 — Credentials`).** Only published credentials: the degree and the HackVortex Codestorm 5 award, whose "Verify ↗" link goes to its proof. A link reads "All credentials →".
+6. **Contact band.** "Building something with LLMs, or running a tech community? Let's talk." Buttons: **Email me** (filled, mailto) and **Contact form** (outline, `/contact`).
 
 ### Projects `/projects`
 

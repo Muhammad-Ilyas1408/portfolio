@@ -1,8 +1,8 @@
 import type { ProjectInput } from "./schema";
 
-const floodAwareChangelog =
+export const floodAwareChangelog =
   "https://github.com/Muhammad-Ilyas1408/flood-aware/blob/main/docs/CHANGELOG.md";
-const storyWeaveDevpost = "https://devpost.com/software/story-weave";
+export const storyWeaveDevpost = "https://devpost.com/software/story-weave";
 
 export const projects: ProjectInput[] = [
   {
@@ -44,9 +44,31 @@ export const projects: ProjectInput[] = [
     ],
     teamOutcomes: ["Complete and deployed"],
     results: [
+      // Highlighted results show on the home card, in this order.
+      {
+        text: "348 backend tests passing (53 skipped) in the latest recorded run",
+        status: "verified",
+        highlight: true,
+        evidence: {
+          kind: "changelog",
+          label: "Changelog",
+          url: floodAwareChangelog,
+        },
+      },
+      {
+        text: "Production GIS warm-up takes about 2 s on Railway",
+        status: "verified",
+        highlight: true,
+        evidence: {
+          kind: "changelog",
+          label: "Changelog, Sprint 16.1",
+          url: floodAwareChangelog,
+        },
+      },
       {
         text: "7 evidence tools",
         status: "verified",
+        highlight: true,
         evidence: {
           kind: "changelog",
           label: "Changelog",
@@ -55,15 +77,6 @@ export const projects: ProjectInput[] = [
       },
       {
         text: "150 villages and 51 shelters",
-        status: "verified",
-        evidence: {
-          kind: "changelog",
-          label: "Changelog",
-          url: floodAwareChangelog,
-        },
-      },
-      {
-        text: "348 backend tests passing (53 skipped) in the latest recorded run",
         status: "verified",
         evidence: {
           kind: "changelog",
@@ -95,15 +108,6 @@ export const projects: ProjectInput[] = [
         evidence: {
           kind: "changelog",
           label: "Changelog, Hotfix 14.4",
-          url: floodAwareChangelog,
-        },
-      },
-      {
-        text: "Production GIS warm-up takes about 2 s on Railway",
-        status: "verified",
-        evidence: {
-          kind: "changelog",
-          label: "Changelog, Sprint 16.1",
           url: floodAwareChangelog,
         },
       },

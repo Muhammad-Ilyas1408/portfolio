@@ -1,12 +1,14 @@
 import { z } from "zod";
 
 import { credentials as rawCredentials } from "./credentials";
+import { home as rawHome } from "./home";
 import { initiatives as rawInitiatives } from "./initiatives";
 import { profile as rawProfile } from "./profile";
 import { projects as rawProjects } from "./projects";
 import { roles as rawRoles } from "./roles";
 import {
   Credential,
+  Home,
   Initiative,
   Profile,
   ProjectList,
@@ -43,6 +45,18 @@ const credentials = z
   .parse(rawCredentials)
   .filter((credential) => credential.published);
 const skills = z.array(SkillGroup).parse(rawSkills);
+const home = Home.parse(rawHome);
+
+// Leadership preview roles, oldest first. Each must match a published role.
+const leadershipPath = home.leadershipPath
+  .map(({ org, title }) => {
+    const role = roles.find((r) => r.org === org && r.title === title);
+    if (!role) {
+      throw new Error(`Leadership path role "${title}" (${org}) not found`);
+    }
+    return role;
+  })
+  .toSorted((a, b) => a.start.localeCompare(b.start));
 
 const usedInTargets = new Set([
   ...projects.map((project) => project.slug),
@@ -71,3 +85,5 @@ export const getPublishedCredentials = (kind?: Credential["kind"]) =>
     ? credentials.filter((credential) => credential.kind === kind)
     : credentials;
 export const getSkills = () => skills;
+export const getHomeProof = () => home.proof;
+export const getLeadershipPath = () => leadershipPath;

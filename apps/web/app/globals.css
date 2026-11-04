@@ -52,6 +52,13 @@
   --text-3xl--line-height: 1.05;
 }
 
+/* Faint engineering-paper dot grid, used behind the hero only. */
+@utility dot-grid {
+  background-image: radial-gradient(var(--border) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: center top;
+}
+
 @layer base {
   body {
     background: var(--bg);

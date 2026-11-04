@@ -107,7 +107,7 @@ test("footer links are in order and only external ones open a new tab", async ({
   }
 });
 
-for (const width of [360, 390, 768, 1024]) {
+for (const width of [360, 390, 768, 1024, 1280]) {
   test(`no horizontal scroll at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
 

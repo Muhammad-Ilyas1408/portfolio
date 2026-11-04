@@ -19,11 +19,25 @@ describe("EvidenceChip", () => {
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });
 
-  it("shows Verified text only when verified", () => {
+  it("shows only the kind and uses the label as its accessible name", () => {
+    render(<EvidenceChip {...props} />);
+
+    const link = screen.getByRole("link", {
+      name: "Sample (opens in a new tab)",
+    });
+    expect(link).toHaveTextContent(/^repo$/);
+    expect(screen.queryByText("Sample")).not.toBeInTheDocument();
+  });
+
+  it("shows the verified dot only when verified", () => {
     const { rerender } = render(<EvidenceChip {...props} />);
-    expect(screen.queryByText("Verified")).not.toBeInTheDocument();
+    expect(screen.getByRole("link")).not.toHaveAttribute("data-verified");
+    expect(screen.getByRole("link").querySelector(".bg-verified")).toBeNull();
 
     rerender(<EvidenceChip {...props} verified />);
-    expect(screen.getByText("Verified")).toBeInTheDocument();
+    expect(screen.getByRole("link")).toHaveAttribute("data-verified", "true");
+    expect(
+      screen.getByRole("link").querySelector(".bg-verified"),
+    ).not.toBeNull();
   });
 });

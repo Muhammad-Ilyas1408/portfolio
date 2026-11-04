@@ -26,21 +26,16 @@ export function EvidenceChip({
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex min-h-7 items-center gap-2 rounded-md bg-signal-soft px-2 py-0.5 text-sm text-text transition-colors duration-150 hover:bg-surface-raised"
+      aria-label={`${label} (opens in a new tab)`}
+      data-verified={verified || undefined}
+      className="inline-flex min-h-7 items-center gap-2 rounded-md bg-signal-soft px-2 py-0.5 text-sm transition-colors duration-150 hover:bg-surface-raised"
     >
       {verified && (
-        <>
-          <span
-            aria-hidden="true"
-            className="size-2 rounded-full bg-verified"
-          />
-          <span className="sr-only">Verified</span>
-        </>
+        <span aria-hidden="true" className="size-2 rounded-full bg-verified" />
       )}
       <span className="font-mono font-medium text-signal uppercase">
         {kind}
       </span>
-      <span>{label}</span>
     </a>
   );
 }

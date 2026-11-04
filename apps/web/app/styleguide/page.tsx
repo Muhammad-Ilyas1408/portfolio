@@ -118,13 +118,13 @@ export default function Styleguide() {
         <div className="flex flex-wrap gap-4">
           <EvidenceChip
             kind="repo"
-            label="Verified sample"
+            label="Repo (verified sample)"
             url="https://example.com"
             verified
           />
           <EvidenceChip
             kind="repo"
-            label="Unverified sample"
+            label="Repo (unverified sample)"
             url="https://example.com"
           />
         </div>

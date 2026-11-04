@@ -11,6 +11,8 @@ export const profile: ProfileInput = {
   positioning:
     "AI/ML Engineer building grounded, agentic systems — and the communities that build them.",
   location: "Pakistan",
+  // The owner supplied the file as portrait.jpeg (the M3 prompt said .jpg).
+  portrait: { src: "/portrait.jpeg", alt: "Portrait of Muhammad Ilyas" },
   links: {
     email: "mailto:muhammadilyas.ai.eng@gmail.com",
     github: "https://github.com/Muhammad-Ilyas1408",

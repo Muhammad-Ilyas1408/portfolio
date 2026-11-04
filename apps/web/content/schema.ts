@@ -59,6 +59,10 @@ export const Profile = z.object({
   // Used for page metadata.
   positioning: z.string().min(1),
   location: z.string().min(1),
+  // `src` is a path under apps/web/public.
+  portrait: z
+    .object({ src: z.string().regex(/^\/[^\s]+$/), alt: z.string().min(1) })
+    .optional(),
   links: z.object({
     email: z.string().regex(/^mailto:[^@\s]+@[^@\s]+$/),
     github: HttpsUrl,
@@ -87,7 +91,12 @@ export const Project = z.object({
   stack: z.array(z.string().min(1)),
   myContributions: z.array(z.string().min(1)).default([]),
   teamOutcomes: z.array(z.string().min(1)).default([]),
-  results: z.array(Claim).default([]),
+  // `highlight: true` marks the results shown on the home card, in this order.
+  results: z
+    .array(
+      z.intersection(Claim, z.object({ highlight: z.boolean().optional() })),
+    )
+    .default([]),
   links: z.array(Evidence).default([]),
   featured: z.boolean(),
   order: z.number().int(),
@@ -161,6 +170,15 @@ export const Initiative = z
     path: ["end"],
   });
 
+// Home-page content. The proof strip holds exactly four claims.
+export const Home = z.object({
+  proof: z.array(Claim).length(4),
+  // The community roles shown in the leadership preview, matched by org and title.
+  leadershipPath: z
+    .array(z.object({ org: z.string().min(1), title: z.string().min(1) }))
+    .min(1),
+});
+
 export const Credential = z.object({
   name: z.string().min(1),
   issuer: z.string().min(1),
@@ -200,6 +218,7 @@ export type Project = z.output<typeof Project>;
 export type Role = z.output<typeof Role>;
 export type Initiative = z.output<typeof Initiative>;
 export type Credential = z.output<typeof Credential>;
+export type Home = z.output<typeof Home>;
 export type Skill = z.output<typeof Skill>;
 export type SkillGroup = z.output<typeof SkillGroup>;
 
@@ -209,4 +228,5 @@ export type ProjectInput = z.input<typeof Project>;
 export type RoleInput = z.input<typeof Role>;
 export type InitiativeInput = z.input<typeof Initiative>;
 export type CredentialInput = z.input<typeof Credential>;
+export type HomeInput = z.input<typeof Home>;
 export type SkillGroupInput = z.input<typeof SkillGroup>;

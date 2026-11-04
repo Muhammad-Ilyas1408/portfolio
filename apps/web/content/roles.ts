@@ -1,9 +1,10 @@
 import type { RoleInput } from "./schema";
 
-const css = "Computing Students Society (CSS), University of Peshawar";
-const gdg = "GDG on Campus University of Peshawar";
+export const css = "Computing Students Society (CSS), University of Peshawar";
+export const gdg = "GDG on Campus University of Peshawar";
 // The program's name before it became GDG on Campus.
-const gdsc = "Google Developer Student Clubs (GDSC), University of Peshawar";
+export const gdsc =
+  "Google Developer Student Clubs (GDSC), University of Peshawar";
 const connectedPakistan = "Connected Pakistan";
 
 // Community myContributions are self-reported by the owner.
