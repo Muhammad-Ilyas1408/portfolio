@@ -223,21 +223,26 @@ Every fact comes from `content/` (`profile.ts`, `home.ts`, `projects.ts`, `roles
 
 ### Projects `/projects`
 
-- Filter chips: All · Agentic/RAG · Full-stack · ML. Filters are client-side and the URL keeps the state (`?tag=rag`).
+- No filter chips in v1: with two projects they add nothing. Deferred until there are enough projects to filter (All · Agentic/RAG · Full-stack · ML, synced to `?tag=`).
+- Each card reuses the home `ProjectCard`: title, summary, role, status pill, stack chips, the highlighted results with evidence chips, and links to the case study, live site and repo.
 - Each card shows a title, one-line problem, role ("BS CS Final Year Project (team of 2)"), stack tags in mono, a status pill (*Live* · *Complete* · *In progress* · *Experiment* · *Concept*) and evidence chips.
-- A **Lab** section at the bottom holds a compact list for smaller public repos.
+- A **Lab** section at the bottom holds a compact list for smaller public repos. It renders nothing until one is published.
 
 ### Case study `/projects/[slug]` (the template every project uses)
 
-1. Header: title, a one-line summary, role, team and supervisor, dates, a status pill, and buttons for Live demo, Repo and Docs.
+Every fact comes from `content/projects.ts` and `content/case-studies.ts`. Sections with nothing to show are left out, and the rest are numbered in order.
+
+1. Header: title, the project summary, role, dates, a status pill, and buttons for Live demo, Repo and Devpost (only those the project has).
 2. **At a glance:** a 4-cell grid covering Problem · Approach · My role · Outcome.
-3. **Architecture:** a static, accessible SVG diagram with a numbered list below it explaining each component. Nothing is hidden behind hover, so the list works on phones and with screen readers.
-4. **Key engineering decisions:** 3–5 cards, each following *Decision → Why → Trade-off*.
-5. **Hard problems solved:** 2–3 short debugging stories. For Flood-Aware: the evidence-reuse regression, the missing forecast-discharge mapping, and shelter-proximity matching.
-6. **Results:** only sourced numbers, each with its evidence chip.
-7. **Team and credit:** names everyone, and separates *what I did* from *what the team did*.
-8. **What I'd do next:** honest limits and next steps.
-9. Previous and next project links.
+3. **Architecture:** a static, accessible inline SVG built from `architecture.steps` (`role="img"`, with an `aria-label` summarizing the flow; theme tokens only), drawn as two numbered rows. A numbered list below gives each step's description. Nothing is hidden behind hover. Below 1024px the SVG is hidden and the list carries the content alone, so there is no horizontal scroll.
+4. **Key engineering decisions:** 3–5 cards, each following *Decision → Why → Trade-off*, with an evidence chip naming the README section or CHANGELOG entry it comes from. StoryWeave has none: its README gives no reasons or trade-offs.
+5. **Hard problems solved:** up to 3 short debugging stories (*Symptom → Root cause → Fix*), each with its CHANGELOG evidence. For Flood-Aware: the evidence-reuse regression (Hotfix 20), the missing forecast-discharge mapping (Hotfix 21) and shelter-proximity matching (Hotfix 22).
+6. **Results:** every project result as a claim; verified ones carry their evidence chip.
+7. **Team and credit:** names everyone ("Team of 2: … · Supervised by …", or a member list when roles are known), and separates *What I did* (`myContributions`, verbatim) from *What the team did* (`teamOutcomes`). An empty list renders nothing.
+8. **What I'd do next:** honest limits stated in the sources only.
+9. Previous and next project links, in project order (no wrap-around).
+
+Unknown slugs return a 404 (see section 7, Rendering). Page title: "<Project> — Case study · Muhammad Ilyas"; description: the project summary.
 
 ### Experience `/experience`
 
@@ -268,11 +273,11 @@ The form fields are Name, Email, a Reason dropdown (Job opportunity · Collabora
 
 ### States every page handles
 
-Loading skeletons appear only where data loads at runtime, which is just the contact form. Empty states cover a filtered project list with no results. A broken image falls back to a monogram. The 404 page links back to Work and Home.
+Loading skeletons appear only where data loads at runtime, which is just the contact form. Empty states cover a filtered project list with no results, once filters exist (v1.1). A broken image falls back to a monogram. The 404 page links back to Work and Home.
 
 ## 6. Content model
 
-All content lives in typed files under `apps/web/content/`. Zod schemas check every file at build time, so a missing field or a proof-less "verified" claim fails the build. Case-study prose goes in MDX, and structured facts go in TypeScript. To update the site, you edit content files only and never touch components.
+All content lives in typed files under `apps/web/content/`. Zod schemas check every file at build time, so a missing field or a proof-less "verified" claim fails the build. Case studies are structured TypeScript too (`case-studies.ts`), not MDX; see section 7. To update the site, you edit content files only and never touch components.
 
 ```ts
 // content/schema.ts — the single source of truth for content shape
@@ -306,8 +311,20 @@ export const Project = z.object({
   results: z.array(Claim).default([]),
   links: z.array(Evidence).default([]),
   featured: z.boolean(), order: z.number().int(),   // slugs and orders are unique across projects
-  caseStudy: z.string().optional(),     // path to the MDX file
 });
+
+export const CaseStudy = z.object({    // matched to its project by slug; one per project at most
+  slug: z.string(),                    // must match a project's slug (checked at build time)
+  problem: z.string(), approach: z.string(), outcome: z.string(), // one sentence each, for "At a glance"
+  architecture: z.object({
+    steps: z.array(z.object({ id: z.string(), label: z.string(), description: z.string() })).min(4).max(8), // ordered pipeline stages; ids unique
+  }),
+  decisions: z.array(z.object({ decision: z.string(), why: z.string(), tradeoff: z.string(), evidence: Evidence })), // none, or 3–5
+  hardProblems: z.array(z.object({ title: z.string(), symptom: z.string(), rootCause: z.string(), fix: z.string(), evidence: Evidence })).max(3), // evidence required
+  limitations: z.array(z.string()).default([]), // "What I'd do next": honest limits stated in the sources only
+});
+// Every decision and hard problem must trace to a specific README section or CHANGELOG entry,
+// named in its evidence label (e.g. kind "changelog", label "Hotfix 14.4" → chip name "CHANGELOG: Hotfix 14.4").
 
 export const Role = z.object({
   org: z.string(), title: z.string(), start: YearMonth, end: YearMonth.optional(),
@@ -344,7 +361,7 @@ export const Credential = z.object({
 });
 ```
 
-**Files:** `profile.ts` (name, title, headline, intro, positioning for metadata, location, links), `projects.ts`, `roles.ts`, `initiatives.ts`, `credentials.ts`, `skills.ts` (each skill lists the project slugs where it was used), and `case-studies/*.mdx`.
+**Files:** `profile.ts` (name, title, headline, intro, positioning for metadata, location, links), `projects.ts`, `roles.ts`, `initiatives.ts`, `credentials.ts`, `skills.ts` (each skill lists the project slugs where it was used), and `case-studies.ts`.
 
 ## 7. Technical architecture
 
@@ -368,6 +385,8 @@ Visitor ──HTTPS──▶ Vercel · Next.js
 
 - **Next.js 16 (App Router), TypeScript in strict mode, Tailwind CSS v4.** No UI component library in v1; primitives are hand-built and accessible (the mobile menu is a disclosure, not a dialog). Every component is our own, so the site doesn't look like a template.
 - **Rendering:** all routes are statically generated from the content files. v1 fetches no data at runtime. Repos appear as plain links, and live GitHub stats are deferred to v1.1.
+- **Proxy (one, added in M4):** `apps/web/proxy.ts`, matching `/projects/:slug` only. It rewrites a slug with no case study to the 404 page before rendering, so unknown project URLs return a real `404` status. It is needed because, with Cache Components on, `dynamicParams` is unavailable and an unknown slug would otherwise stream the page shell with a `200` before `notFound()` runs. It reads the slug list from `content/` and does no other work; every page stays statically generated.
+- **Case studies are TypeScript, not MDX (changed in M4).** Each case study is structured data (`content/case-studies.ts`, validated by the `CaseStudy` schema), so every decision and hard problem carries required evidence and the template renders it consistently. No MDX dependency is needed.
 - **Motion:** CSS transitions only, with no animation library in v1.
 - **Images:** `next/image` serves AVIF/WebP. Your portrait is at most 1200px at the source.
 - **SEO:** the Metadata API, `opengraph-image.tsx` for each route, `sitemap.ts`, `robots.ts`, and JSON-LD for `Person` (with `sameAs` links to GitHub, LinkedIn and Kaggle) and `CreativeWork` for each project.
@@ -431,8 +450,9 @@ portfolio/
 │   │   ├── content/                 # ← the only folder you edit to update the site
 │   │   │   ├── schema.ts  profile.ts  projects.ts  roles.ts
 │   │   │   ├── initiatives.ts  credentials.ts  skills.ts
-│   │   │   └── case-studies/        # flood-aware.mdx, storyweave.mdx
+│   │   │   └── case-studies.ts      # structured case studies (was MDX)
 │   │   ├── lib/                     # api-client.ts, seo.ts
+│   │   ├── proxy.ts                 # 404 status for unknown /projects/[slug] (M4)
 │   │   ├── public/                  # cv.pdf, portrait, images/ (events, logos)
 │   │   ├── tests/unit/  tests/e2e/  # Vitest / Playwright
 │   │   ├── vitest.config.mts  playwright.config.ts
@@ -498,7 +518,7 @@ Run the milestones in order, one Claude Code session each. After M1 and M3, brin
 | M1 | Design system and layout shell | Tokens, fonts, UI primitives, header/footer/mobile nav, `/styleguide` page; axe is clean |
 | M2 | Content layer | Schemas plus real content for every item marked Verified or Self-reported; the build fails on a bad claim |
 | M3 | Home page | All 6 home sections built from content; works at 360–1536 px — **design review** |
-| M4 | Projects and case studies | Index with filters; template; Two case studies: Flood-Aware (with an interactive architecture diagram) and StoryWeave |
+| M4 | Projects and case studies | Index (filters deferred); template; two case studies, Flood-Aware and StoryWeave, each with a static, accessible architecture diagram |
 | M5 | Experience, Leadership, Credentials, About | All four pages; a static leadership timeline; axe clean on every route |
 | M6 | Contact API | FastAPI endpoints, security and the full pytest suite passing |
 | M7 | Contact form integration | Form wired to the API with every state; e2e tests with the API mocked |

@@ -1,7 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { EvidenceChip } from "@/components/evidence/EvidenceChip";
+import {
+  EvidenceChip,
+  evidenceChipName,
+} from "@/components/evidence/EvidenceChip";
 
 const props = {
   kind: "repo",
@@ -19,11 +22,11 @@ describe("EvidenceChip", () => {
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });
 
-  it("shows only the kind and uses the label as its accessible name", () => {
+  it("shows only the kind, and its name is '<KIND>: <label> (opens in a new tab)'", () => {
     render(<EvidenceChip {...props} />);
 
     const link = screen.getByRole("link", {
-      name: "Sample (opens in a new tab)",
+      name: "REPO: Sample (opens in a new tab)",
     });
     expect(link).toHaveTextContent(/^repo$/);
     expect(screen.queryByText("Sample")).not.toBeInTheDocument();
@@ -39,5 +42,21 @@ describe("EvidenceChip", () => {
     expect(
       screen.getByRole("link").querySelector(".bg-verified"),
     ).not.toBeNull();
+  });
+
+  it("always starts the accessible name with the visible kind", () => {
+    expect(evidenceChipName("repo", "README")).toBe(
+      "REPO: README (opens in a new tab)",
+    );
+    expect(evidenceChipName("changelog", "Hotfix 14.4")).toBe(
+      "CHANGELOG: Hotfix 14.4 (opens in a new tab)",
+    );
+
+    render(<EvidenceChip kind="devpost" label="Anything" url={props.url} />);
+    const link = screen.getByRole("link");
+    const visible = link.textContent ?? "";
+    expect(
+      link.getAttribute("aria-label")?.startsWith(visible.toUpperCase()),
+    ).toBe(true);
   });
 });

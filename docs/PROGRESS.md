@@ -11,7 +11,7 @@ Running log of the portfolio build. Claude Code updates this at the end of every
 | M2 | Content layer | Done | 2026-11-02 |
 | M2.1 | Content update (owner-provided facts) | Done | 2026-11-04 |
 | M3 | Home page | Done | 2026-11-04 |
-| M4 | Projects and case studies | Not started | |
+| M4 | Projects and case studies | Done | 2026-11-04 |
 | M5 | Experience, Leadership, Credentials, About | Not started | |
 | M6 | Contact API | Not started | |
 | M7 | Contact form integration | Not started | |
@@ -27,6 +27,25 @@ See section 11 of `PLAN.md`. Items resolved during the build are noted in the se
 ## Session log
 
 Newest first. One entry per Claude Code session.
+
+### 2026-11-04 — M4 review fixes
+- **Source check (Flood-Aware CHANGELOG):** Sprint 11.1, Sprint 11.2 and Sprint 12.1 all exist and support the claims that cite them; no evidence was moved and nothing was removed. The routing trade-off's wording comes straight from Sprint 14.1.4 (Notes), with Sprint 12.1 as confirmation; the source comment in `case-studies.ts` now says so.
+- **Flood-Aware `teamOutcomes`:** now `[]`, so Team & credit shows only "What I did".
+- **Evidence labels:** repo links → "GitHub repository", live links → "Live app", Devpost links → "Devpost project page" (also in `home.ts`); README evidence → "README: <section heading>" ("README: Grounded Multi-Tool Reasoning", "README: Project Status" for the golden-set result). "Sprint …"/"Hotfix …" and "Changelog" labels unchanged.
+- **`PLAN.md` section 7:** the proxy now has its own bullet (`proxy.ts`, `/projects/:slug` only, real 404 for unknown slugs).
+- **Tests:** e2e checks the new Devpost name, the README chip name, and that "What the team did" is absent on Flood-Aware. Screenshots regenerated.
+- M4 → Done; ticked in `README.md`.
+
+### 2026-11-04 — M4 Projects and case studies
+- **EvidenceChip:** the accessible name is now built as "<KIND>: <label> (opens in a new tab)", so the visible kind always starts it (WCAG 2.5.3). Styleguide samples are back to "Verified sample" / "Unverified sample". To avoid names like "CHANGELOG: Changelog, Sprint 16.1", three Flood-Aware result labels were shortened to "Sprint 16.1", "Sprint 14.1.5" and "Hotfix 14.4"; plain "Changelog", "Repo", "Live" and "Devpost" labels are unchanged.
+- **Sources:** the Flood-Aware README and `docs/CHANGELOG.md` and the StoryWeave README, cloned read-only to `../_refs/` outside the repo. Nothing was copied in.
+- **Content model:** new `CaseStudy` schema and `content/case-studies.ts` (replaces the planned MDX; the empty `content/case-studies/` folder was removed, and `Project.caseStudy` dropped). Decisions also carry required `evidence`, so each one names its README section or CHANGELOG entry. The build fails if a case-study slug matches no project. New getters: `getCaseStudy`, `getCaseStudySlugs`, `getAdjacentProjects`.
+- **Flood-Aware:** 8 architecture steps from the README's System Architecture diagram; 5 decisions; 3 hard problems (Hotfix 20, 21, 22, all verified in the CHANGELOG); 4 limitations from deferred items in the CHANGELOG. The thesis photo does not exist, so it is skipped.
+- **StoryWeave:** 6 steps from "How It Works", framed as the team's pipeline. The README names Docker and DigitalOcean but gives no reasons or trade-offs, and documents no debugging story or limits, so decisions, hard problems and limitations are empty and their sections do not render.
+- **Pages:** `/projects` (one `ProjectCard` per project; the card moved from `components/home/FeaturedWork.tsx` to `components/projects/ProjectCard.tsx`); `/projects/[slug]` with numbered sections that are left out when empty, and per-page metadata. `ArchitectureDiagram` is a two-row inline SVG shown from 1024px; below that the numbered list carries the content.
+- **404 for unknown slugs:** with Cache Components, `dynamicParams` is unavailable and the shell streams with a 200 before `notFound()` runs (tried `"use cache"` on the page first; still 200). Added `apps/web/proxy.ts` (matcher `/projects/:slug`), which rewrites unknown slugs to the 404 page before rendering, per the Next.js 16 docs. This adds a request-time Proxy function; no new dependency.
+- **`PLAN.md`:** section 5 (no filter chips in v1, deferred; case-study template as built), section 6 (`CaseStudy` schema, files), section 7 (MDX → TS note, Proxy note), section 8 (tree), section 10 (M4 row).
+- **Tests:** unit — case-study schema (https evidence on hard problems, 0 or 3–5 decisions, 4–8 unique steps, slug must match a project), empty sections render nothing, team line, "What I did" verbatim, diagram summary and word wrap, EvidenceChip name format. E2E — `projects.spec.ts`: 2 cards, section headings per case study, 404 for an unknown slug, axe on `/projects` and both case studies, no horizontal scroll at 360/390/768/1280px. Screenshots: `projects-1280`, `flood-aware-390`, `flood-aware-1280`, `storyweave-1280`.
 
 ### 2026-11-04 — M3 design review fixes
 - **EvidenceChip:** the visible text is now only the kind in mono caps, plus the verified dot when verified. The label becomes the accessible name: "<label> (opens in a new tab)". A verified chip also carries `data-verified`. Unit tests updated.

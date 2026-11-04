@@ -100,7 +100,6 @@ export const Project = z.object({
   links: z.array(Evidence).default([]),
   featured: z.boolean(),
   order: z.number().int(),
-  caseStudy: z.string().optional(),
 });
 
 export const ProjectList = z.array(Project).superRefine((projects, ctx) => {
@@ -126,6 +125,92 @@ export const ProjectList = z.array(Project).superRefine((projects, ctx) => {
     seenOrders.add(order);
   });
 });
+
+// A case study's structured content, matched to its project by `slug`.
+// Every decision and hard problem cites the README section or CHANGELOG entry
+// it comes from; its evidence label names that section or entry.
+export const CaseStudy = z.object({
+  slug: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/),
+  // One sentence each, for "At a glance".
+  problem: z.string().min(1),
+  approach: z.string().min(1),
+  outcome: z.string().min(1),
+  architecture: z.object({
+    // Ordered pipeline stages.
+    steps: z
+      .array(
+        z.object({
+          id: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/),
+          label: z.string().min(1),
+          description: z.string().min(1),
+        }),
+      )
+      .min(4)
+      .max(8)
+      .refine(
+        (steps) => new Set(steps.map((s) => s.id)).size === steps.length,
+        {
+          error: "architecture step ids must be unique",
+        },
+      ),
+  }),
+  // None, or 3–5. An empty list renders nothing.
+  decisions: z
+    .array(
+      z.object({
+        decision: z.string().min(1),
+        why: z.string().min(1),
+        tradeoff: z.string().min(1),
+        evidence: Evidence,
+      }),
+    )
+    .refine(
+      (list) => list.length === 0 || (list.length >= 3 && list.length <= 5),
+      {
+        error: "a case study has no decisions, or 3–5",
+      },
+    ),
+  hardProblems: z
+    .array(
+      z.object({
+        title: z.string().min(1),
+        symptom: z.string().min(1),
+        rootCause: z.string().min(1),
+        fix: z.string().min(1),
+        evidence: Evidence,
+      }),
+    )
+    .max(3),
+  // "What I'd do next": honest limits stated in the sources only.
+  limitations: z.array(z.string().min(1)).default([]),
+});
+
+export const CaseStudyList = z.array(CaseStudy).superRefine((list, ctx) => {
+  const seen = new Set<string>();
+  list.forEach(({ slug }, index) => {
+    if (seen.has(slug)) {
+      ctx.addIssue({
+        code: "custom",
+        message: `duplicate case study "${slug}"`,
+        path: [index, "slug"],
+      });
+    }
+    seen.add(slug);
+  });
+});
+
+/** Throws unless every case study's slug matches a project. */
+export function assertCaseStudiesMatchProjects(
+  caseStudies: { slug: string }[],
+  projects: { slug: string }[],
+) {
+  const slugs = new Set(projects.map((project) => project.slug));
+  for (const { slug } of caseStudies) {
+    if (!slugs.has(slug)) {
+      throw new Error(`Case study "${slug}" has no matching project`);
+    }
+  }
+}
 
 export const Role = z.object({
   org: z.string().min(1),
@@ -216,6 +301,7 @@ export type Claim = z.output<typeof Claim>;
 export type Profile = z.output<typeof Profile>;
 export type Project = z.output<typeof Project>;
 export type Role = z.output<typeof Role>;
+export type CaseStudy = z.output<typeof CaseStudy>;
 export type Initiative = z.output<typeof Initiative>;
 export type Credential = z.output<typeof Credential>;
 export type Home = z.output<typeof Home>;
@@ -226,6 +312,7 @@ export type ClaimInput = z.input<typeof Claim>;
 export type ProfileInput = z.input<typeof Profile>;
 export type ProjectInput = z.input<typeof Project>;
 export type RoleInput = z.input<typeof Role>;
+export type CaseStudyInput = z.input<typeof CaseStudy>;
 export type InitiativeInput = z.input<typeof Initiative>;
 export type CredentialInput = z.input<typeof Credential>;
 export type HomeInput = z.input<typeof Home>;

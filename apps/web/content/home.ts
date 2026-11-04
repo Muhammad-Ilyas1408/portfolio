@@ -17,7 +17,11 @@ export const home: HomeInput = {
     {
       text: "HackVortex Codestorm 5 — 1st place",
       status: "verified",
-      evidence: { kind: "devpost", label: "Devpost", url: storyWeaveDevpost },
+      evidence: {
+        kind: "devpost",
+        label: "Devpost project page",
+        url: storyWeaveDevpost,
+      },
     },
     {
       text: "President, Computing Students Society 2025–26",

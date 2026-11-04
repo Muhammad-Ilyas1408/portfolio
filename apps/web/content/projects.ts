@@ -42,7 +42,7 @@ export const projects: ProjectInput[] = [
       "Deployed the FastAPI backend to Railway and the frontend to Vercel, including production CORS hardening",
       "Wrote the backend test suite and the real-API golden-set evaluation",
     ],
-    teamOutcomes: ["Complete and deployed"],
+    teamOutcomes: [],
     results: [
       // Highlighted results show on the home card, in this order.
       {
@@ -61,7 +61,7 @@ export const projects: ProjectInput[] = [
         highlight: true,
         evidence: {
           kind: "changelog",
-          label: "Changelog, Sprint 16.1",
+          label: "Sprint 16.1",
           url: floodAwareChangelog,
         },
       },
@@ -89,7 +89,7 @@ export const projects: ProjectInput[] = [
         status: "verified",
         evidence: {
           kind: "repo",
-          label: "README",
+          label: "README: Project Status",
           url: "https://github.com/Muhammad-Ilyas1408/flood-aware",
         },
       },
@@ -98,7 +98,7 @@ export const projects: ProjectInput[] = [
         status: "verified",
         evidence: {
           kind: "changelog",
-          label: "Changelog, Sprint 14.1.5",
+          label: "Sprint 14.1.5",
           url: floodAwareChangelog,
         },
       },
@@ -107,7 +107,7 @@ export const projects: ProjectInput[] = [
         status: "verified",
         evidence: {
           kind: "changelog",
-          label: "Changelog, Hotfix 14.4",
+          label: "Hotfix 14.4",
           url: floodAwareChangelog,
         },
       },
@@ -115,10 +115,14 @@ export const projects: ProjectInput[] = [
     links: [
       {
         kind: "repo",
-        label: "Repo",
+        label: "GitHub repository",
         url: "https://github.com/Muhammad-Ilyas1408/flood-aware",
       },
-      { kind: "live", label: "Live", url: "https://flood-aware.vercel.app" },
+      {
+        kind: "live",
+        label: "Live app",
+        url: "https://flood-aware.vercel.app",
+      },
       { kind: "changelog", label: "Changelog", url: floodAwareChangelog },
     ],
     featured: true,
@@ -155,19 +159,27 @@ export const projects: ProjectInput[] = [
       {
         text: "1st place, HackVortex Codestorm 5",
         status: "verified",
-        evidence: { kind: "devpost", label: "Devpost", url: storyWeaveDevpost },
+        evidence: {
+          kind: "devpost",
+          label: "Devpost project page",
+          url: storyWeaveDevpost,
+        },
       },
     ],
     links: [
       {
         kind: "repo",
-        label: "Repo",
+        label: "GitHub repository",
         url: "https://github.com/JawadGigyani/StoryWeave",
       },
-      { kind: "devpost", label: "Devpost", url: storyWeaveDevpost },
+      {
+        kind: "devpost",
+        label: "Devpost project page",
+        url: storyWeaveDevpost,
+      },
       {
         kind: "live",
-        label: "Live",
+        label: "Live app",
         url: "https://story-weave-pi.vercel.app",
       },
     ],

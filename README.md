@@ -64,7 +64,7 @@ portfolio/
 - [x] M1 — Design system and layout shell
 - [x] M2 — Content layer
 - [x] M3 — Home page
-- [ ] M4 — Projects and case studies
+- [x] M4 — Projects and case studies
 - [ ] M5 — Experience, Leadership, Credentials, About
 - [ ] M6 — Contact API
 - [ ] M7 — Contact form integration

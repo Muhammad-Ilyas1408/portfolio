@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { caseStudies as rawCaseStudies } from "./case-studies";
 import { credentials as rawCredentials } from "./credentials";
 import { home as rawHome } from "./home";
 import { initiatives as rawInitiatives } from "./initiatives";
@@ -7,6 +8,8 @@ import { profile as rawProfile } from "./profile";
 import { projects as rawProjects } from "./projects";
 import { roles as rawRoles } from "./roles";
 import {
+  assertCaseStudiesMatchProjects,
+  CaseStudyList,
   Credential,
   Home,
   Initiative,
@@ -22,6 +25,9 @@ const profile = Profile.parse(rawProfile);
 const projects = ProjectList.parse(rawProjects).toSorted(
   (a, b) => a.order - b.order,
 );
+const caseStudies = CaseStudyList.parse(rawCaseStudies);
+assertCaseStudiesMatchProjects(caseStudies, projects);
+
 const roles = z
   .array(Role)
   .parse(rawRoles)
@@ -76,6 +82,21 @@ export const getFeaturedProjects = () =>
   projects.filter((project) => project.featured);
 export const getProject = (slug: string) =>
   projects.find((project) => project.slug === slug);
+/** The projects before and after this one, in project order. */
+export const getAdjacentProjects = (slug: string) => {
+  const index = projects.findIndex((project) => project.slug === slug);
+  return {
+    previous: index > 0 ? projects[index - 1] : undefined,
+    next: index >= 0 ? projects[index + 1] : undefined,
+  };
+};
+/** Slugs of the projects that have a case study, in project order. */
+export const getCaseStudySlugs = () =>
+  projects
+    .filter((project) => caseStudies.some((c) => c.slug === project.slug))
+    .map((project) => project.slug);
+export const getCaseStudy = (slug: string) =>
+  caseStudies.find((caseStudy) => caseStudy.slug === slug);
 export const getRoles = () => roles;
 export const getInitiatives = () => initiatives;
 export const getFeaturedInitiatives = () =>
