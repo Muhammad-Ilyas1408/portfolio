@@ -67,7 +67,7 @@ portfolio/
 - [x] M4 — Projects and case studies
 - [x] M5 — Experience, Leadership, Credentials, About
 - [x] M6 — Contact API
-- [ ] M7 — Contact form integration
+- [x] M7 — Contact form integration
 - [ ] M8 — SEO, accessibility and performance pass
 - [ ] M9 — Deploy and docs
 

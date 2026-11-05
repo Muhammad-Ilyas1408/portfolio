@@ -1,5 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
 
+// The contact form calls this origin. E2E tests mock it with page.route, so no
+// request reaches a real API. Set here so the build inlines it in CI as well.
+process.env.NEXT_PUBLIC_API_URL ??= "http://localhost:8000";
+
 export default defineConfig({
   testDir: "tests/e2e",
   fullyParallel: true,

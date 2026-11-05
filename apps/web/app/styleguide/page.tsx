@@ -26,6 +26,8 @@ const tokens = [
   "ember",
   "ember-soft",
   "verified",
+  "danger",
+  "danger-soft",
 ];
 
 const typeScale = [

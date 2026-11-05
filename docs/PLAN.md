@@ -178,8 +178,10 @@ Removed in M5: Kaggle Intro to Machine Learning, and IBM "Generative AI and LLMs
 | `ember` | #F5B454 | Leadership accent: timeline nodes, community highlights, awards |
 | `ember-soft` | #F5B454 at 10% | Leadership tints |
 | `verified` | #6EE7A0 | Verified dot on evidence chips, and the Live status pill |
+| `danger` | #F87171 | Errors only: validation messages, invalid-field borders, error panels (about 6.9:1 on bg, 6.6:1 on surface) |
+| `danger-soft` | #F87171 at 10% | Error panel background |
 
-Rules: an accent stays under about 10% of any screen; only bg-colored text may sit on a full-strength accent fill, and only on primary buttons; focus rings use `signal` everywhere. A light theme comes from the same token names in phase 2. The tokens make it a one-file change.
+Rules: an accent stays under about 10% of any screen; only bg-colored text may sit on a full-strength accent fill, and only on primary buttons; focus rings use `signal` everywhere. Danger is used only for errors. A light theme comes from the same token names in phase 2. The tokens make it a one-file change.
 
 ### Typography
 
@@ -293,7 +295,14 @@ As built in M5.
 
 ### Contact `/contact`
 
-The form fields are Name, Email, a Reason dropdown (Job opportunity · Collaboration · Speaking/community · Other) and a Message. The form has inline validation and a hidden honeypot field. The submit button shows a loading state, then a success panel or an error panel with a mailto fallback. Email, GitHub, LinkedIn and the CV are listed beside the form.
+Signal accent. Title "Contact · Muhammad Ilyas"; description `profile.positioning`. Intro: "Building something with LLMs, or running a tech community? Send a message — I'll reply by email." The form is on the left; a "Direct links" panel (Email, LinkedIn, GitHub, Download CV, from `profile`) sits on the right from 1024px and below the form on smaller screens.
+
+- **Fields:** Name (2–80), Email, Reason (a "Choose a reason" placeholder, then Job opportunity · Collaboration · Speaking or community · Other), and Message (20–5000, with a live "n / 5000" counter that counts characters the way the API does). A honeypot field `website` ("Leave this field empty") is visually hidden, `aria-hidden`, `tabIndex -1` and `autoComplete="off"`.
+- **Validation:** client-side with the shared Zod schema on submit, then live as the visitor fixes fields. Each field has a visible label; errors appear under it with `aria-invalid` and `aria-describedby`, and the first invalid field gets focus. A 422 from the API maps onto the matching fields (first one focused); errors for other keys (e.g. `body`) show as a general error.
+- **Sending:** the button shows a spinner, "Sending…", `aria-busy` and is disabled. Requests time out after 15 seconds.
+- **States** (announced through an `aria-live="polite"` region): 202 replaces the form with a success panel ("Thanks — your message is on its way. I'll reply by email.") that receives focus, with a "Send another message" button that resets the form and focuses Name · 429 → "You've sent several messages recently. Please try again in N minutes." (from `Retry-After`, rounded up; "a few minutes" if missing) · 413 → "Your message is too long. Please shorten it." · 503, any other status, a network error or the timeout → "The message service is unavailable right now." with a mailto link whose subject is "Portfolio contact: <reason label>" (no body).
+- **No API URL:** if `NEXT_PUBLIC_API_URL` is missing at build time, the form is disabled and shows the same unavailable message and mailto link.
+- **Privacy:** form contents are never logged or stored in the browser.
 
 ### States every page handles
 
@@ -427,6 +436,8 @@ Visitor ──HTTPS──▶ Vercel · Next.js
 - **Rendering:** all routes are statically generated from the content files. v1 fetches no data at runtime. Repos appear as plain links, and live GitHub stats are deferred to v1.1.
 - **Proxy (one, added in M4):** `apps/web/proxy.ts`, matching `/projects/:slug` only. It rewrites a slug with no case study to the 404 page before rendering, so unknown project URLs return a real `404` status. It is needed because, with Cache Components on, `dynamicParams` is unavailable and an unknown slug would otherwise stream the page shell with a `200` before `notFound()` runs. It reads the slug list from `content/` and does no other work; every page stays statically generated.
 - **Case studies are TypeScript, not MDX (changed in M4).** Each case study is structured data (`content/case-studies.ts`, validated by the `CaseStudy` schema), so every decision and hard problem carries required evidence and the template renders it consistently. No MDX dependency is needed.
+- **Contact form (added in M7):** a client component (`components/contact/ContactForm.tsx`) using `react-hook-form` with `@hookform/resolvers/zod`. The shared contract in `lib/contact.ts` (reasons, limits, a Zod schema mirroring `POST /contact`, error mapping, `submitContact`) is the only place the API shape is described on the frontend. It POSTs JSON to `${NEXT_PUBLIC_API_URL}/contact` with a 15-second timeout. `NEXT_PUBLIC_API_URL` is inlined at build time; without it the form renders disabled with a mailto link. Playwright sets it to `http://localhost:8000` for the build, and every e2e request to it is mocked.
+- **Content-Security-Policy (M8):** the form calls the API from the browser, so M8's CSP must allow `connect-src` to the API origin (`'self'` plus the production API URL, and `http://localhost:8000` in development). Without it, every submission fails and visitors only see the mailto fallback.
 - **Motion:** CSS transitions only, with no animation library in v1.
 - **Images:** `next/image` serves AVIF/WebP. Your portrait is at most 1200px at the source.
 - **SEO:** the Metadata API, `opengraph-image.tsx` for each route, `sitemap.ts`, `robots.ts`, and JSON-LD for `Person` (with `sameAs` links to GitHub, LinkedIn and Kaggle) and `CreativeWork` for each project.
@@ -492,7 +503,7 @@ portfolio/
 │   │   │   ├── schema.ts  profile.ts  projects.ts  roles.ts
 │   │   │   ├── initiatives.ts  credentials.ts  skills.ts
 │   │   │   └── case-studies.ts      # structured case studies (was MDX)
-│   │   ├── lib/                     # api-client.ts, seo.ts
+│   │   ├── lib/                     # contact.ts (form contract + client, M7), format.ts, seo.ts
 │   │   ├── proxy.ts                 # 404 status for unknown /projects/[slug] (M4)
 │   │   ├── public/                  # cv.pdf, portrait, images/ (events, logos)
 │   │   ├── tests/unit/  tests/e2e/  # Vitest / Playwright

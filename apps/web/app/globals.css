@@ -14,6 +14,8 @@
   --ember: #f5b454;
   --ember-soft: #f5b4541a;
   --verified: #6ee7a0;
+  --danger: #f87171;
+  --danger-soft: #f871711a;
 }
 
 @theme inline {
@@ -29,6 +31,8 @@
   --color-ember: var(--ember);
   --color-ember-soft: var(--ember-soft);
   --color-verified: var(--verified);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
 
   --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;

@@ -14,7 +14,7 @@ Running log of the portfolio build. Claude Code updates this at the end of every
 | M4 | Projects and case studies | Done | 2026-11-04 |
 | M5 | Experience, Leadership, Credentials, About | Done | 2026-11-05 |
 | M6 | Contact API | Done | 2026-11-05 |
-| M7 | Contact form integration | Not started | |
+| M7 | Contact form integration | Done | 2026-11-05 |
 | M8 | SEO, accessibility and performance pass | Not started | |
 | M9 | Deploy and docs | Not started | |
 
@@ -27,6 +27,24 @@ See section 11 of `PLAN.md`. Items resolved during the build are noted in the se
 ## Session log
 
 Newest first. One entry per Claude Code session.
+
+### 2026-11-05 — M7 final fixes
+- **New tokens:** `danger` (#F87171) and `danger-soft` (#F87171 at 10%) in `globals.css` and the Tailwind theme, plus styleguide swatches. Contrast of `danger` text: 6.95:1 on `bg`, 6.57:1 on `surface`, 6.18:1 on `danger-soft`; body `text` on `danger-soft` is 14.16:1.
+- **/contact:** validation messages, invalid-field borders, the over-limit counter, the error panel and the "API URL missing" panel now use `danger`/`danger-soft` instead of `ember`.
+- **`PLAN.md` section 3:** token table rows and the rule "Danger is used only for errors."
+- Screenshots regenerated. M7 → Done; ticked in `README.md`.
+
+### 2026-11-05 — M7 Contact form
+- **Dependencies:** `react-hook-form` 7.91.0 and `@hookform/resolvers` 7.0.2 (requested in the M7 prompt and listed in `PLAN.md` section 8). `zod` was already present. `pnpm peers check` reports only the existing `@types/node`/vitest mismatch.
+- **Contract (`lib/contact.ts`):** reason options and labels, limits (name 2–80, message 20–5000), a Zod schema mirroring `POST /contact` (trim, control characters incl. U+2028/U+2029, lengths counted in code points like Python's `len`, so 5,000 emoji pass), `mapApiErrors`, `formatRetryAfter`/`rateLimitMessage`, `buildMailto`, and `submitContact` (15 s `AbortController` timeout; maps 202/422/429/413/other/network/timeout to a result). It never logs.
+- **Form (`components/contact/ContactForm.tsx`):** visible labels, `aria-invalid` + `aria-describedby` errors, first invalid field focused (client and server 422), live "n / 5000" counter, honeypot `website` (sr-only, `aria-hidden`, `tabIndex -1`, `autoComplete="off"`), spinner + `aria-busy` while sending, one always-mounted `aria-live="polite"` region, focused success panel with "Send another message" (resets and focuses Name), mailto fallback on 503/network/timeout. Missing `NEXT_PUBLIC_API_URL` → disabled form with the mailto link. Reason has a "Choose a reason" placeholder, so no reason is preselected.
+- **Page (`app/contact/page.tsx`):** signal accent, title "Contact · Muhammad Ilyas", description from `profile.positioning`, canonical `/contact`; form left, "Direct links" (Email, LinkedIn, GitHub, Download CV) right from 1024px and below on smaller screens.
+- **Home and header:** already linked to `/contact` (nav "Contact", hero "Contact", contact band "Contact form"); existing e2e tests cover them. No change.
+- **Playwright config:** defaults `NEXT_PUBLIC_API_URL` to `http://localhost:8000` so the build inlines it locally and in CI; all e2e calls to it are mocked with `page.route`.
+- **Tests:** unit `contact.test.tsx` (30: schema limits, emoji count, control characters, reasons, error mapping, Retry-After cases, mailto encoding, `submitContact` statuses/network/timeout, disabled form without the API URL, honeypot attributes). E2E `contact.spec.ts` (16: metadata and links; success with focus and the exact payload sent, `aria-busy` while sending, "Send another"; empty submit focuses Name and sends nothing; 422 field and general errors; 429 "10 minutes"; 413; 503, aborted and 15 s timeout (fake clock) → mailto fallback; honeypot skipped by Tab; axe idle/error/success; no horizontal scroll at 360/390/768/1280). Screenshots `contact-1280`, `contact-390`, `contact-errors-390`, `contact-success-1280`.
+- **Manual check:** `pnpm api` + `pnpm dev` (with `NEXT_PUBLIC_API_URL=http://localhost:8000`), a real submission from headless Chromium: preflight `OPTIONS /contact` 200, `POST /contact` 202, API log "email delivery disabled (RESEND_API_KEY not set); message dropped" and `contact outcome=sent reason=other`; success panel shown and focused. Both servers stopped.
+- **Design note:** validation errors and the error panel used `ember` (no error token yet); replaced by `danger` in the final fixes.
+- **`PLAN.md`:** section 5 (Contact as built), section 7 (contact form bullet; M8 CSP must allow `connect-src` to the API origin), section 8 (`lib/` entry).
 
 ### 2026-11-05 — M6 final fixes
 - **Body limit 16 KB → 32 KB** (`app/security.py`), so a 5,000-character message of 4-byte characters (emoji) is always accepted; the 5,000-character limit is unchanged. New test: 5,000 emoji (about 20 KB as UTF-8 JSON) → 202. The 413 tests now use bodies over 32 KB. `docs/API.md` and `PLAN.md` section 7 updated.
