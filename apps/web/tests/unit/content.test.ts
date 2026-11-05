@@ -170,14 +170,14 @@ describe("getters", () => {
   it("never returns unpublished credentials", () => {
     const published = getPublishedCredentials();
 
-    expect(published).toHaveLength(17);
+    expect(published).toHaveLength(20);
     expect(published.every((item) => item.published)).toBe(true);
     expect(getPublishedCredentials("degree").map((c) => c.name)).toEqual([
       "BS Computer Science",
     ]);
     expect(getPublishedCredentials("award")).toHaveLength(6);
     expect(getPublishedCredentials("specialization")).toHaveLength(3);
-    expect(getPublishedCredentials("course")).toHaveLength(6);
+    expect(getPublishedCredentials("course")).toHaveLength(9);
     expect(getPublishedCredentials("training")).toHaveLength(1);
   });
 

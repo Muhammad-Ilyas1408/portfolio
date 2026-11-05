@@ -138,27 +138,26 @@ export const credentials: CredentialInput[] = [
     verifyUrl: "https://coursera.org/share/25eeb624318c431eb2bb9be0c681e79d",
     published: true,
   },
-  // Hidden until the owner confirms the issuer.
   {
     name: "AI Foundations: How Artificial Intelligence Works",
-    // TODO: issuer, owner to confirm.
+    issuer: "IBM",
     kind: "course",
     verifyUrl: "https://coursera.org/share/ab671767dd7396d70de3a6acf10c12da",
-    published: false,
+    published: true,
   },
   {
     name: "Data Science Foundations: Tools, Careers & Real-World Applications",
-    // TODO: issuer, owner to confirm.
+    issuer: "IBM",
     kind: "course",
     verifyUrl: "https://coursera.org/share/f0282661c77c467d3abc64c13a077168",
-    published: false,
+    published: true,
   },
   {
     name: "Python for Data Science & AI: Hands-On Development",
-    // TODO: issuer, owner to confirm.
+    issuer: "IBM",
     kind: "course",
     verifyUrl: "https://coursera.org/share/9349d0ddea719d277c0d53aa4833aef9",
-    published: false,
+    published: true,
   },
 
   // Training (no certificate link or image).

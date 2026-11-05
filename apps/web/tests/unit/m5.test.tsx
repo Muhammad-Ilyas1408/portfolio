@@ -89,20 +89,19 @@ describe("credentials", () => {
       "courses",
       "training",
     ]);
-    expect(groups.map((g) => g.items.length)).toEqual([1, 6, 3, 6, 1]);
+    expect(groups.map((g) => g.items.length)).toEqual([1, 6, 3, 9, 1]);
     expect(groups.flatMap((g) => g.items).every((item) => item.published)).toBe(
       true,
     );
   });
 
-  it("hides the three courses whose issuer is unconfirmed", () => {
-    const hidden = credentials.filter((c) => !c.published);
+  it("publishes every credential, including the three IBM courses", () => {
     const shown = getCredentialGroups().flatMap((g) => g.items);
 
-    expect(hidden).toHaveLength(3);
-    for (const { name } of hidden) {
-      expect(shown.some((c) => c.name === name)).toBe(false);
-    }
+    expect(credentials.filter((c) => !c.published)).toHaveLength(0);
+    expect(
+      shown.filter((c) => c.kind === "course" && c.issuer === "IBM"),
+    ).toHaveLength(3);
   });
 
   it("requires an issuer once published, and https verify links", () => {
@@ -281,8 +280,8 @@ describe("pages", () => {
       "Courses",
       "Training",
     ]);
-    // 1 award + 3 specializations + 6 courses.
-    expect(screen.getAllByRole("link", { name: /^Verify:/ })).toHaveLength(10);
+    // 1 award + 3 specializations + 9 courses.
+    expect(screen.getAllByRole("link", { name: /^Verify:/ })).toHaveLength(13);
   });
 
   it("/about shows principles, skills and education", () => {

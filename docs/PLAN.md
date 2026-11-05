@@ -150,7 +150,7 @@ Replaced in full in M5. CSS certificates are issued by "Computing Students Socie
 | HackVortex Codestorm 5, 1st place (StoryWeave, team of 4) | Award, team | **Verified** (Devpost) |
 | Machine Learning Specialization (DeepLearning.AI & Stanford); Deep Learning Specialization (DeepLearning.AI); Generative AI Engineering with LLMs Specialization (IBM) | Specialization | Coursera share links |
 | Generative AI Essentials: Overview and Impact, Python Basics, Python Functions, Files, and Dictionaries (University of Michigan); AI For Everyone (DeepLearning.AI); Foundations of Data Science, AI for Brainstorming and Planning (Google) | Course | Coursera share links |
-| AI Foundations: How Artificial Intelligence Works; Data Science Foundations: Tools, Careers & Real-World Applications; Python for Data Science & AI: Hands-On Development | Course | **Pending:** issuer to confirm (links held, `published: false`) |
+| AI Foundations: How Artificial Intelligence Works; Data Science Foundations: Tools, Careers & Real-World Applications; Python for Data Science & AI: Hands-On Development (IBM) | Course | Coursera share links (issuer confirmed and published in M6) |
 | Python Programming (Batch-01), Saylani Mass IT Training (SMIT), Saylani Welfare International Trust, Jan–Aug 2024 (8 months) | Training | Self-reported, no link or image |
 
 Removed in M5: Kaggle Intro to Machine Learning, and IBM "Generative AI and LLMs: Architecture and Data Preparation".
@@ -434,22 +434,23 @@ Visitor ──HTTPS──▶ Vercel · Next.js
 
 ### Backend — `apps/api`
 
-- **FastAPI with Pydantic v2 and pydantic-settings.** It runs on Python 3.11 under uv, the same tooling as Flood-Aware.
+- **FastAPI with Pydantic v2 and pydantic-settings.** It runs on Python 3.11 under uv, the same tooling as Flood-Aware. `app/main.py` is an app factory, `create_app(settings)`; the full contract is in [`docs/API.md`](API.md) (built in M6).
 
 | Endpoint | Request | Responses |
 | --- | --- | --- |
 | `GET /health` | — | `200 {"status":"ok","version":"1.0.0"}` |
-| `POST /contact` | `{name: 2–80 chars, email: EmailStr, reason: enum, message: 20–5000 chars, website: "" (honeypot)}` | `202 {"ok":true}` · `422` validation errors by field · `429` rate-limited with `Retry-After` · `503` email provider down (the client shows the mailto fallback) |
+| `POST /contact` | `{name: 2–80 chars, no control characters; email: EmailStr; reason: "job" \| "collaboration" \| "speaking" \| "other"; message: 20–5000 chars; website: "" (honeypot)}`, trimmed | `202 {"ok":true}` · `422 {"ok":false,"errors":{"<field>":"<message>"}}` · `413 {"ok":false,"error":"payload_too_large"}` · `429 {"ok":false,"error":"rate_limited"}` with `Retry-After` · `503 {"ok":false,"error":"email_unavailable"}` (the client shows the mailto fallback) |
 
 - **Security:**
-  - CORS allows the production domain exactly, plus a regex pinned to your own Vercel previews (the same lesson as Flood-Aware's Sprint 16.3).
-  - Rate limiting allows 5 requests per IP per 10 minutes through `slowapi`.
-  - A filled honeypot field returns a fake 202 and sends nothing.
-  - Request bodies are capped at 16 KB.
-  - Message text is escaped before going into the email HTML.
-  - Logs never contain the message body, only the request id and outcome.
-  - Secrets come from environment variables only: `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CORS_ALLOW_ORIGINS`, `CORS_ALLOW_ORIGIN_REGEX`.
-- **Email:** [Resend](https://resend.com) sends a notification to you, plus an optional auto-reply to the sender.
+  - CORS allows the exact origins in `CORS_ALLOW_ORIGINS`, plus an optional `CORS_ALLOW_ORIGIN_REGEX` pinned to your own Vercel previews (the same lesson as Flood-Aware's Sprint 16.3). Methods `GET`, `POST`, `OPTIONS`; header `Content-Type`; no credentials.
+  - Rate limiting allows 5 requests per IP per 10 minutes (`RATE_LIMIT`) on `POST /contact` only, through `slowapi` with in-memory storage. Behind a proxy, `TRUST_PROXY_HEADERS=true` keys on the first `X-Forwarded-For` address. Requests that fail validation are not counted.
+  - A filled honeypot field returns a fake 202 and sends nothing, even when other fields are invalid.
+  - Request bodies over 32 KB get a 413 before parsing (raised from 16 KB at the end of M6, so a 5,000-character message of 4-byte characters such as emoji always fits).
+  - Message text is escaped before going into the email HTML, and CR/LF are stripped from the subject.
+  - Every response and app log line carries a request id (`X-Request-ID`). Logs hold only the request id, outcome and reason: never the message body, the sender's name or their email.
+  - In production (`ENV=production`), `/docs`, `/redoc` and `/openapi.json` are off, and a missing `RESEND_API_KEY` stops the app at startup.
+  - Configuration comes from environment variables only: `ENV`, `RESEND_API_KEY` (the one secret), `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`, `CORS_ALLOW_ORIGINS`, `CORS_ALLOW_ORIGIN_REGEX`, `RATE_LIMIT`, `TRUST_PROXY_HEADERS`.
+- **Email:** [Resend](https://resend.com) sends one notification to you, with `reply_to` set to the sender. The SDK is blocking, so it runs in a worker thread with a 10-second limit. The mailer sits behind a `Mailer` protocol, injected as a FastAPI dependency, so tests use a fake. **No auto-reply to the sender in v1:** Resend's test sender (`onboarding@resend.dev`) can only deliver to the account owner. An auto-reply needs a verified sending domain first.
 - **No database in v1.** If you later want an admin inbox or dynamic content, add Postgres (Railway or Neon) behind the same API.
 
 ### Hosting and cost
@@ -501,18 +502,19 @@ portfolio/
 │   │   └── .env.example             # NEXT_PUBLIC_API_URL only
 │   └── api/                         # FastAPI — contact + health only
 │       ├── app/
-│       │   ├── main.py              # app factory, CORS, middleware, routers
+│       │   ├── main.py              # create_app(settings): CORS, middleware, error handlers
 │       │   ├── config.py            # pydantic-settings            (M6)
 │       │   ├── routers/             # health.py, contact.py        (M6)
-│       │   ├── schemas.py           # ContactRequest / ContactResponse (M6)
+│       │   ├── schemas.py           # ContactRequest / ContactMessage (M6)
 │       │   ├── services/mailer.py   # Resend behind a Mailer protocol (M6)
-│       │   └── security.py          # rate limit, honeypot, body-size limit (M6)
+│       │   ├── security.py          # body-size limit, rate-limit key and limiter (M6)
+│       │   └── request_id.py        # X-Request-ID and log lines   (M6)
 │       ├── tests/
 │       ├── pyproject.toml           # deps + ruff, mypy, pytest config
 │       ├── uv.lock  .python-version  .env.example
 ├── docs/
 │   ├── PLAN.md                      # this document
-│   └── API.md  DEPLOY.md  CONTENT-GUIDE.md   (written in M6 and M9)
+│   └── API.md  DEPLOY.md  CONTENT-GUIDE.md   (API.md written in M6; the rest in M9)
 ├── .github/workflows/ci.yml         # web + api jobs
 ├── package.json                     # root scripts + "packageManager": "pnpm@…"
 ├── pnpm-workspace.yaml              # packages: [apps/web] + ignoredBuiltDependencies
@@ -670,7 +672,7 @@ None of these block M0–M2. Each one fills in or unhides a piece of content whe
 
 - [x] **1. Your Flood-Aware ownership.** Resolved in M2.1: six self-reported contributions, and the team is Muhammad Ilyas and Abdullah Ahmad (section 2).
 - [x] **2. TechRise '26 details.** Resolved in M2.1: 22 Oct 2026 at SSAQ Khan Hall, event lead (initiated and planned as President, Aug–Sep 2026), 300+ attendees, 9 speakers, 3 sponsors, four photos (section 2). No official post link was given, so the card has no evidence link.
-- [ ] **3. Credential verify links.** Mostly resolved in M5 (Coursera share links, CSS award photos); still open: the issuer of 3 courses, hidden until confirmed. Original request: On Coursera, open each certificate and copy its `coursera.org/verify/...` (or `/verify/specialization/...`) link. The org dashboard link needs a login. Also send the Kaggle certificate URL and images of the SMIT, CSS award and Certificate of Excellence certificates.
+- [x] **3. Credential verify links.** Resolved: Coursera share links and CSS award photos in M5; in M6 the last 3 courses were confirmed as issued by IBM and published. Original request: On Coursera, open each certificate and copy its `coursera.org/verify/...` (or `/verify/specialization/...`) link. The org dashboard link needs a login. Also send the Kaggle certificate URL and images of the SMIT, CSS award and Certificate of Excellence certificates.
 - [x] **4. Summer Bootcamp 2026.** Resolved in M2.1: instructor on the AI track of CSS Summer Bootcamp 2026 (3 tracks), 4 Jul – 20 Sep 2026; 70+ participants across 3 tracks and 30+ in the AI track, both self-reported.
 - [x] **5. GDG, Connected Pakistan and CSS AI/DS Club Lead.** Resolved in M2.1: contributions per role in section 2. The Ambassador role has none, so it shows no bullets.
 - [x] **6. Availability line.** Resolved in M2.1: dropped. The hero uses the headline and intro in section 2.
@@ -684,7 +686,7 @@ None of these block M0–M2. Each one fills in or unhides a piece of content whe
 
 **Also resolved in M2.1:** the 2023–24 role is "AI/ML Team Member" at Google Developer Student Clubs (GDSC), University of Peshawar; the AI/DS Club Lead term started Dec 2024; the 2025 bootcamp's name is "CSS AI Bootcamp 2025"; the StoryWeave role follows the repo README.
 
-**Content still open:** item 3 (issuer of 3 courses). Items 7, 8 and 10–12 are assets or owner tasks, not content.
+**Content still open:** none, except the mobile events toggle (M8). Items 7, 8 and 10–12 are assets or owner tasks, not content.
 
 ## Sources
 

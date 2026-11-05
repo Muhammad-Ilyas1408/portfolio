@@ -13,7 +13,7 @@ Running log of the portfolio build. Claude Code updates this at the end of every
 | M3 | Home page | Done | 2026-11-04 |
 | M4 | Projects and case studies | Done | 2026-11-04 |
 | M5 | Experience, Leadership, Credentials, About | Done | 2026-11-05 |
-| M6 | Contact API | Not started | |
+| M6 | Contact API | Done | 2026-11-05 |
 | M7 | Contact form integration | Not started | |
 | M8 | SEO, accessibility and performance pass | Not started | |
 | M9 | Deploy and docs | Not started | |
@@ -27,6 +27,20 @@ See section 11 of `PLAN.md`. Items resolved during the build are noted in the se
 ## Session log
 
 Newest first. One entry per Claude Code session.
+
+### 2026-11-05 — M6 final fixes
+- **Body limit 16 KB → 32 KB** (`app/security.py`), so a 5,000-character message of 4-byte characters (emoji) is always accepted; the 5,000-character limit is unchanged. New test: 5,000 emoji (about 20 KB as UTF-8 JSON) → 202. The 413 tests now use bodies over 32 KB. `docs/API.md` and `PLAN.md` section 7 updated.
+- M6 → Done; ticked in `README.md`.
+
+### 2026-11-05 — M6 Contact API
+- **Content first:** the three remaining Coursera courses ("AI Foundations: How Artificial Intelligence Works", "Data Science Foundations: Tools, Careers & Real-World Applications", "Python for Data Science & AI: Hands-On Development") now have issuer IBM and `published: true`; TODOs removed. Unit counts updated (20 published, 9 courses, 13 Verify links). `PLAN.md` section 2 row and section 11 item 3 resolved; the only open content item is the M8 mobile events toggle.
+- **Config (`app/config.py`):** pydantic-settings with `ENV`, `RESEND_API_KEY` (SecretStr), `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`, `CORS_ALLOW_ORIGINS`, `CORS_ALLOW_ORIGIN_REGEX`, `RATE_LIMIT`, `TRUST_PROXY_HEADERS`; empty values fall back to defaults. Production without a key, or an unparseable `RATE_LIMIT`, fails at startup. `.env.example` rewritten (no real values).
+- **App (`app/main.py`, `create_app(settings, mailer=None)`):** middleware order request id → CORS → 16 KB body limit (pure ASGI, also counts chunked bodies) → routes. CORS exposes `Retry-After` and `X-Request-ID` so the M7 form can read them. Docs/OpenAPI off in production. `/health` returns version `1.0.0` (from `app/__init__.py`); `pyproject.toml` version bumped to 1.0.0 and `uv.lock` re-locked (version line only; no new packages).
+- **POST /contact:** `schemas.py` (trim, control-character check on name, honeypot), `routers/contact.py` (slowapi limit applied in a router factory so it reads `RATE_LIMIT`), one 422 shape with fixed per-field messages, 429 with `Retry-After` computed from the window, 503 `email_unavailable` on any mailer error or timeout. A filled honeypot returns 202 even when other fields are invalid. Logs: request id + outcome + reason only.
+- **Mailer (`services/mailer.py`):** `Mailer` protocol, `ResendMailer` (subject without CR/LF, `reply_to`, text + escaped HTML), injected via the `get_mailer` dependency. In development without a key, a `DisabledMailer` accepts and drops messages with a warning. No auto-reply (noted in `PLAN.md` section 7).
+- **Timeout detail:** the SDK call runs through `anyio.to_thread.run_sync(..., abandon_on_cancel=True)` inside `anyio.fail_after(10)`. That is the call Starlette's `run_in_threadpool` makes, minus the wait: `run_in_threadpool` cannot abandon the thread, so a hung send would hold the request past 10 s. The SDK's HTTP client timeout is also set to 10 s.
+- **Tests (50, no network):** valid → 202 and one escaped email with `reply_to`; 422 per invalid/missing field, bad JSON and non-object bodies; honeypot (also with invalid fields); 6th request → 429 with `Retry-After`; validation failures not counted; `X-Forwarded-For` only when trusted; 413 with and without `Content-Length`; CORS allowed/disallowed/regex/multiple origins; 503 on error and on timeout; CR/LF never in the subject; caplog shows no name, email or message, and log lines carry the request id; production disables docs and needs the key; `ResendMailer` request built via a monkeypatched `resend.Emails.send`; `/health` 1.0.0.
+- **Docs:** new `docs/API.md`; `PLAN.md` section 7 (backend as built), section 8 (API tree adds `request_id.py`).
 
 ### 2026-11-05 — M5 follow-ups
 - **Event photos:** restored Supabase Meetup `talk.jpg` and `audience.jpg` and Sports Fest `trophies.jpg` with the alt text from the M5 prompt; TODOs removed. Sports Fest `teams.png` added after the owner confirmed it is the correct file (the prompt listed `teams.jpg`); TODO removed.
