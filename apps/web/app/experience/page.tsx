@@ -11,17 +11,14 @@ import {
   getInternship,
   getProfile,
 } from "@/content";
+import { pageMetadata } from "@/lib/seo";
 
-const title = `Experience — ${getProfile().name}`;
-const description =
-  "AI/ML engineering internship in LLM fine-tuning and DP-SGD, and teaching two AI bootcamps.";
-
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: { canonical: "/experience" },
-  openGraph: { title, description },
-};
+export const metadata: Metadata = pageMetadata({
+  title: `Experience — ${getProfile().name}`,
+  description:
+    "AI/ML engineering internship in LLM fine-tuning and DP-SGD, and teaching two AI bootcamps.",
+  path: "/experience",
+});
 
 // The bootcamps taught, oldest first, with the title shown on this page.
 const teaching = [

@@ -1,12 +1,11 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-for (const [name, url] of [
-  ["home", "/"],
-  ["styleguide", "/styleguide"],
-  ["404", "/this-page-does-not-exist"],
-]) {
-  test(`${name} page has zero axe violations`, async ({ page }) => {
+import { notFoundRoute, publicRoutes } from "./routes";
+
+// /contact error and success states are covered in contact.spec.ts.
+for (const url of [...publicRoutes, "/styleguide", notFoundRoute]) {
+  test(`${url} has zero axe violations`, async ({ page }) => {
     await page.goto(url);
 
     const results = await new AxeBuilder({ page }).analyze();
@@ -15,10 +14,22 @@ for (const [name, url] of [
   });
 }
 
+test("/leadership has zero axe violations with every event shown", async ({
+  page,
+}) => {
+  await page.goto("/leadership");
+  await page.locator("#all-events > summary").click();
+  await expect(page.locator("#all-events")).toHaveAttribute("open", "");
+
+  const results = await new AxeBuilder({ page }).analyze();
+
+  expect(results.violations).toEqual([]);
+});
+
 test("the 404 page responds 404 and links to Home and Work", async ({
   page,
 }) => {
-  const response = await page.goto("/this-page-does-not-exist");
+  const response = await page.goto(notFoundRoute);
 
   expect(response?.status()).toBe(404);
   const main = page.getByRole("main");

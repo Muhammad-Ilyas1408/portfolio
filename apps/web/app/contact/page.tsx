@@ -5,17 +5,18 @@ import { cvHref } from "@/components/layout/nav";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Container } from "@/components/ui/Container";
 import { getProfile } from "@/content";
+import { pageMetadata } from "@/lib/seo";
 
 const profile = getProfile();
-const title = `Contact · ${profile.name}`;
-const description = profile.positioning;
+const intro =
+  "Building something with LLMs, or running a tech community? Send a message — I'll reply by email.";
 
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: { canonical: "/contact" },
-  openGraph: { title, description },
-};
+export const metadata: Metadata = pageMetadata({
+  title: `Contact · ${profile.name}`,
+  // The page's own intro line, so the description is unique to /contact.
+  description: intro,
+  path: "/contact",
+});
 
 const linkClasses =
   "inline-flex min-h-11 items-center gap-1 rounded-md font-semibold text-signal underline-offset-4 transition-colors duration-150 hover:underline";
@@ -27,10 +28,7 @@ export default function ContactPage() {
   return (
     <Container>
       <PageHeader label="Contact" title="Contact">
-        <p>
-          Building something with LLMs, or running a tech community? Send a
-          message — I&apos;ll reply by email.
-        </p>
+        <p>{intro}</p>
       </PageHeader>
 
       <div className="grid gap-12 py-12 md:py-16 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">

@@ -22,6 +22,16 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
+      # Fails if the build output names the Resend key variable or holds a
+      # Resend-style key (re_ + 20 or more characters). The left anchor stops
+      # identifiers such as "_workStore_pendingRevalidatedTags" in Next.js's
+      # own code from matching.
+      - name: No secrets in the build output
+        run: |
+          if grep -rlE 'RESEND_API_KEY|(^|[^A-Za-z0-9_])re_[A-Za-z0-9_]{20,}' apps/web/.next; then
+            echo "::error::Secret-like string found in apps/web/.next (files above)"
+            exit 1
+          fi
       - run: pnpm --filter web exec playwright install --with-deps chromium
       - run: pnpm --filter web test:e2e
 

@@ -40,7 +40,11 @@ export function Hero({ profile }: { profile: Profile }) {
             <Button href={cvHref} variant="outline" download prefetch={false}>
               Download CV
             </Button>
-            <Button href="/contact" variant="ghost">
+            {/* Not prefetched: on a phone this link is in the first viewport,
+                and prefetching /contact loads the form's JS (react-hook-form,
+                zod) during start-up, which cost about 0.5 s of blocking time
+                in Lighthouse. The page itself is static and loads fast. */}
+            <Button href="/contact" variant="ghost" prefetch={false}>
               Contact
             </Button>
           </div>

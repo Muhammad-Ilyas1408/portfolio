@@ -8,17 +8,14 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { getCredentialGroups, getProfile, getProject } from "@/content";
+import { pageMetadata } from "@/lib/seo";
 
-const title = `Credentials — ${getProfile().name}`;
-const description =
-  "Degree, awards, specializations, courses and training, each linked to its proof where one exists.";
-
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: { canonical: "/credentials" },
-  openGraph: { title, description },
-};
+export const metadata: Metadata = pageMetadata({
+  title: `Credentials — ${getProfile().name}`,
+  description:
+    "Degree, awards, specializations, courses and training, each linked to its proof where one exists.",
+  path: "/credentials",
+});
 
 export default function CredentialsPage() {
   const groups = getCredentialGroups();

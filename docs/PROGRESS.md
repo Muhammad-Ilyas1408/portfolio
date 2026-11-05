@@ -15,7 +15,7 @@ Running log of the portfolio build. Claude Code updates this at the end of every
 | M5 | Experience, Leadership, Credentials, About | Done | 2026-11-05 |
 | M6 | Contact API | Done | 2026-11-05 |
 | M7 | Contact form integration | Done | 2026-11-05 |
-| M8 | SEO, accessibility and performance pass | Not started | |
+| M8 | SEO, accessibility and performance pass | Done | 2026-11-06 |
 | M9 | Deploy and docs | Not started | |
 
 Status values: Not started · In progress · In review · Done
@@ -27,6 +27,32 @@ See section 11 of `PLAN.md`. Items resolved during the build are noted in the se
 ## Session log
 
 Newest first. One entry per Claude Code session.
+
+### 2026-11-06 — M8 SEO, accessibility and performance
+- **Site URL:** `NEXT_PUBLIC_SITE_URL` (default `http://localhost:3000`, set on Vercel in M9) added to `apps/web/.env.example`; `lib/site.ts` keeps its origin and feeds `metadataBase` in the root layout, the sitemap, robots and JSON-LD. The home page's `metadataBase` TODO is resolved.
+- **Metadata:** every route uses `pageMetadata()` (`lib/seo.ts`): title, description, canonical, Open Graph (title, description, url, type, site name, image) and a `summary_large_image` Twitter card. A page that sets `openGraph` drops the root's file-based image (checked on the built site), so each page names its image explicitly. New descriptions for routes that shared `profile.positioning`: `/projects` (built from the project titles), `/about` (lists the page's sections), `/contact` (the page's own intro line, now one constant used for both); 404: "This page does not exist. Go back to the home page or see the projects." These are page descriptions, not facts. The 404 has no canonical (it has no URL of its own) and Next.js already marks it noindex.
+- **Open Graph images:** `app/opengraph-image.tsx` (name, "AI/ML ENGINEER", the headline's 3 segments, positioning line) and `app/projects/[slug]/opengraph-image.tsx` (title, summary, "CASE STUDY"); `lib/og.tsx` holds the frame and fonts, `lib/tokens.ts` the token values (unit-tested against `globals.css`). Fonts: static TTF Bricolage Grotesque 700, Inter 400 and JetBrains Mono 500 from Google Fonts (SIL OFL) in `apps/web/assets/fonts/` with a README, since `ImageResponse` can't read WOFF2. Font files, not a package dependency. PNGs saved by the screenshot spec to `tests/screenshots/og-default.png`, `og-flood-aware.png`, `og-storyweave.png` (that folder is git-ignored).
+- **Icons:** `app/icon.tsx` (32×32) and `app/apple-icon.tsx` (180×180, square for iOS masking), "MI" in Bricolage, signal on bg. `app/favicon.ico` deleted; `/favicon.ico` now returns 404 (tested).
+- **sitemap.ts / robots.ts:** the nine public routes without `lastModified` (no reliable dates in content); robots allows all, disallows `/styleguide`, names the sitemap.
+- **JSON-LD:** `Person` in the root layout; `CreativeWork` on each case study. The author list is the Person by `@id` plus the other team members by name (Flood-Aware 2, StoryWeave 4), so team work isn't credited to one person. Repo, live and Devpost links go in `sameAs` (`codeRepository` is not a `CreativeWork` property). `serializeJsonLd` escapes `<`. Unit tests check the exact Person object and each CreativeWork.
+- **Security headers:** `lib/security-headers.ts` → `next.config.ts` `headers()` on `/:path*`. Nonces need dynamic rendering and don't work with Cache Components/PPR (bundled CSP guide), so `script-src`/`style-src` use `'unsafe-inline'`; reasons in `PLAN.md` section 7. `connect-src` adds the origin of `NEXT_PUBLIC_API_URL`, which is read at build time. Dev adds `'unsafe-eval'` (checked: `pnpm dev` shows no violations).
+- **CSP fix found by Lighthouse:** `/contact` reported a CSP issue that the console never showed. Zod 4 probes `new Function` once (caught, but the browser still reports it). Fixed with `z.config({ jitless: true })` in `lib/contact.ts`. The e2e CSP test now listens for `securitypolicyviolation` events instead of console text.
+- **Contact under CSP:** the 16 mocked e2e tests pass on the built site with the headers, and a manual submit against `pnpm api` from headless Chromium got preflight `OPTIONS /contact` 200, `POST /contact` 202, API log "email delivery disabled … message dropped" and `contact outcome=sent reason=other`, success panel shown, zero CSP violations. Servers stopped.
+- **Events toggle:** `EventsTable` renders the 8 newest events, then a native `<details id="all-events">` "Show all 20 events" holding a second table with the rest (same columns, a screen-reader-only caption). `OpenTargetDetails` (client, ~30 lines) opens the disclosure when the hash targets a hidden row, on load and on `hashchange`. `/experience` → `/leadership#css-ai-bootcamp-2025` (a hidden row) works on both full and client-side navigation.
+- **CI guard:** step "No secrets in the build output" after `pnpm build`. The prompt's regex `re_[A-Za-z0-9]{20,}` matched Next.js's own `_workStore_pendingRevalidatedTags` in `.next`, so the pattern is anchored: `RESEND_API_KEY|(^|[^A-Za-z0-9_])re_[A-Za-z0-9_]{20,}`. It also allows `_` inside the key, since Resend keys can contain one. Checked locally: the clean build passes; planted `re_…` and `RESEND_API_KEY` strings are caught.
+- **Performance:** the hero's Contact button has `prefetch={false}`. On a phone, prefetching `/contact` loaded the form's JS during start-up (home TBT 510 → 160 ms at 1× CPU). Image sizes were already right: the only image-delivery hint is the lazy TechRise banner at the expected 750w for a 412px DPR-1.75 screen. Lighthouse 13 gives insights no score weight.
+- **Lighthouse 13.6.0** (run via `pnpm dlx`, not added to the repo; mobile preset; Playwright's Chromium via `CHROME_PATH`; `pnpm build && pnpm start`). This machine's `benchmarkIndex` is **359**. Lighthouse's 4× CPU slowdown assumes a fast desktop (index about 1500+), and its throttling guide recommends 1× below about 800. Final scores, median of 3 runs at 1× CPU (network throttling unchanged):
+
+  | Page | Perf | A11y | Best Pr. | SEO | LCP | CLS | TBT |
+  | --- | --- | --- | --- | --- | --- | --- | --- |
+  | `/` | 100 | 100 | 100 | 100 | 0.8 s | 0 | 60 ms |
+  | `/projects/flood-aware` | 100 | 100 | 100 | 100 | 0.9 s | 0 | 90 ms |
+  | `/leadership` | 100 | 100 | 100 | 100 | 0.9 s | 0 | 50 ms |
+  | `/contact` | 99 | 100 | 100 | 100 | 0.8 s | 0 | 90 ms |
+
+  At the default 4× on this machine, Performance was 80 / 81 / 81 / 84 (LCP 0.9–1.1 s, CLS ≤ 0.004, TBT 620–840 ms). The gap is React/Next.js start-up JS on a slow CPU slowed 4× more: `/contact`'s 29 KB page had the same TBT as `/leadership`'s 150 KB page. **To confirm:** PageSpeed Insights on the deployed URL (M9).
+- **Tests:** unit `m8.test.tsx` (23: site URL, unique titles/descriptions and full OG/Twitter/canonical on all 9 routes, 404 metadata, sitemap/robots, Person and CreativeWork shape, `<` escaping, CSP string, dev/no-API variants, headers, tokens vs `globals.css`, the events toggle and hash opener). E2E `m8.spec.ts` (30: one h1 and no skipped heading levels on 10 pages, an internal link and anchor crawl, headers on the built site, no `securitypolicyviolation` on any page, SEO tags and OG image responses per route, unique titles/descriptions, icons, robots/sitemap, JSON-LD, toggle by keyboard, by hash and after client navigation). `a11y.spec.ts` now runs axe on every public route, `/styleguide`, the 404 and `/leadership` with every event open (the `/contact` states stay in `contact.spec.ts`). The M5 mobile-stacking test checks both tables; the home canonical test now expects the `metadataBase` origin. Screenshots regenerated.
+- **`PLAN.md`:** section 4 (other routes), section 5 (events toggle), section 7 (SEO, security headers and why `'unsafe-inline'`, site URL, toggle, prefetch), section 8 (tree), section 9 (performance, accessibility, SEO and security rows as built), section 11 (content still open: none).
 
 ### 2026-11-05 — M7 final fixes
 - **New tokens:** `danger` (#F87171) and `danger-soft` (#F87171 at 10%) in `globals.css` and the Tailwind theme, plus styleguide swatches. Contrast of `danger` text: 6.95:1 on `bg`, 6.57:1 on `surface`, 6.18:1 on `danger-soft`; body `text` on `danger-soft` is 14.16:1.

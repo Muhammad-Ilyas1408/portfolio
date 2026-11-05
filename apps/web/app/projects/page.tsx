@@ -4,16 +4,15 @@ import { ProjectCard } from "@/components/projects/ProjectCard";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { getProfile, getProjects } from "@/content";
+import { pageMetadata } from "@/lib/seo";
 
-const title = `Projects — ${getProfile().name}`;
-const description = getProfile().positioning;
+const projectTitles = getProjects().map((project) => project.title);
 
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: { canonical: "/projects" },
-  openGraph: { title, description },
-};
+export const metadata: Metadata = pageMetadata({
+  title: `Projects — ${getProfile().name}`,
+  description: `Case studies of ${projectTitles.join(" and ")}: architecture, engineering decisions and results, each linked to its evidence.`,
+  path: "/projects",
+});
 
 export default function ProjectsPage() {
   const projects = getProjects();

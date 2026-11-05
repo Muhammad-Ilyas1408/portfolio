@@ -68,7 +68,7 @@ portfolio/
 - [x] M5 — Experience, Leadership, Credentials, About
 - [x] M6 — Contact API
 - [x] M7 — Contact form integration
-- [ ] M8 — SEO, accessibility and performance pass
+- [x] M8 — SEO, accessibility and performance pass
 - [ ] M9 — Deploy and docs
 
 ## Contact

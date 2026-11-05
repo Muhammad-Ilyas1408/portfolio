@@ -1,3 +1,5 @@
+import { writeFileSync } from "node:fs";
+
 import { expect, type Page, test } from "@playwright/test";
 
 const dir = "tests/screenshots";
@@ -124,3 +126,18 @@ test("screenshot contact success at 1280px", async ({ page }) => {
     fullPage: true,
   });
 });
+
+for (const [name, url] of [
+  ["og-default", "/opengraph-image"],
+  ["og-flood-aware", "/projects/flood-aware/opengraph-image"],
+  ["og-storyweave", "/projects/storyweave/opengraph-image"],
+] as const) {
+  test(`save ${name}.png`, async ({ request }) => {
+    const response = await request.get(url);
+    expect(response.headers()["content-type"]).toBe("image/png");
+    const body = await response.body();
+    // PNG width and height live at bytes 16–23 of the IHDR chunk.
+    expect([body.readUInt32BE(16), body.readUInt32BE(20)]).toEqual([1200, 630]);
+    writeFileSync(`${dir}/${name}.png`, body);
+  });
+}

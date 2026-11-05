@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+// The site's CSP has no 'unsafe-eval'. Without this, Zod probes `new Function`
+// once to decide whether to JIT-compile parsers; the probe is caught, but the
+// browser still reports a CSP violation. Jitless parsing is plenty fast here.
+z.config({ jitless: true });
+
 /**
  * The contact form's contract, mirroring `POST /contact` in docs/API.md.
  * Both the client form and the unit tests use this file.

@@ -14,17 +14,15 @@ import {
   getPublishedCredentials,
   getSkills,
 } from "@/content";
+import { pageMetadata } from "@/lib/seo";
 
 const profile = getProfile();
-const title = `About — ${profile.name}`;
-const description = profile.positioning;
 
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: { canonical: "/about" },
-  openGraph: { title, description },
-};
+export const metadata: Metadata = pageMetadata({
+  title: `About — ${profile.name}`,
+  description: `About ${profile.name}: how I got into AI, my engineering principles, skills and education.`,
+  path: "/about",
+});
 
 const usedInTargets: Record<string, UsedInTarget> = {
   ...Object.fromEntries(

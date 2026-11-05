@@ -13,6 +13,7 @@ import {
   Results,
   TeamAndCredit,
 } from "@/components/projects/CaseStudySections";
+import { JsonLd } from "@/components/shared/JsonLd";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import {
@@ -22,6 +23,8 @@ import {
   getProfile,
   getProject,
 } from "@/content";
+import { caseStudyJsonLd } from "@/lib/json-ld";
+import { caseStudyOgImage, pageMetadata } from "@/lib/seo";
 
 export async function generateStaticParams() {
   return getCaseStudySlugs().map((slug) => ({ slug }));
@@ -39,13 +42,13 @@ export async function generateMetadata({
   const found = load((await params).slug);
   if (!found) return {};
   const { project } = found;
-  const title = `${project.title} — Case study · ${getProfile().name}`;
-  return {
-    title,
+  return pageMetadata({
+    title: `${project.title} — Case study · ${getProfile().name}`,
     description: project.summary,
-    alternates: { canonical: `/projects/${project.slug}` },
-    openGraph: { title, description: project.summary },
-  };
+    path: `/projects/${project.slug}`,
+    type: "article",
+    image: caseStudyOgImage(project.slug),
+  });
 }
 
 export default async function CaseStudyPage({
@@ -119,6 +122,7 @@ export default async function CaseStudyPage({
 
   return (
     <Container>
+      <JsonLd data={caseStudyJsonLd(project, getProfile())} />
       <article>
         <CaseStudyHeader project={project} />
         {sections.map((section, index) => (

@@ -16,18 +16,16 @@ import {
   getProfile,
   getProject,
 } from "@/content";
+import { pageMetadata } from "@/lib/seo";
 
 const profile = getProfile();
-const title = `${profile.name} — ${profile.title}`;
 
-// TODO: set metadataBase once the production domain is known (M8/M9), so the
-// canonical and Open Graph URLs resolve to it instead of localhost.
-export const metadata: Metadata = {
-  title,
+// Absolute URLs resolve against metadataBase (NEXT_PUBLIC_SITE_URL, root layout).
+export const metadata: Metadata = pageMetadata({
+  title: `${profile.name} — ${profile.title}`,
   description: profile.positioning,
-  alternates: { canonical: "/" },
-  openGraph: { title, description: profile.positioning },
-};
+  path: "/",
+});
 
 export default function Home() {
   return (

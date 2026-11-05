@@ -222,7 +222,7 @@ Sitemap
 
 **Footer:** email, GitHub, LinkedIn, Kaggle, a "Source on GitHub" link, and the current year.
 
-**Other routes:** `/projects/[slug]` for each case study, `/cv.pdf` (a static file), a custom 404 page, `sitemap.xml`, `robots.txt`, and a generated Open Graph image for each page.
+**Other routes:** `/projects/[slug]` for each case study, `/cv.pdf` (a static file), a custom 404 page, `sitemap.xml`, `robots.txt`, the generated `icon` and `apple-icon`, a default generated Open Graph image, and one per case study (M8).
 
 ## 5. Page-by-page UX spec
 
@@ -277,7 +277,7 @@ As built in M5. Sections are numbered and left out when empty.
 2. **Progression:** vertical, newest first, static. Each community role shows title, organization, dates, `myContributions` (empty → nothing) and evidence chips.
 3. **Chapter 2 in numbers:** the five `chapter.ts` stats with the source line "Source: … · Self-reported" (not linked).
 4. **Featured initiatives:** TechRise '26 (date, venue, role, summary, stats, 4-photo gallery), then short cards for the two bootcamps linking to `/experience#teaching`.
-5. **All events and programmes:** a table of every published initiative, newest first (date, event with summary, format, focus, attendance, my role). Rows with photos get a "Photos (n)" disclosure. Each row's `id` is its anchor (`initiativeId`, e.g. `/leadership#techrise-26`). Below 1024px the table stacks into cards with inline labels.
+5. **All events and programmes:** a table of every published initiative, newest first (date, event with summary, format, focus, attendance, my role). The 8 newest show; the rest sit in a native `<details>` "Show all N events" (M8), which opens by itself when the URL hash targets an event inside it. Rows with photos get a "Photos (n)" disclosure. Each row's `id` is its anchor (`initiativeId`, e.g. `/leadership#techrise-26`). Below 1024px the table stacks into cards with inline labels.
 6. **Recognition:** the Award of Appreciation with its shield photo and "See all awards →" to `/credentials#awards`.
 
 ### Credentials `/credentials`
@@ -437,10 +437,22 @@ Visitor ──HTTPS──▶ Vercel · Next.js
 - **Proxy (one, added in M4):** `apps/web/proxy.ts`, matching `/projects/:slug` only. It rewrites a slug with no case study to the 404 page before rendering, so unknown project URLs return a real `404` status. It is needed because, with Cache Components on, `dynamicParams` is unavailable and an unknown slug would otherwise stream the page shell with a `200` before `notFound()` runs. It reads the slug list from `content/` and does no other work; every page stays statically generated.
 - **Case studies are TypeScript, not MDX (changed in M4).** Each case study is structured data (`content/case-studies.ts`, validated by the `CaseStudy` schema), so every decision and hard problem carries required evidence and the template renders it consistently. No MDX dependency is needed.
 - **Contact form (added in M7):** a client component (`components/contact/ContactForm.tsx`) using `react-hook-form` with `@hookform/resolvers/zod`. The shared contract in `lib/contact.ts` (reasons, limits, a Zod schema mirroring `POST /contact`, error mapping, `submitContact`) is the only place the API shape is described on the frontend. It POSTs JSON to `${NEXT_PUBLIC_API_URL}/contact` with a 15-second timeout. `NEXT_PUBLIC_API_URL` is inlined at build time; without it the form renders disabled with a mailto link. Playwright sets it to `http://localhost:8000` for the build, and every e2e request to it is mocked.
-- **Content-Security-Policy (M8):** the form calls the API from the browser, so M8's CSP must allow `connect-src` to the API origin (`'self'` plus the production API URL, and `http://localhost:8000` in development). Without it, every submission fails and visitors only see the mailto fallback.
+- **Security headers (built in M8):** `next.config.ts` sets these on every route (`/:path*`), from `lib/security-headers.ts`:
+  - `Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' <API origin>; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'`. `<API origin>` is the origin of `NEXT_PUBLIC_API_URL`, read when `next build` runs (headers are fixed at build time), so on Vercel the variable must be set before the build. `pnpm dev` adds `'unsafe-eval'` to `script-src` (React's dev overlays need it); production never has it.
+  - **Why `'unsafe-inline'` for scripts and styles:** every page is prerendered. The Next.js 16 docs say nonces need dynamic rendering on every request, and they don't work with Partial Prerendering/Cache Components, which this site uses. A static page carries Next.js's inline RSC payload scripts, and `next/image` writes inline `style` attributes, so `'unsafe-inline'` is the documented option without nonces. The risk is limited: the site renders no user-generated HTML, loads no third-party scripts, and the CSP still blocks eval, foreign script origins, framing, `<base>` and plugins. The experimental SRI mode was not used, since it does not cover the inline scripts.
+  - The contact form runs Zod with `z.config({ jitless: true })` (`lib/contact.ts`), so Zod never probes `new Function`, which would be reported as a CSP violation.
+  - `Strict-Transport-Security: max-age=63072000; includeSubDomains`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy: camera=(), microphone=(), geolocation=()`.
+- **Site URL (M8):** `NEXT_PUBLIC_SITE_URL` (default `http://localhost:3000`; set on Vercel in M9) feeds `metadataBase`, canonicals, Open Graph URLs, the sitemap, robots and JSON-LD (`lib/site.ts`).
 - **Motion:** CSS transitions only, with no animation library in v1.
 - **Images:** `next/image` serves AVIF/WebP. Your portrait is at most 1200px at the source.
-- **SEO:** the Metadata API, `opengraph-image.tsx` for each route, `sitemap.ts`, `robots.ts`, and JSON-LD for `Person` (with `sameAs` links to GitHub, LinkedIn and Kaggle) and `CreativeWork` for each project.
+- **SEO (built in M8):**
+  - **Metadata:** each route calls `pageMetadata()` (`lib/seo.ts`) for its own title, description, canonical, Open Graph (title, description, url, type `website`, or `article` on case studies, site name, image) and a `summary_large_image` Twitter card. Next.js merges `openGraph` shallowly, and a page that sets it loses the parent's file-based image, so every page names its image explicitly. The 404 has no canonical and is noindex; `/styleguide` stays noindex.
+  - **Open Graph images** (`ImageResponse`, 1200×630, design tokens from `lib/tokens.ts`, which a unit test keeps equal to `globals.css`): `app/opengraph-image.tsx` is the default (name, "AI/ML ENGINEER", headline segments, positioning line) and `app/projects/[slug]/opengraph-image.tsx` is per case study (title, summary, "CASE STUDY"). Both are prerendered at build time. The fonts are static TTF copies of Bricolage Grotesque, Inter and JetBrains Mono in `apps/web/assets/fonts/` (SIL OFL), because `ImageResponse` cannot read `next/font`'s WOFF2.
+  - **Icons:** `app/icon.tsx` (32×32) and `app/apple-icon.tsx` (180×180), an "MI" monogram in Bricolage, signal on bg. The scaffold `favicon.ico` is gone.
+  - **`sitemap.ts`** lists the nine public routes (no `lastModified`: the content has no reliable per-page dates); **`robots.ts`** allows all, disallows `/styleguide` and names the sitemap.
+  - **JSON-LD** (`lib/json-ld.ts`, rendered server-side): a `Person` in the root layout (name, jobTitle, url, portrait image, email, `alumniOf` from the degree's issuer, `sameAs` GitHub, LinkedIn, Kaggle), and a `CreativeWork` on each case study (name, summary, url, `sameAs` repo/live/Devpost links). Its `author` is the Person (by `@id`) plus every other team member by name, so team projects are not credited to one person. `codeRepository` is not a `CreativeWork` property, so the repo goes in `sameAs`.
+- **Leadership events toggle (M8):** "All events and programmes" shows the 8 newest events; the rest sit in a native `<details>` ("Show all N events"), as a second table with the same columns. A hash pointing at a hidden event (e.g. `/leadership#css-ai-bootcamp-2025` from `/experience`) opens the disclosure through a small client effect (`OpenTargetDetails`).
+- **Performance (M8):** the hero's Contact button does not prefetch `/contact`. On a phone it is in the first viewport, and prefetching loaded the form's JS (react-hook-form, Zod) during start-up, adding about 0.35 s of blocking time on home.
 - **Analytics:** none in v1. Deferred to v1.1, when a cookie-free option can be added.
 
 ### Backend — `apps/api`
@@ -491,7 +503,8 @@ portfolio/
 │   │   │   ├── projects/page.tsx
 │   │   │   ├── projects/[slug]/page.tsx
 │   │   │   ├── experience/  leadership/  credentials/  about/  contact/
-│   │   │   └── opengraph-image.tsx  sitemap.ts  robots.ts  not-found.tsx
+│   │   │   ├── opengraph-image.tsx  projects/[slug]/opengraph-image.tsx   (M8)
+│   │   │   └── icon.tsx  apple-icon.tsx  sitemap.ts  robots.ts  not-found.tsx
 │   │   ├── components/
 │   │   │   ├── ui/                  # Button, Chip, Card, Pill, Section, Container
 │   │   │   ├── evidence/            # EvidenceChip, ClaimList
@@ -503,14 +516,16 @@ portfolio/
 │   │   │   ├── schema.ts  profile.ts  projects.ts  roles.ts
 │   │   │   ├── initiatives.ts  credentials.ts  skills.ts
 │   │   │   └── case-studies.ts      # structured case studies (was MDX)
-│   │   ├── lib/                     # contact.ts (form contract + client, M7), format.ts, seo.ts
+│   │   ├── lib/                     # contact.ts (M7), format.ts; M8: seo.ts, site.ts, json-ld.ts, og.tsx, tokens.ts, security-headers.ts
+│   │   ├── assets/fonts/            # TTF fonts for ImageResponse only (M8)
 │   │   ├── proxy.ts                 # 404 status for unknown /projects/[slug] (M4)
 │   │   ├── public/                  # cv.pdf, portrait, images/ (events, logos)
 │   │   ├── tests/unit/  tests/e2e/  # Vitest / Playwright
+│   │   ├── next.config.ts           # Cache Components + security headers (M8)
 │   │   ├── vitest.config.mts  playwright.config.ts
 │   │   ├── AGENTS.md                # written by Next.js 16 — keep it
 │   │   ├── package.json             # scripts: dev, build, lint, typecheck, test, test:e2e, format
-│   │   └── .env.example             # NEXT_PUBLIC_API_URL only
+│   │   └── .env.example             # NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL
 │   └── api/                         # FastAPI — contact + health only
 │       ├── app/
 │       │   ├── main.py              # create_app(settings): CORS, middleware, error handlers
@@ -550,13 +565,13 @@ A milestone is done only when its checks pass in CI. Each bar below is a concret
 
 | Area | v1 target | How it's checked |
 | --- | --- | --- |
-| Performance | Lighthouse 95+ on mobile for every page; LCP under 2.0 s, CLS under 0.05 | Manual Lighthouse run against `pnpm build && pnpm start` before launch (CI automation deferred to v1.1) |
-| Accessibility | WCAG 2.2 AA: 4.5:1 text contrast, visible focus rings, a skip link, keyboard-only navigation, alt text on all images, form errors announced through `aria-live` | `@axe-core/playwright` on every route (zero violations), plus a manual keyboard pass |
-| SEO fundamentals | A unique title and description per page, OG image, canonical URL, sitemap, robots and JSON-LD `Person` | Playwright checks the meta tags on key routes; Google Rich Results test before launch |
+| Performance | Lighthouse Performance 95+, Accessibility 100, Best Practices 95+, SEO 100 on mobile; LCP under 2.0 s, CLS under 0.05 | Manual Lighthouse (mobile preset) against `pnpm build && pnpm start` for `/`, `/projects/flood-aware`, `/leadership`, `/contact` (CI automation deferred to v1.1). Lighthouse calibrates its 4× CPU slowdown for a fast desktop; on a slow host (Lighthouse `benchmarkIndex` under about 800) run it with `--throttling.cpuSlowdownMultiplier=1`, as Lighthouse's throttling guide advises, and record the index. M8 results are in `PROGRESS.md`. Re-check with PageSpeed Insights after deploy (M9). |
+| Accessibility | WCAG 2.2 AA: 4.5:1 text contrast, visible focus rings, a skip link, keyboard-only navigation, alt text on all images, form errors announced through `aria-live` | `@axe-core/playwright` on every public route, `/styleguide`, the 404, `/leadership` with every event shown, and `/contact` idle, error and success (zero violations); an e2e check of exactly one `h1` per page and no skipped heading levels; plus a manual keyboard pass |
+| SEO fundamentals | A unique title and description per page, OG image, canonical URL, sitemap, robots, JSON-LD `Person` and `CreativeWork` | Unit tests on every route's metadata and the JSON-LD shape; Playwright checks canonical, Open Graph, Twitter tags and the OG image response on every public route, the sitemap and robots. An e2e crawl visits every route and asserts every internal link returns 200 and every `#anchor` exists. Google Rich Results test before launch |
 | Content integrity | No verified claim without evidence; nothing unpublished renders | Zod schemas at build time, plus unit tests for both rules |
 | Frontend tests (essential) | Unit: EvidenceChip, content schema rules, contact form validation. End-to-end: navigation, mobile menu, CV download, contact success and error states (API mocked) | Vitest; Playwright on Chromium at 375px and 1280px |
 | Backend tests | 202 on a valid submission; 422 for each invalid field; honeypot sends nothing; 429 on the 6th request within 10 minutes; no CORS headers for a disallowed origin; 503 when the mailer fails | pytest + httpx, with a fake mailer |
-| Security | No secrets in client bundles; CSP, HSTS, `X-Content-Type-Options` and `Referrer-Policy` headers set | A CI grep for key patterns in `.next/`; a header check after deploy |
+| Security | No secrets in client bundles; CSP, HSTS, `X-Content-Type-Options`, `Referrer-Policy` and `Permissions-Policy` headers set; no CSP violations | A CI step after `pnpm build` fails if `apps/web/.next` matches `RESEND_API_KEY\|(^\|[^A-Za-z0-9_])re_[A-Za-z0-9_]{20,}` (the left anchor stops `…_workStore_pendingRevalidatedTags` in Next.js's own code from matching). E2E checks the headers on the built site and listens for `securitypolicyviolation` on every route; unit tests check the CSP string. A header check after deploy |
 | Responsive | Correct at 360, 390, 768, 1024, 1280 and 1536 px with no horizontal scroll | A manual check at each width, plus Playwright screenshots for design review |
 
 CI (GitHub Actions) has two jobs. **web** runs lint, typecheck, unit tests, build and the Chromium end-to-end tests. **api** runs ruff (lint and format check), mypy in strict mode and pytest. Pull requests must pass CI before merging to `main`. Auto-deploy from `main` is switched on by you in M9. Deferred to v1.1: Lighthouse CI, the weekly link checker and WebKit runs.
@@ -697,7 +712,7 @@ None of these block M0–M2. Each one fills in or unhides a piece of content whe
 
 **Also resolved in M2.1:** the 2023–24 role is "AI/ML Team Member" at Google Developer Student Clubs (GDSC), University of Peshawar; the AI/DS Club Lead term started Dec 2024; the 2025 bootcamp's name is "CSS AI Bootcamp 2025"; the StoryWeave role follows the repo README.
 
-**Content still open:** none, except the mobile events toggle (M8). Items 7, 8 and 10–12 are assets or owner tasks, not content.
+**Content still open:** none (the events toggle was built in M8). Items 7, 8 and 10–12 are assets or owner tasks, not content.
 
 ## Sources
 

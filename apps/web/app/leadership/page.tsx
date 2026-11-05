@@ -19,17 +19,14 @@ import {
   getProfile,
   getPublishedCredentials,
 } from "@/content";
+import { pageMetadata } from "@/lib/seo";
 
-const title = `Leadership — ${getProfile().name}`;
-const description =
-  "From a GDSC team member to leading the Computing Students Society: roles, events and recognition.";
-
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: { canonical: "/leadership" },
-  openGraph: { title, description },
-};
+export const metadata: Metadata = pageMetadata({
+  title: `Leadership — ${getProfile().name}`,
+  description:
+    "From a GDSC team member to leading the Computing Students Society: roles, events and recognition.",
+  path: "/leadership",
+});
 
 const leadEvent = "TechRise '26";
 const bootcampNames = [

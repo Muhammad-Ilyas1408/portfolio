@@ -132,7 +132,11 @@ test("the events table stacks as cards on mobile", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/leadership");
 
-  await expect(page.locator("#events thead")).toBeHidden();
+  // Two tables since M8: the 8 newest events, and the rest under "Show all".
+  await page.locator("#all-events > summary").click();
+  for (const head of await page.locator("#events thead").all()) {
+    await expect(head).toBeHidden();
+  }
   await expect(
     page.locator("tr#techrise-26").getByText("Format:", { exact: false }),
   ).toBeVisible();

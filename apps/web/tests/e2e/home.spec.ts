@@ -120,9 +120,10 @@ test("home metadata", async ({ page }) => {
     "content",
     description,
   );
+  // Resolved against metadataBase (NEXT_PUBLIC_SITE_URL, localhost here).
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
-    /\/$/,
+    /^http:\/\/localhost:3000\/?$/,
   );
   await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
     "content",
