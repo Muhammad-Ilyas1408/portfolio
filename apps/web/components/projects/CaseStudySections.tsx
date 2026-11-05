@@ -94,7 +94,8 @@ export function Decisions({
       {decisions.map((item) => (
         <li
           key={item.decision}
-          className="flex flex-col rounded-lg border border-border bg-surface p-6"
+          id={item.anchor}
+          className="flex scroll-mt-20 flex-col rounded-lg border border-border bg-surface p-6"
         >
           <h3>{item.decision}</h3>
           <dl className="mt-4 grid flex-1 gap-3">

@@ -1,6 +1,22 @@
-import { expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 
 const dir = "tests/screenshots";
+
+/** Scrolls through the page so lazy images load before a full-page capture. */
+async function loadLazyImages(page: Page) {
+  await page.evaluate(async () => {
+    for (let y = 0; y < document.body.scrollHeight; y += 600) {
+      window.scrollTo(0, y);
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+    window.scrollTo(0, 0);
+  });
+  await page.waitForFunction(() =>
+    [...document.images].every(
+      (image) => image.complete || !image.checkVisibility(),
+    ),
+  );
+}
 
 for (const [name, url] of [
   ["home", "/"],
@@ -23,10 +39,16 @@ for (const [name, url, width] of [
   ["flood-aware", "/projects/flood-aware", 390],
   ["flood-aware", "/projects/flood-aware", 1280],
   ["storyweave", "/projects/storyweave", 1280],
+  ["experience", "/experience", 1280],
+  ["leadership", "/leadership", 1280],
+  ["leadership", "/leadership", 390],
+  ["credentials", "/credentials", 1280],
+  ["about", "/about", 1280],
 ] as const) {
   test(`screenshot ${name} at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 844 });
     await page.goto(url);
+    await loadLazyImages(page);
     await page.screenshot({
       path: `${dir}/${name}-${width}.png`,
       fullPage: true,

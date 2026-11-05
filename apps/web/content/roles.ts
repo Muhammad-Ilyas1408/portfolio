@@ -7,6 +7,13 @@ export const gdsc =
   "Google Developer Student Clubs (GDSC), University of Peshawar";
 const connectedPakistan = "Connected Pakistan";
 
+// Lists CSS office-bearers by chapter; supplied by the owner in M5.
+const cssAlumniPage = {
+  kind: "website",
+  label: "CSS alumni page",
+  url: "https://cssuop.org/alumni",
+} as const;
+
 // Community myContributions are self-reported by the owner.
 export const roles: RoleInput[] = [
   {
@@ -15,6 +22,9 @@ export const roles: RoleInput[] = [
     start: "2025-01",
     end: "2025-04",
     track: "industry",
+    // Owner-provided in the M5 prompt (self-reported).
+    summary:
+      "Worked on low-resource language model adaptation through parameter-efficient fine-tuning using LoRA and QLoRA, and explored privacy-preserving machine learning by implementing Differential Privacy (DP-SGD) with Opacus, focusing on the trade-offs between model performance, training stability and privacy.",
     // Self-reported, from the CV.
     myContributions: [
       "Fine-tuned TinyLlama with Unsloth using LoRA and QLoRA on limited GPU resources",
@@ -30,11 +40,13 @@ export const roles: RoleInput[] = [
     end: "2026-09",
     track: "community",
     myContributions: [
+      "Led a team of about 40 students: the presidential council (two vice presidents, chief secretary, information secretary), four clubs (AI & DS, Cyber Security, Software Engineering, Literary), and the PR, media, creative, content & graphics and management teams",
       "Led the CSS executive team and the Department of Computer Science's student activities as president of the department's official society",
       "Organized 18 events during the term — technical, career and community sessions, online and on campus — from the Supabase Meetup Peshawar (Nov 2025) to a Pentesting Masterclass (Sep 2026)",
       "Initiated and planned TechRise '26 (held 22 Oct 2026, 300+ attendees)",
     ],
     teamOutcomes: [],
+    evidence: [cssAlumniPage],
     published: true,
   },
   {
@@ -50,6 +62,7 @@ export const roles: RoleInput[] = [
       "Co-led and taught the CSS AI Bootcamp 2025 (Jun–Aug 2025)",
     ],
     teamOutcomes: [],
+    evidence: [cssAlumniPage],
     published: true,
   },
   {

@@ -84,6 +84,7 @@ export const caseStudies: CaseStudyInput[] = [
       },
       // Why: README "Why This Is Different From a Generic AI Chatbot".
       {
+        anchor: "citation-validation",
         decision:
           "Validate every citation against the evidence bundle and reject unsupported ones",
         why: "For a disaster-response tool, a system that invents shelter capacity or flood-zone specifics is worse than one that admits it doesn't know.",
@@ -121,6 +122,7 @@ export const caseStudies: CaseStudyInput[] = [
       },
       // Why: CHANGELOG Hotfix 20 (Notes).
       {
+        anchor: "golden-set",
         decision:
           "Evaluate the decision agent on a golden set with real OpenAI calls",
         why: "Mocked and real-API checks catch different bugs: three prompt regressions were caught only by real-API reruns, and the evidence-reuse regression only by live testing.",

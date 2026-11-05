@@ -6,7 +6,8 @@ export type EvidenceKind =
   | "changelog"
   | "thesis"
   | "post"
-  | "photo";
+  | "photo"
+  | "website";
 
 /** "REPO: README (opens in a new tab)": the visible kind always starts the name (WCAG 2.5.3). */
 export function evidenceChipName(kind: EvidenceKind, label: string) {

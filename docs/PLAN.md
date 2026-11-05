@@ -48,6 +48,7 @@ Every item on the site carries one of three evidence labels. **Verified** means 
 - **Intro:** "I fine-tune LLMs and build grounded, RAG-powered applications with LangGraph, FastAPI and Next.js — and I led the University of Peshawar's Computing Students Society as President (2025–26)."
 - **Location:** Pakistan. There is no availability line; it was dropped in M2.1.
 - The positioning line in `profile.ts` stays and is used for page metadata.
+- **About (M5, self-reported):** one five-sentence paragraph in `profile.about`, from "My journey into AI started during my Computer Science degree…" to "…keep learning." It is shown on `/about`.
 
 ### Official profile links
 
@@ -61,7 +62,7 @@ Every item on the site carries one of three evidence labels. **Verified** means 
 | --- | --- | --- | --- | --- | --- |
 | 1 | [Flood-Aware](https://github.com/Muhammad-Ilyas1408/flood-aware) | BS CS Final Year Project (team of 2) | Complete, deployed | Repo, changelog, thesis photo, live app | 7 evidence tools; 150 villages and 51 shelters; 348 backend tests passing (53 skipped) in the latest recorded run; golden-set evaluation with real API calls; startup cut from 5–6 min to 39 s; production GIS warm-up about 2 s; data files cut from 147.2 MiB to 4.2 MiB (OSM) and 134.9 MiB to 2.0 MiB (WorldPop) |
 | 2 | [StoryWeave](https://github.com/JawadGigyani/StoryWeave) | Full-Stack Developer: Docker, deployment, infrastructure (team of 4) | Complete, demo live | Repo README, [Devpost](https://devpost.com/software/story-weave) | 1st place at HackVortex Codestorm 5; 6-stage LangGraph pipeline (Gemini, ElevenLabs, FFmpeg); deployed with Docker on DigitalOcean |
-| 3 | Internship: fine-tuning and DP-SGD | Intern | Done, Jan–Apr 2025 | Self-reported (CV) | TinyLlama with Unsloth and LoRA/QLoRA; Opacus DP-SGD with gradient clipping and noise injection. No metrics shown. |
+| 3 | Internship: fine-tuning and DP-SGD | Intern | Done, Jan–Apr 2025 | Self-reported (CV, M5 summary) | Summary: low-resource language model adaptation through LoRA/QLoRA, and DP-SGD with Opacus, focusing on the trade-offs between model performance, training stability and privacy. TinyLlama with Unsloth and LoRA/QLoRA; Opacus DP-SGD with gradient clipping and noise injection. No metrics shown. |
 | — | Lab grid: ReAct agent, RAG tools, Personality Search, AI Chatbot, File Intelligence, Spendly, spam classifier | Solo | Mixed | Only Spendly and the spam classifier are public | Each card appears only once its repo is public, labelled *Experiment*, *In progress* or *Concept* |
 
 **Flood-Aware performance, shown as three separate facts:**
@@ -85,11 +86,11 @@ Sources: [Flood-Aware changelog](https://github.com/Muhammad-Ilyas1408/flood-awa
 
 ### Leadership timeline
 
-All community roles and contributions are self-reported.
+All community roles and contributions are self-reported. The President and AI/DS Club Lead roles also carry a verified `WEBSITE` chip linking to the [CSS alumni page](https://cssuop.org/alumni) (M5).
 
 | Period | Role | Organization | What you did |
 | --- | --- | --- | --- |
-| Oct 2025 – Sep 2026 | President | Computing Students Society (CSS), UoP | Led the CSS executive team and the Department of Computer Science's student activities as president of the department's official society; organized 18 events during the term, from the Supabase Meetup Peshawar (Nov 2025) to a Pentesting Masterclass (Sep 2026); initiated and planned TechRise '26 (held 22 Oct 2026, 300+ attendees) |
+| Oct 2025 – Sep 2026 | President | Computing Students Society (CSS), UoP | Led a team of about 40 students: the presidential council (two vice presidents, chief secretary, information secretary), four clubs (AI & DS, Cyber Security, Software Engineering, Literary), and the PR, media, creative, content & graphics and management teams; led the CSS executive team and the Department of Computer Science's student activities as president of the department's official society; organized 18 events during the term, from the Supabase Meetup Peshawar (Nov 2025) to a Pentesting Masterclass (Sep 2026); initiated and planned TechRise '26 (held 22 Oct 2026, 300+ attendees) |
 | Dec 2024 – Sep 2025 | AI/DS Club Lead | CSS | Delivered a three-part AI session series (foundations of AI, Machine Learning, Deep Learning); co-led a GitHub session; co-led and taught the CSS AI Bootcamp 2025 (Jun–Aug 2025) |
 | Dec 2024 – Jan 2025 | Team Member | Connected Pakistan | Worked on the team for the Connected Pakistan Conference 2024 (CPC 2024) |
 | Oct – Dec 2024 | Ambassador | Connected Pakistan | None listed |
@@ -104,42 +105,55 @@ Organized by the Computing Students Society. Your role is "Organized as CSS Pres
 | --- | --- | --- | --- | --- |
 | 22 Oct 2026 | ★ TechRise '26, SSAQ Khan Hall, University of Peshawar. Your role: event lead; you initiated and planned it as CSS President (Aug–Sep 2026) | On campus | Technical | 300+ attendees, 9 speakers, 3 sponsors |
 | 3 Sep 2026 | Pentesting Masterclass | Online | Technical | 70+ attendees |
-| 4 Jul – 20 Sep 2026 | ★ CSS Summer Bootcamp 2026 (3 tracks). Your role: instructor, AI track | Online | Technical | 70+ participants across 3 tracks; 30+ students in the AI track |
+| 4 Jul – 20 Sep 2026 | ★ CSS Summer Bootcamp 2026 (3 tracks). Your role: instructor, AI & Data Science track | Online | Technical | 70+ students across 3 tracks (AI & Data Science, Web Development, Cyber Security); 35+ students in the 9-week AI & Data Science track |
 | 21–22 May 2026 | Prompt Engineering Bootcamp (2 days) | Online | Technical | 80+ attendees |
 | 19 May 2026 | CSS × SMIT: Free IT Courses Session | On campus | Career | 120+ attendees |
-| 11 May 2026 | One Year of Glory: Alumni Reunion | On campus | Community | 100+ attendees |
+| 11 May 2026 | One Year of Glory: Alumni Reunion. Your role: speaker (as CSS President) | On campus | Community | 100+ attendees |
 | 5 May 2026 | Turn Your Skills Into Income | On campus | Career | 100+ attendees |
 | 10 Apr 2026 | LinkedIn Optimization Masterclass | Online | Career | 90+ attendees |
 | 7 Apr 2026 | Step into App Development | Online | Technical | 60+ attendees |
 | 4 Apr 2026 | From Open Source to Google DeepMind | Online | Career | 50+ attendees |
 | 1 Apr 2026 | From Zero to GitHub Hero | Online | Technical | 60+ attendees |
-| 11 Mar 2026 | Purpose of Life & Ramadan + Seerat Quiz | On campus | Community | 60+ attendees |
-| 5 Mar 2026 | Guidance Session with Fresh Juniors | On campus | Community | ~300 attendees |
+| 11 Mar 2026 | Purpose of Life & Ramadan + Seerat Quiz. Your role: co-delivered (as CSS President) | On campus | Community | 60+ attendees |
+| 5 Mar 2026 | Guidance Session with Fresh Juniors. Your role: speaker (as CSS President) | On campus | Community | ~300 attendees |
 | 16 Feb 2026 | Build Your First Website | Online | Technical | 55+ attendees |
 | 24–25 Jan 2026 | Workflow Automation with n8n (2 days) | Online | Technical | 50+ attendees |
 | 3 Jan 2026 | Your 1st Step into AI | Online | Technical | 60+ attendees |
 | 29 Dec 2025 | Web Development: What to Learn, When, Why | Online | Technical | 100+ attendees |
-| 23–28 Nov 2025 | Sports Fest 2025–26 | On campus | Community | 700+ participants |
+| 23–28 Nov 2025 | Sports Fest 2025–26. Your role: chief organizer (as CSS President) | On campus | Community | 700+ participants |
 | 13 Nov 2025 | Supabase Meetup Peshawar | On campus | Technical | 100+ attendees |
 | Jun – Aug 2025 | ★ CSS AI Bootcamp 2025, held during the AI/DS Club Lead term. Your role: lead and instructor | Online | Technical | 30+ students |
 
 - **TechRise '26:** a youth-focused tech event by the Computing Students Society, Department of Computer Science, connecting students across Khyber Pakhtunkhwa and beyond while creating opportunities for youth from the Newly Merged Districts. Promoted by the Directorate of Youth Affairs, Khyber Pakhtunkhwa. Theme: Learn · Connect · Rise. Photos: banner, audience, panel and keynote, in `apps/web/public/images/events/techrise-26/`.
-- **CSS Summer Bootcamp 2026:** you co-delivered an end-to-end AI curriculum taking students from Python fundamentals to Machine Learning, Deep Learning, NLP and Agentic AI, with exposure to FastAPI and Docker. Participants came from the department and other universities.
+- **CSS Summer Bootcamp 2026:** you taught Machine Learning, Deep Learning and NLP and judged the final Project Exhibition; you co-delivered the AI & Data Science track with Abdullah Ahmad, Muhammad Jawad and Abubakar Saddiq, supervised by Dr. Waheed Ur Rehman. Participants came from the department and other universities.
+- **Summaries added in M5:** Sports Fest (six-day festival: cricket, futsal, badminton, traditional Pashto games, chess, e-sports), Supabase Meetup Peshawar (co-hosted with Supabase Peshawar, TechKhwa as community partner), Guidance Session (class-to-class visits across all five programs), Alumni Reunion (graduation ceremony honouring the 2024–25 chapter), CSS × SMIT (free IT and AI courses awareness), Pentesting Masterclass (with SheTech, live bug bounty hunting).
+- **Sponsors:** TechRise '26 shows "3 sponsors" and never names them (owner decision, M5).
+- **Event photos (M5 follow-up):** Supabase Meetup `talk.jpg` and `audience.jpg`, and Sports Fest `teams.png` and `trophies.jpg`, are shown. The owner confirmed `teams.png` is correct (the prompt listed `teams.jpg`).
+
+### Chapter 2 in numbers (self-reported)
+
+Source: "CSS Chapter 2 Progress Report 2025–26 (submitted Sep 2026)", named but not linked. 18 events and programmes (11 online, 7 on campus) · 2,200+ total attendances (cumulative) · 14 guest speakers · 4 partner organizations: Supabase Peshawar, TechKhwa, SMIT and SheTech · ~300 freshers reached through class-to-class visits.
 - **CSS AI Bootcamp 2025:** you co-led and delivered an end-to-end AI learning program from Python fundamentals to Machine Learning and Agentic AI. You taught Python programming, NumPy, Pandas and Machine Learning, led academic planning (curriculum, assignments, quizzes, assessments and evaluation), and supervised the final student projects. Participants came from the department and other universities.
 
 ### Awards and credentials
 
+Replaced in full in M5. CSS certificates are issued by "Computing Students Society & Department of Computer Science, University of Peshawar"; their photos are in `apps/web/public/images/awards/`.
+
 | Item | Kind | Evidence |
 | --- | --- | --- |
+| BS Computer Science, University of Peshawar, 2022–2026, completed Nov 2026 | Degree | Self-reported; shown with the Flood-Aware FYP |
+| Award of Appreciation — President, CSS Chapter 2025–26 (Oct 2026, presented at TechRise '26) | Award | Self-reported; shield photo and presentation photo |
+| Certificate of Recognition — President, CSS (2025–26) | Award | Self-reported; certificate photo |
+| Certificate of Excellence — CSS (2025–26) | Award | Self-reported; certificate photo |
+| Certificate of Recognition — AI & DS Club Lead, CSS (2024–25) | Award | Self-reported; certificate photo |
+| Certificate of Excellence — CSS (2024–25) | Award | Self-reported; certificate photo |
 | HackVortex Codestorm 5, 1st place (StoryWeave, team of 4) | Award, team | **Verified** (Devpost) |
-| CSS AI/ML Club Lead Award | Award, individual | Pending: certificate image |
-| CSS Certificate of Excellence | Award, individual | Pending: certificate image |
-| BS Computer Science, University of Peshawar, 2022–2026 | Degree | Thesis photo; conferral status pending |
-| DeepLearning.AI ML Specialization; Deep Learning Specialization | Specialization | Pending: verify links |
-| IBM GenAI Engineering with LLMs Specialization | Specialization | Pending: verify link |
-| IBM GenAI and LLMs: Architecture and Data Preparation; Michigan GenAI Essentials | Course | Pending: verify links |
-| Kaggle Intro to Machine Learning | Course | Pending: Kaggle certificate link |
-| SMIT/Saylani Python for AI & Data Science | Training | Pending: certificate image |
+| Machine Learning Specialization (DeepLearning.AI & Stanford); Deep Learning Specialization (DeepLearning.AI); Generative AI Engineering with LLMs Specialization (IBM) | Specialization | Coursera share links |
+| Generative AI Essentials: Overview and Impact, Python Basics, Python Functions, Files, and Dictionaries (University of Michigan); AI For Everyone (DeepLearning.AI); Foundations of Data Science, AI for Brainstorming and Planning (Google) | Course | Coursera share links |
+| AI Foundations: How Artificial Intelligence Works; Data Science Foundations: Tools, Careers & Real-World Applications; Python for Data Science & AI: Hands-On Development | Course | **Pending:** issuer to confirm (links held, `published: false`) |
+| Python Programming (Batch-01), Saylani Mass IT Training (SMIT), Saylani Welfare International Trust, Jan–Aug 2024 (8 months) | Training | Self-reported, no link or image |
+
+Removed in M5: Kaggle Intro to Machine Learning, and IBM "Generative AI and LLMs: Architecture and Data Preparation".
 
 ## 3. Brand and visual identity
 
@@ -147,7 +161,7 @@ Organized by the Computing Students Society. Your role is "Organized as CSS Pres
 
 **Concept: "Signal and Ember."** The site's two halves get two accent colors that never compete. **Signal** (cool teal) marks engineering work: projects, skills, experience, code. **Ember** (warm amber) marks people work: leadership, community, teaching, awards. A visitor learns the code in seconds. Teal means *what he built*, amber means *who he built it with*. Pages that join both, like About and the hero, use both accents sparingly.
 
-**The evidence system is the signature.** Every claim gets a small mono chip: `REPO`, `LIVE`, `DEVPOST`, `CERT`, `CHANGELOG` or `THESIS`. Each chip links to its proof. Verified chips get a green dot; self-reported items get no chip. This turns Flood-Aware's "never fabricate" principle into the site's identity.
+**The evidence system is the signature.** Every claim gets a small mono chip: `REPO`, `LIVE`, `DEVPOST`, `CERT`, `CHANGELOG`, `THESIS` or `WEBSITE`. Each chip links to its proof. Verified chips get a green dot; self-reported items get no chip. This turns Flood-Aware's "never fabricate" principle into the site's identity.
 
 ### Color tokens (dark theme, the default)
 
@@ -244,28 +258,38 @@ Every fact comes from `content/projects.ts` and `content/case-studies.ts`. Secti
 
 Unknown slugs return a 404 (see section 7, Rendering). Page title: "<Project> — Case study · Muhammad Ilyas"; description: the project summary.
 
-### Experience `/experience`
+### Experience `/experience` (signal)
 
-A card for the DeepCognishann internship (Jan–Apr 2025) with three subsections: LLM fine-tuning (TinyLlama, Unsloth, LoRA/QLoRA), privacy-preserving ML (Opacus, DP-SGD, clipping and noise), and what you learned. It includes a plain explainer box: "What is DP-SGD, in 3 sentences." It shows no company code. A link to a public DP-SGD demo notebook can be added later if you build one.
+As built in M5. Two sections, left out when empty:
+
+1. **Industry:** the internship card — title, organization, dates, `summary`, "What I did" (`myContributions`) and a "DP-SGD in three sentences" explainer box (`content/about.ts`; a general description of the technique, no claims about the company's results). No company code or metrics.
+2. **Teaching:** CSS AI Bootcamp 2025 and "CSS Summer Bootcamp 2026 — AI & Data Science track": dates, role, stats (self-reported), summary, and a link to the event's row at `/leadership#<id>`.
+
+A link to a public DP-SGD demo notebook can be added later if you build one.
 
 ### Leadership `/leadership` (the ember page)
 
-1. Intro: "From leading one AI/ML team to running a computing society."
-2. **Progression timeline:** vertical and newest first, and static in v1. Each node shows the role, organization, dates and 2–3 bullets split into **"I led"** and **"We delivered"**.
-3. **Initiatives:** event cards, newest first; the featured ones are TechRise '26, CSS Summer Bootcamp 2026 (3 tracks) and CSS AI Bootcamp 2025. Each card shows the date, format, your role, stats (labelled self-reported unless they carry evidence), photos and a link to the post when there is one.
-4. **Teaching and mentorship:** what you taught at the bootcamp, plus talks and workshops.
-5. Awards from community work: CSS AI/ML Club Lead Award and Certificate of Excellence, once their images are provided.
+As built in M5. Sections are numbered and left out when empty.
+
+1. Intro: "From a GDSC team member to leading the Computing Students Society."
+2. **Progression:** vertical, newest first, static. Each community role shows title, organization, dates, `myContributions` (empty → nothing) and evidence chips.
+3. **Chapter 2 in numbers:** the five `chapter.ts` stats with the source line "Source: … · Self-reported" (not linked).
+4. **Featured initiatives:** TechRise '26 (date, venue, role, summary, stats, 4-photo gallery), then short cards for the two bootcamps linking to `/experience#teaching`.
+5. **All events and programmes:** a table of every published initiative, newest first (date, event with summary, format, focus, attendance, my role). Rows with photos get a "Photos (n)" disclosure. Each row's `id` is its anchor (`initiativeId`, e.g. `/leadership#techrise-26`). Below 1024px the table stacks into cards with inline labels.
+6. **Recognition:** the Award of Appreciation with its shield photo and "See all awards →" to `/credentials#awards`.
 
 ### Credentials `/credentials`
 
-Four groups in this order: **Degree** · **Specializations** · **Courses and training** · **Awards**. Each row shows the name, issuer, date and a "Verify ↗" link. Items without proof are hidden until their proof arrives. A small note explains the rule: "Certificates link to their issuer's verification page; the degree is shown with my final-year thesis."
+As built in M5. Groups in this order, each with an anchor: **Degree** (`#degree`) · **Awards** (`#awards`) · **Specializations** (`#specializations`) · **Courses** (`#courses`) · **Training** (`#training`). Empty groups are left out; unpublished items never render. Awards show a thumbnail (`next/image`) that opens the full image in a new tab, plus title, issuer, date and note; extra photos are text links. Specializations and courses show "Verify ↗" (signal). Training shows its period and length. The degree shows its years, completion month, and the Flood-Aware FYP with its supervisor. Note under the heading: "Certificates link to their issuer's verification page; the degree is shown with my final-year thesis."
 
 ### About `/about`
 
-- **Story:** 3 short paragraphs: how you started, community and engineering together, and where you're going.
-- **Engineering principles:** 3 cards. 1) Ground every claim in evidence. 2) Verify with real systems, not just mocks. 3) Fix root causes, not symptoms. Each card links to a Flood-Aware example.
-- **Skills:** grouped by area (ML/DL · GenAI and LLMs · Backend · Frontend · Data and vector stores · Tools). Each skill links to where it was used, e.g. "LangGraph → Flood-Aware, StoryWeave". Skills with no project to point to are listed as "Familiar" without a link.
-- **Education:** the degree card with the FYP title and supervisor.
+As built in M5.
+
+- **Header:** portrait and the one-paragraph `profile.about` (replaces the planned 3 story paragraphs).
+- **Engineering principles:** 3 cards. 1) Ground every claim in evidence → `/projects/flood-aware#citation-validation`. 2) Verify with real systems, not just mocks → `#golden-set`. 3) Fix root causes, not symptoms → `#hard-problems`. The build fails if an anchor does not exist.
+- **Skills:** grouped as in `skills.ts`. A skill with `usedIn` shows "Used in: Flood-Aware" (or "Internship" → `/experience#industry`) as links; others are listed plainly, with no "Familiar" label.
+- **Education:** the degree card with the FYP title (linking to its case study) and supervisor.
 
 ### Contact `/contact`
 
@@ -286,7 +310,7 @@ const YearMonth = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/); // "YYYY-MM"; unk
 const EventDate = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?$/); // "YYYY-MM-DD" or "YYYY-MM"; the day must exist
 
 export const Evidence = z.object({
-  kind: z.enum(['repo', 'live', 'devpost', 'cert', 'changelog', 'thesis', 'post', 'photo']),
+  kind: z.enum(['repo', 'live', 'devpost', 'cert', 'changelog', 'thesis', 'post', 'photo', 'website']),
   label: z.string(),
   url: HttpsUrl,
 });
@@ -319,7 +343,7 @@ export const CaseStudy = z.object({    // matched to its project by slug; one pe
   architecture: z.object({
     steps: z.array(z.object({ id: z.string(), label: z.string(), description: z.string() })).min(4).max(8), // ordered pipeline stages; ids unique
   }),
-  decisions: z.array(z.object({ decision: z.string(), why: z.string(), tradeoff: z.string(), evidence: Evidence })), // none, or 3–5
+  decisions: z.array(z.object({ anchor: z.string().optional(), decision: z.string(), why: z.string(), tradeoff: z.string(), evidence: Evidence })), // none, or 3–5
   hardProblems: z.array(z.object({ title: z.string(), symptom: z.string(), rootCause: z.string(), fix: z.string(), evidence: Evidence })).max(3), // evidence required
   limitations: z.array(z.string()).default([]), // "What I'd do next": honest limits stated in the sources only
 });
@@ -329,6 +353,7 @@ export const CaseStudy = z.object({    // matched to its project by slug; one pe
 export const Role = z.object({
   org: z.string(), title: z.string(), start: YearMonth, end: YearMonth.optional(),
   track: z.enum(['community', 'industry']),
+  summary: z.string().optional(),
   myContributions: z.array(z.string()).default([]),
   teamOutcomes: z.array(z.string()).default([]),
   evidence: z.array(Evidence).default([]),
@@ -353,15 +378,30 @@ export const Initiative = z.object({ // events, bootcamps and workshops
 // getInitiatives(): published only, newest first (by start, then end). getFeaturedInitiatives(): the featured subset.
 
 export const Credential = z.object({
-  name: z.string(), issuer: z.string(), date: YearMonth.optional(),
+  name: z.string(), issuer: z.string().optional(), date: YearMonth.optional(), // issuer required once published
   years: z.string().regex(/^\d{4}–\d{4}$/).optional(), // a span known only in whole years
+  period: z.object({ start: YearMonth, end: YearMonth }).optional(),
   kind: z.enum(['degree', 'specialization', 'course', 'training', 'award']),
+  note: z.string().optional(),          // e.g. "Presented at TechRise '26"
   verifyUrl: HttpsUrl.optional(),
+  photos: z.array(Photo).optional(),    // the first is the thumbnail
   published: z.boolean(),               // false until proof exists
 });
+// getCredentialGroups(): Degree · Awards · Specializations · Courses · Training, published only, empty groups dropped.
+
+export const Chapter = z.object({      // content/chapter.ts
+  title: z.string(),
+  source: z.object({ label: z.string(), url: HttpsUrl.optional() }),
+  stats: z.array(Claim).min(1),
+});
+
+export const Principle = z.object({ title: z.string(), href: z.string(), linkLabel: z.string() }); // content/about.ts; anchor checked at build
+export const Explainer = z.object({ title: z.string(), sentences: z.array(z.string()).length(3) });  // content/about.ts
 ```
 
-**Files:** `profile.ts` (name, title, headline, intro, positioning for metadata, location, links), `projects.ts`, `roles.ts`, `initiatives.ts`, `credentials.ts`, `skills.ts` (each skill lists the project slugs where it was used), and `case-studies.ts`.
+`Photo` is `{ src, alt }` (src under `apps/web/public`), shared by initiatives and credentials. `Profile` also has `about`. Initiative anchors come from `initiativeId(name)` and must be unique (checked at build).
+
+**Files:** `profile.ts` (name, title, headline, intro, about, positioning for metadata, location, links), `chapter.ts`, `about.ts` (principles, DP-SGD explainer), `projects.ts`, `roles.ts`, `initiatives.ts`, `credentials.ts`, `skills.ts` (each skill lists the project slugs where it was used), and `case-studies.ts`.
 
 ## 7. Technical architecture
 
@@ -630,21 +670,21 @@ None of these block M0–M2. Each one fills in or unhides a piece of content whe
 
 - [x] **1. Your Flood-Aware ownership.** Resolved in M2.1: six self-reported contributions, and the team is Muhammad Ilyas and Abdullah Ahmad (section 2).
 - [x] **2. TechRise '26 details.** Resolved in M2.1: 22 Oct 2026 at SSAQ Khan Hall, event lead (initiated and planned as President, Aug–Sep 2026), 300+ attendees, 9 speakers, 3 sponsors, four photos (section 2). No official post link was given, so the card has no evidence link.
-- [ ] **3. Credential verify links.** On Coursera, open each certificate and copy its `coursera.org/verify/...` (or `/verify/specialization/...`) link. The org dashboard link needs a login. Also send the Kaggle certificate URL and images of the SMIT, CSS award and Certificate of Excellence certificates.
+- [ ] **3. Credential verify links.** Mostly resolved in M5 (Coursera share links, CSS award photos); still open: the issuer of 3 courses, hidden until confirmed. Original request: On Coursera, open each certificate and copy its `coursera.org/verify/...` (or `/verify/specialization/...`) link. The org dashboard link needs a login. Also send the Kaggle certificate URL and images of the SMIT, CSS award and Certificate of Excellence certificates.
 - [x] **4. Summer Bootcamp 2026.** Resolved in M2.1: instructor on the AI track of CSS Summer Bootcamp 2026 (3 tracks), 4 Jul – 20 Sep 2026; 70+ participants across 3 tracks and 30+ in the AI track, both self-reported.
 - [x] **5. GDG, Connected Pakistan and CSS AI/DS Club Lead.** Resolved in M2.1: contributions per role in section 2. The Ambassador role has none, so it shows no bullets.
 - [x] **6. Availability line.** Resolved in M2.1: dropped. The hero uses the headline and intro in section 2.
 - [ ] **7. Portrait.** A high-resolution headshot, at least 1200px, plain or blurred background. The thesis photo can go on the Flood-Aware case study.
 - [ ] **8. Final CV PDF.** Fix the StoryWeave bullet and split the Flood-Aware performance line first (section 1).
-- [ ] **9. Degree status.** Conferred, or awaiting results? This decides whether the site says "BS CS, 2026" or "BS CS (2022–2026), results pending".
+- [x] **9. Degree status.** Resolved in M5: completed Nov 2026 (self-reported). Original question: Conferred, or awaiting results? This decides whether the site says "BS CS, 2026" or "BS CS (2022–2026), results pending".
 - [ ] **10. Domain and hosting.** Decided in M9 after Claude Code lists current prices: a free API host, or a paid one only with your approval. A domain is optional and bought by you.
 - [ ] **11. Profile cleanups.** Fix the GitHub sidebar LinkedIn link (it points to `/muhammad-ilyas-d14m08`), change the GitHub bio away from "Data Science Freshman", and add READMEs and screenshots to the repos you want in the Lab grid.
 - [ ] **12. Optional, high value.** A public notebook reproducing DP-SGD with Opacus on a small dataset. It turns the internship from a claim into something people can see.
-- [ ] **13. About text.** The three story paragraphs for `/about` (section 5), in your words.
+- [x] **13. About text.** Resolved in M5: one five-sentence paragraph (section 2). Original request: The three story paragraphs for `/about` (section 5), in your words.
 
 **Also resolved in M2.1:** the 2023–24 role is "AI/ML Team Member" at Google Developer Student Clubs (GDSC), University of Peshawar; the AI/DS Club Lead term started Dec 2024; the 2025 bootcamp's name is "CSS AI Bootcamp 2025"; the StoryWeave role follows the repo README.
 
-**Content still open:** items 3 (credential verify links), 9 (degree status) and 13 (About text). Items 7, 8 and 10–12 are assets or owner tasks, not content.
+**Content still open:** item 3 (issuer of 3 courses). Items 7, 8 and 10–12 are assets or owner tasks, not content.
 
 ## Sources
 

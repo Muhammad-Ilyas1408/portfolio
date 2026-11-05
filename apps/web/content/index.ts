@@ -1,6 +1,11 @@
 import { z } from "zod";
 
+import {
+  dpSgdExplainer as rawDpSgdExplainer,
+  principles as rawPrinciples,
+} from "./about";
 import { caseStudies as rawCaseStudies } from "./case-studies";
+import { chapter as rawChapter } from "./chapter";
 import { credentials as rawCredentials } from "./credentials";
 import { home as rawHome } from "./home";
 import { initiatives as rawInitiatives } from "./initiatives";
@@ -10,9 +15,12 @@ import { roles as rawRoles } from "./roles";
 import {
   assertCaseStudiesMatchProjects,
   CaseStudyList,
+  Chapter,
   Credential,
+  Explainer,
   Home,
   Initiative,
+  Principle,
   Profile,
   ProjectList,
   Role,
@@ -52,6 +60,62 @@ const credentials = z
   .filter((credential) => credential.published);
 const skills = z.array(SkillGroup).parse(rawSkills);
 const home = Home.parse(rawHome);
+const chapter = Chapter.parse(rawChapter);
+const principles = z.array(Principle).parse(rawPrinciples);
+const dpSgdExplainer = Explainer.parse(rawDpSgdExplainer);
+
+/** "TechRise '26" → "techrise-26": the in-page anchor for an initiative. */
+export function initiativeId(initiative: { name: string }) {
+  return initiative.name
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+const initiativeIds = new Set<string>();
+for (const initiative of initiatives) {
+  const id = initiativeId(initiative);
+  if (!id || initiativeIds.has(id)) {
+    throw new Error(`Initiative "${initiative.name}" has a duplicate anchor`);
+  }
+  initiativeIds.add(id);
+}
+
+// Every principle links to an anchor that exists on its case study.
+const caseStudyAnchors = new Map(
+  caseStudies.map((caseStudy) => [
+    `/projects/${caseStudy.slug}`,
+    new Set([
+      "hard-problems",
+      "decisions",
+      "results",
+      ...caseStudy.decisions.flatMap((d) => (d.anchor ? [d.anchor] : [])),
+    ]),
+  ]),
+);
+for (const { title, href } of principles) {
+  const [path, anchor] = href.split("#");
+  if (!caseStudyAnchors.get(path)?.has(anchor)) {
+    throw new Error(`Principle "${title}" links to unknown anchor "${href}"`);
+  }
+}
+
+// Credentials page order. Empty groups are left out.
+const credentialGroups = (
+  [
+    { kind: "degree", id: "degree", title: "Degree" },
+    { kind: "award", id: "awards", title: "Awards" },
+    { kind: "specialization", id: "specializations", title: "Specializations" },
+    { kind: "course", id: "courses", title: "Courses" },
+    { kind: "training", id: "training", title: "Training" },
+  ] as const
+)
+  .map((group) => ({
+    ...group,
+    items: credentials.filter((credential) => credential.kind === group.kind),
+  }))
+  .filter((group) => group.items.length > 0);
 
 // Leadership preview roles, oldest first. Each must match a published role.
 const leadershipPath = home.leadershipPath
@@ -106,5 +170,22 @@ export const getPublishedCredentials = (kind?: Credential["kind"]) =>
     ? credentials.filter((credential) => credential.kind === kind)
     : credentials;
 export const getSkills = () => skills;
+export const getCredentialGroups = () => credentialGroups;
+/** The home row: the degree and awards with a public verify link. */
+export const getHomeCredentials = () =>
+  credentials.filter(
+    (credential) =>
+      credential.kind === "degree" ||
+      (credential.kind === "award" && !!credential.verifyUrl),
+  );
+export const getCommunityRoles = () =>
+  roles.filter((role) => role.track === "community");
+export const getInternship = () =>
+  roles.find((role) => role.track === "industry");
+export const getInitiativeByName = (name: string) =>
+  initiatives.find((initiative) => initiative.name === name);
+export const getChapter = () => chapter;
+export const getPrinciples = () => principles;
+export const getDpSgdExplainer = () => dpSgdExplainer;
 export const getHomeProof = () => home.proof;
 export const getLeadershipPath = () => leadershipPath;

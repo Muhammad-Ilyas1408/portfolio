@@ -1,88 +1,173 @@
+import { storyWeaveDevpost } from "./projects";
 import type { CredentialInput } from "./schema";
 
-const css = "Computing Students Society (CSS), University of Peshawar";
+// Owner-provided in the M5 prompt. Dates and awards are self-reported unless
+// a verifyUrl is given.
+const cssAndDepartment =
+  "Computing Students Society & Department of Computer Science, University of Peshawar";
+
+/** A CSS certificate whose only photo is the certificate itself. */
+const cssCertificate = (name: string, src: string): CredentialInput => ({
+  name,
+  issuer: cssAndDepartment,
+  kind: "award",
+  photos: [{ src, alt: name }],
+  published: true,
+});
 
 export const credentials: CredentialInput[] = [
+  // Degree
   {
-    // TODO: conferral status, conferred or results pending (open item 9).
     name: "BS Computer Science",
     issuer: "University of Peshawar",
     years: "2022–2026",
+    // Completed Nov 2026 (self-reported).
+    date: "2026-11",
     kind: "degree",
     published: true,
   },
+
+  // Awards
+  {
+    name: "Award of Appreciation — President, CSS Chapter 2025–26",
+    issuer: cssAndDepartment,
+    date: "2026-10",
+    note: "Presented at TechRise '26",
+    kind: "award",
+    photos: [
+      {
+        src: "/images/awards/appreciation-shield-2025-26.jpg",
+        alt: "Award of Appreciation shield, President, CSS Chapter 2025–26",
+      },
+      {
+        src: "/images/awards/appreciation-presented-techrise-26.jpg",
+        alt: "Receiving the Award of Appreciation at TechRise '26",
+      },
+    ],
+    published: true,
+  },
+  cssCertificate(
+    "Certificate of Recognition — President, CSS (2025–26)",
+    "/images/awards/recognition-president-2025-26.jpg",
+  ),
+  cssCertificate(
+    "Certificate of Excellence — CSS (2025–26)",
+    "/images/awards/excellence-2025-26.jpg",
+  ),
+  cssCertificate(
+    "Certificate of Recognition — AI & DS Club Lead, CSS (2024–25)",
+    "/images/awards/recognition-ai-ds-lead-2024-25.jpg",
+  ),
+  cssCertificate(
+    "Certificate of Excellence — CSS (2024–25)",
+    "/images/awards/excellence-2024-25.jpg",
+  ),
   {
     name: "HackVortex Codestorm 5 — 1st place (team, StoryWeave)",
     issuer: "HackVortex Codestorm 5",
     // Self-reported by the owner.
     date: "2025-10",
     kind: "award",
-    verifyUrl: "https://devpost.com/software/story-weave",
+    verifyUrl: storyWeaveDevpost,
     published: true,
   },
 
-  // Everything below stays hidden until its proof arrives.
+  // Specializations
   {
-    // TODO: verify link and date (open item 3).
     name: "Machine Learning Specialization",
-    issuer: "DeepLearning.AI",
+    issuer: "DeepLearning.AI & Stanford University",
     kind: "specialization",
-    published: false,
+    verifyUrl: "https://coursera.org/share/6a8972fae946064d9d5010b4e94c8196",
+    published: true,
   },
   {
-    // TODO: verify link and date (open item 3).
     name: "Deep Learning Specialization",
     issuer: "DeepLearning.AI",
     kind: "specialization",
-    published: false,
+    verifyUrl: "https://coursera.org/share/260e335b087f9a2584540926fa06e4e2",
+    published: true,
   },
   {
-    // TODO: verify link and date (open item 3).
     name: "Generative AI Engineering with LLMs Specialization",
     issuer: "IBM",
     kind: "specialization",
-    published: false,
+    verifyUrl: "https://coursera.org/share/04f6964c57f67db4b994c0fbe80ce0b0",
+    published: true,
   },
+
+  // Courses
   {
-    // TODO: verify link and date (open item 3).
-    name: "Generative AI and LLMs: Architecture and Data Preparation",
-    issuer: "IBM",
-    kind: "course",
-    published: false,
-  },
-  {
-    // TODO: verify link and date (open item 3).
-    name: "Generative AI Essentials",
+    name: "Generative AI Essentials: Overview and Impact",
     issuer: "University of Michigan",
     kind: "course",
-    published: false,
+    verifyUrl: "https://coursera.org/share/50a2946400e264aed5351678e36ca422",
+    published: true,
   },
   {
-    // TODO: Kaggle certificate link and date (open item 3).
-    name: "Intro to Machine Learning",
-    issuer: "Kaggle",
+    name: "AI For Everyone",
+    issuer: "DeepLearning.AI",
     kind: "course",
+    verifyUrl: "https://coursera.org/share/e862bac22c67c5aeddf9e03ac71b1973",
+    published: true,
+  },
+  {
+    name: "Python Basics",
+    issuer: "University of Michigan",
+    kind: "course",
+    verifyUrl: "https://coursera.org/share/88f8d91255e75d82e31fd626393e8947",
+    published: true,
+  },
+  {
+    name: "Python Functions, Files, and Dictionaries",
+    issuer: "University of Michigan",
+    kind: "course",
+    verifyUrl: "https://coursera.org/share/e8435175d8d47ca51fc779f1a7623cc1",
+    published: true,
+  },
+  {
+    name: "Foundations of Data Science",
+    issuer: "Google",
+    kind: "course",
+    verifyUrl: "https://coursera.org/share/52599be52886e46ea88d4d03d826d544",
+    published: true,
+  },
+  {
+    name: "AI for Brainstorming and Planning",
+    issuer: "Google",
+    kind: "course",
+    verifyUrl: "https://coursera.org/share/25eeb624318c431eb2bb9be0c681e79d",
+    published: true,
+  },
+  // Hidden until the owner confirms the issuer.
+  {
+    name: "AI Foundations: How Artificial Intelligence Works",
+    // TODO: issuer, owner to confirm.
+    kind: "course",
+    verifyUrl: "https://coursera.org/share/ab671767dd7396d70de3a6acf10c12da",
     published: false,
   },
   {
-    // TODO: certificate image and date (open item 3).
-    name: "Python for AI & Data Science",
-    issuer: "SMIT/Saylani",
+    name: "Data Science Foundations: Tools, Careers & Real-World Applications",
+    // TODO: issuer, owner to confirm.
+    kind: "course",
+    verifyUrl: "https://coursera.org/share/f0282661c77c467d3abc64c13a077168",
+    published: false,
+  },
+  {
+    name: "Python for Data Science & AI: Hands-On Development",
+    // TODO: issuer, owner to confirm.
+    kind: "course",
+    verifyUrl: "https://coursera.org/share/9349d0ddea719d277c0d53aa4833aef9",
+    published: false,
+  },
+
+  // Training (no certificate link or image).
+  {
+    name: "Python Programming (Batch-01)",
+    issuer:
+      "Saylani Mass IT Training (SMIT), Saylani Welfare International Trust",
+    period: { start: "2024-01", end: "2024-08" },
     kind: "training",
-    published: false,
-  },
-  {
-    // TODO: certificate image and date (open item 3).
-    name: "CSS AI/ML Club Lead Award",
-    issuer: css,
-    kind: "award",
-    published: false,
-  },
-  {
-    // TODO: certificate image and date (open item 3).
-    name: "CSS Certificate of Excellence",
-    issuer: css,
-    kind: "award",
-    published: false,
+    published: true,
   },
 ];

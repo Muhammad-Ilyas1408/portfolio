@@ -12,7 +12,7 @@ Running log of the portfolio build. Claude Code updates this at the end of every
 | M2.1 | Content update (owner-provided facts) | Done | 2026-11-04 |
 | M3 | Home page | Done | 2026-11-04 |
 | M4 | Projects and case studies | Done | 2026-11-04 |
-| M5 | Experience, Leadership, Credentials, About | Not started | |
+| M5 | Experience, Leadership, Credentials, About | Done | 2026-11-05 |
 | M6 | Contact API | Not started | |
 | M7 | Contact form integration | Not started | |
 | M8 | SEO, accessibility and performance pass | Not started | |
@@ -27,6 +27,23 @@ See section 11 of `PLAN.md`. Items resolved during the build are noted in the se
 ## Session log
 
 Newest first. One entry per Claude Code session.
+
+### 2026-11-05 — M5 follow-ups
+- **Event photos:** restored Supabase Meetup `talk.jpg` and `audience.jpg` and Sports Fest `trophies.jpg` with the alt text from the M5 prompt; TODOs removed. Sports Fest `teams.png` added after the owner confirmed it is the correct file (the prompt listed `teams.jpg`); TODO removed.
+- **`/leadership`:** "All events, 2025–26" renamed to "All events and programmes" (page, tests, `PLAN.md` section 5).
+- Screenshots regenerated. M5 → Done; ticked in `README.md`.
+
+### 2026-11-05 — M5 Experience, Leadership, Credentials, About
+- **Source:** every new fact comes from the owner's M5 prompt and is self-reported, except the CSS alumni page (`WEBSITE` evidence) and the Coursera share links.
+- **Schema:** evidence kind `website`; `Profile.about`; `Role.summary`; shared `Photo`; `Credential` gains `period`, `note` and `photos`, and `issuer` is optional only while unpublished (TODO for 3 courses); new `Chapter`, `Principle` and `Explainer` schemas; optional `anchor` on case-study decisions (`citation-validation`, `golden-set`).
+- **Content:** `profile.about`; internship summary; President team line and CSS alumni evidence on President and AI/DS Club Lead; new `chapter.ts` and `about.ts` (principles, and the 3-sentence DP-SGD explainer, a general description written for this page); initiative roles and summaries as given; Summer Bootcamp 2026 stats, role "Instructor, AI & Data Science track" and co-instructor sentence; `credentials.ts` replaced (17 published, 3 hidden until issuers are confirmed; Kaggle and IBM Architecture entries removed). TechRise '26 sponsors stay unnamed.
+- **Left out:** Sports Fest (`teams.jpg`, `trophies.jpg`) and Supabase Meetup (`talk.jpg`, `audience.jpg`) photos. They came with alt text, but the files are not in `public/images/events/`, so TODOs are in `initiatives.ts`.
+- **Getters and build checks:** `getCredentialGroups`, `getHomeCredentials`, `getCommunityRoles`, `getInternship`, `getInitiativeByName`, `getChapter`, `getPrinciples`, `getDpSgdExplainer`, `initiativeId` (anchors must be unique), and a build failure if a principle points at a missing case-study anchor.
+- **Home:** the credentials row now uses `getHomeCredentials()` (degree + the verifiable award), so it is unchanged while 17 credentials are published.
+- **Pages:** `/experience` (Industry, Teaching), `/leadership` (Progression, Chapter 2 in numbers, Featured initiatives, All events table that stacks into cards below 1024px, Recognition), `/credentials` (Degree · Awards · Specializations · Courses · Training with anchors, award thumbnails opening full images), `/about` (portrait and text, principles, skills with "Used in" links, education). Each page has title, description, canonical and OG metadata. Case-study sections now carry `id`s too.
+- **Components:** `components/shared` (PageHeader, StatChips, TextLink), `components/experience`, `components/leadership`, `components/credentials`, `components/about`.
+- **Tests:** unit `m5.test.tsx` (chapter schema, website kind, credential groups/order/published filter, issuer rule, award photos exist, TechRise sponsors counted but not named, anchors, page sections). E2E `m5-pages.spec.ts` (section headings, metadata, non-empty alt, `/credentials#awards` and `/leadership#<id>` anchors, principle anchors, Photos disclosure, stacked table on mobile, axe on all four pages, no horizontal scroll at 360/390/768/1280). Screenshots `experience-1280`, `leadership-1280`, `leadership-390`, `credentials-1280`, `about-1280`; the screenshot helper now scrolls the page so lazy images load first.
+- **`PLAN.md`:** section 2 (About, internship, roles, initiatives, Chapter 2, credentials table), section 3 (`WEBSITE` chip), section 5 (four pages as built), section 6 (schemas), section 11 (items 3, 9, 13).
 
 ### 2026-11-04 — M4 review fixes
 - **Source check (Flood-Aware CHANGELOG):** Sprint 11.1, Sprint 11.2 and Sprint 12.1 all exist and support the claims that cite them; no evidence was moved and nothing was removed. The routing trade-off's wording comes straight from Sprint 14.1.4 (Notes), with Sprint 12.1 as confirmation; the source comment in `case-studies.ts` now says so.

@@ -124,6 +124,8 @@ export default async function CaseStudyPage({
         {sections.map((section, index) => (
           <Section
             key={section.id}
+            id={section.id}
+            className="scroll-mt-20"
             label={String(index + 1).padStart(2, "0")}
             aria-labelledby={`${section.id}-heading`}
             heading={<h2 id={`${section.id}-heading`}>{section.title}</h2>}

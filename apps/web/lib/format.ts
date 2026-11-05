@@ -55,3 +55,10 @@ export function formatEventRange(start: string, end?: string) {
   const sameYear = start.slice(0, 4) === end.slice(0, 4);
   return `${formatEventDate(start, !sameYear)} – ${formatEventDate(end)}`;
 }
+
+/** Whole months from start to end, inclusive: "2024-01", "2024-08" → 8. */
+export function monthsInRange(start: string, end: string) {
+  const [startYear, startMonth] = start.split("-").map(Number);
+  const [endYear, endMonth] = end.split("-").map(Number);
+  return (endYear - startYear) * 12 + (endMonth - startMonth) + 1;
+}

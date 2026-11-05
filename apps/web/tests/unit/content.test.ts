@@ -87,7 +87,7 @@ describe("content files", () => {
     expect(projects).toHaveLength(2);
     expect(roles).toHaveLength(7);
     expect(initiatives).toHaveLength(20);
-    expect(credentials).toHaveLength(11);
+    expect(credentials).toHaveLength(20);
     expect(skills).toHaveLength(6);
     expect(skills.flatMap((group) => group.skills)).toHaveLength(30);
   });
@@ -170,13 +170,15 @@ describe("getters", () => {
   it("never returns unpublished credentials", () => {
     const published = getPublishedCredentials();
 
-    expect(published).toHaveLength(2);
+    expect(published).toHaveLength(17);
     expect(published.every((item) => item.published)).toBe(true);
     expect(getPublishedCredentials("degree").map((c) => c.name)).toEqual([
       "BS Computer Science",
     ]);
-    expect(getPublishedCredentials("award")).toHaveLength(1);
-    expect(getPublishedCredentials("specialization")).toHaveLength(0);
+    expect(getPublishedCredentials("award")).toHaveLength(6);
+    expect(getPublishedCredentials("specialization")).toHaveLength(3);
+    expect(getPublishedCredentials("course")).toHaveLength(6);
+    expect(getPublishedCredentials("training")).toHaveLength(1);
   });
 
   it("returns published initiatives, newest first", () => {

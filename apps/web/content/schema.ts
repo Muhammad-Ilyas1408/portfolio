@@ -25,6 +25,12 @@ const EventDate = z
     { error: "day does not exist in that month" },
   );
 
+// `src` is a path under apps/web/public, e.g. "/images/events/...".
+export const Photo = z.object({
+  src: z.string().regex(/^\/[^\s]+$/),
+  alt: z.string().min(1),
+});
+
 export const Evidence = z.object({
   kind: z.enum([
     "repo",
@@ -35,6 +41,7 @@ export const Evidence = z.object({
     "thesis",
     "post",
     "photo",
+    "website",
   ]),
   label: z.string().min(1),
   url: HttpsUrl,
@@ -56,6 +63,8 @@ export const Profile = z.object({
   title: z.string().min(1),
   headline: z.string().min(1),
   intro: z.string().min(1),
+  // The /about story, one paragraph.
+  about: z.string().min(1),
   // Used for page metadata.
   positioning: z.string().min(1),
   location: z.string().min(1),
@@ -158,6 +167,11 @@ export const CaseStudy = z.object({
   decisions: z
     .array(
       z.object({
+        // Optional in-page anchor, e.g. "#golden-set", for links from /about.
+        anchor: z
+          .string()
+          .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/)
+          .optional(),
         decision: z.string().min(1),
         why: z.string().min(1),
         tradeoff: z.string().min(1),
@@ -218,6 +232,7 @@ export const Role = z.object({
   start: YearMonth,
   end: YearMonth.optional(),
   track: z.enum(["community", "industry"]),
+  summary: z.string().min(1).optional(),
   myContributions: z.array(z.string().min(1)).default([]),
   teamOutcomes: z.array(z.string().min(1)).default([]),
   evidence: z.array(Evidence).default([]),
@@ -239,14 +254,7 @@ export const Initiative = z
     stats: z.array(Claim).default([]),
     featured: z.boolean(),
     // `src` is a path under apps/web/public, e.g. "/images/events/...".
-    photos: z
-      .array(
-        z.object({
-          src: z.string().regex(/^\/[^\s]+$/),
-          alt: z.string().min(1),
-        }),
-      )
-      .default([]),
+    photos: z.array(Photo).default([]),
     evidence: z.array(Evidence).default([]),
     published: z.boolean(),
   })
@@ -264,18 +272,50 @@ export const Home = z.object({
     .min(1),
 });
 
-export const Credential = z.object({
-  name: z.string().min(1),
-  issuer: z.string().min(1),
-  date: YearMonth.optional(),
-  // For a span known only in whole years, e.g. "2022–2026".
-  years: z
-    .string()
-    .regex(/^\d{4}–\d{4}$/)
-    .optional(),
-  kind: z.enum(["degree", "specialization", "course", "training", "award"]),
-  verifyUrl: HttpsUrl.optional(),
-  published: z.boolean(),
+export const Credential = z
+  .object({
+    name: z.string().min(1),
+    // Optional only while a credential is unpublished and its issuer unconfirmed.
+    issuer: z.string().min(1).optional(),
+    date: YearMonth.optional(),
+    // For a span known only in whole years, e.g. "2022–2026".
+    years: z
+      .string()
+      .regex(/^\d{4}–\d{4}$/)
+      .optional(),
+    // A span known to the month, e.g. a training programme.
+    period: z.object({ start: YearMonth, end: YearMonth }).optional(),
+    kind: z.enum(["degree", "specialization", "course", "training", "award"]),
+    // A short line shown under the issuer, e.g. "Presented at TechRise '26".
+    note: z.string().min(1).optional(),
+    verifyUrl: HttpsUrl.optional(),
+    // The first photo is the thumbnail.
+    photos: z.array(Photo).optional(),
+    published: z.boolean(),
+  })
+  .refine((credential) => !credential.published || !!credential.issuer, {
+    error: "published credentials need an issuer",
+    path: ["issuer"],
+  });
+
+// "Chapter in numbers": self-reported figures with a named, unlinked source.
+export const Chapter = z.object({
+  title: z.string().min(1),
+  source: z.object({ label: z.string().min(1), url: HttpsUrl.optional() }),
+  stats: z.array(Claim).min(1),
+});
+
+// The /about principle cards, each linking to a case-study anchor.
+export const Principle = z.object({
+  title: z.string().min(1),
+  href: z.string().regex(/^\/[^\s]*#[a-z0-9-]+$/),
+  linkLabel: z.string().min(1),
+});
+
+// A short plain-language explainer box: exactly three sentences.
+export const Explainer = z.object({
+  title: z.string().min(1),
+  sentences: z.array(z.string().min(1)).length(3),
 });
 
 export const Skill = z.object({
@@ -305,6 +345,10 @@ export type CaseStudy = z.output<typeof CaseStudy>;
 export type Initiative = z.output<typeof Initiative>;
 export type Credential = z.output<typeof Credential>;
 export type Home = z.output<typeof Home>;
+export type Chapter = z.output<typeof Chapter>;
+export type Principle = z.output<typeof Principle>;
+export type Explainer = z.output<typeof Explainer>;
+export type Photo = z.output<typeof Photo>;
 export type Skill = z.output<typeof Skill>;
 export type SkillGroup = z.output<typeof SkillGroup>;
 
@@ -316,4 +360,7 @@ export type CaseStudyInput = z.input<typeof CaseStudy>;
 export type InitiativeInput = z.input<typeof Initiative>;
 export type CredentialInput = z.input<typeof Credential>;
 export type HomeInput = z.input<typeof Home>;
+export type ChapterInput = z.input<typeof Chapter>;
+export type PrincipleInput = z.input<typeof Principle>;
+export type ExplainerInput = z.input<typeof Explainer>;
 export type SkillGroupInput = z.input<typeof SkillGroup>;

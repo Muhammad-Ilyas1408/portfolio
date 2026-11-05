@@ -65,7 +65,7 @@ portfolio/
 - [x] M2 — Content layer
 - [x] M3 — Home page
 - [x] M4 — Projects and case studies
-- [ ] M5 — Experience, Leadership, Credentials, About
+- [x] M5 — Experience, Leadership, Credentials, About
 - [ ] M6 — Contact API
 - [ ] M7 — Contact form integration
 - [ ] M8 — SEO, accessibility and performance pass

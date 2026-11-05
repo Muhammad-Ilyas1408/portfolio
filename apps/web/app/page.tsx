@@ -9,12 +9,12 @@ import { ProofStrip } from "@/components/home/ProofStrip";
 import { Container } from "@/components/ui/Container";
 import {
   getFeaturedInitiatives,
+  getHomeCredentials,
   getHomeProof,
+  getInternship,
   getLeadershipPath,
   getProfile,
   getProject,
-  getPublishedCredentials,
-  getRoles,
 } from "@/content";
 
 const profile = getProfile();
@@ -38,13 +38,13 @@ export default function Home() {
         <FeaturedWork
           lead={getProject("flood-aware")}
           secondary={getProject("storyweave")}
-          internship={getRoles().find((role) => role.track === "industry")}
+          internship={getInternship()}
         />
         <LeadershipPreview
           roles={getLeadershipPath()}
           initiatives={getFeaturedInitiatives()}
         />
-        <CredentialsRow credentials={getPublishedCredentials()} />
+        <CredentialsRow credentials={getHomeCredentials()} />
         <ContactBand email={profile.links.email} />
       </Container>
     </>
