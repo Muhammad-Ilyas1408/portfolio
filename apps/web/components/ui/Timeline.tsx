@@ -8,6 +8,8 @@ export type TimelineItem = {
   id?: string;
   /** The mono date shown left of the spine (above the card on phones). */
   date: string;
+  /** M8.6: the period's length, e.g. "4 months", shown with the date. */
+  duration?: string;
   /** Filled dot for the current or newest item. */
   current?: boolean;
   children: ReactNode;
@@ -62,6 +64,11 @@ export function Timeline({
               className={`col-start-2 row-start-1 pb-3 font-mono text-xs font-medium tracking-[0.12em] uppercase lg:col-start-1 lg:pt-7 lg:pb-0 lg:text-right lg:whitespace-nowrap ${dateClasses[accent]}`}
             >
               {item.date}
+              {item.duration && (
+                <span className="font-normal tracking-[0.08em] text-text-muted normal-case max-lg:before:mx-2 max-lg:before:content-['·'] lg:mt-1 lg:block">
+                  {item.duration}
+                </span>
+              )}
             </p>
             <div
               aria-hidden="true"

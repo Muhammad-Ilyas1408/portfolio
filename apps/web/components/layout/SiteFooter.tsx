@@ -134,7 +134,7 @@ export async function SiteFooter() {
             ))}
         </div>
 
-        <div className="mt-14 flex flex-col gap-2 border-t border-border pt-6 text-sm text-text-muted sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-14 flex flex-col gap-2 border-t border-border pt-6 text-sm text-text-muted sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-x-8">
           <p>
             © {year} {profile.name}
           </p>
@@ -149,6 +149,14 @@ export async function SiteFooter() {
               Source on GitHub
             </a>
           </p>
+          {/* M8.6: no JS needed; #main is the page's main landmark. */}
+          <a
+            href="#main"
+            className="inline-flex min-h-11 items-center gap-1.5 self-start rounded-sm text-text transition-colors duration-150 hover:text-signal sm:self-auto"
+          >
+            Back to top
+            <span aria-hidden="true">↑</span>
+          </a>
         </div>
       </Container>
     </footer>

@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 
+import { FlowLines } from "@/components/motion/FlowLines";
+import { Reveal } from "@/components/motion/Reveal";
+
 import { EvidenceChip } from "@/components/evidence/EvidenceChip";
 import { ProjectCover } from "@/components/projects/ProjectCover";
 import { AccentText } from "@/components/ui/AccentText";
@@ -40,6 +43,9 @@ const tokens = [
   "verified",
   "danger",
   "danger-soft",
+  // M8.6: decorative FlowLines / gradient colours.
+  "flow-a",
+  "flow-b",
 ];
 
 const typeScale = [
@@ -65,6 +71,8 @@ const displayScale = [
     className: "text-display-3",
   },
   { size: "stat · 36–56px", className: "text-stat" },
+  { size: "tagline · 28–48px (M8.6 hero)", className: "text-tagline" },
+  { size: "role · 22–30px (M8.6 hero role line)", className: "text-role" },
 ];
 
 const sampleEvidence = {
@@ -262,6 +270,53 @@ export default function Styleguide() {
         </div>
       </Section>
 
+      <Section
+        label="Motion (M8.6)"
+        heading={<h2>FlowLines, Reveal, Spotlight</h2>}
+      >
+        <p className="max-w-[64ch] text-text-muted">
+          FlowLines pauses off-screen and when the tab is hidden, and draws one
+          still frame under reduced motion. Reveal only hides content that JS
+          has found below the fold. Spotlight follows a mouse pointer on
+          interactive cards and filled buttons; touch and reduced motion get
+          none. Violet lines go deep violet to lavender; leadership pages use
+          fainter lime lines. The two never blend.
+        </p>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {(["hero", "band", "page"] as const).map((variant) => (
+            <div
+              key={variant}
+              className="relative isolate h-48 overflow-hidden rounded-xl border border-border"
+            >
+              <FlowLines variant={variant} className="-z-10" />
+              <p className="p-4 font-mono text-sm">FlowLines {variant}</p>
+            </div>
+          ))}
+          <div className="relative isolate h-48 overflow-hidden rounded-xl border border-border">
+            <FlowLines variant="page" accent="ember" className="-z-10" />
+            <p className="p-4 font-mono text-sm">FlowLines page · ember</p>
+          </div>
+          <Card interactive className="h-48">
+            <p className="font-mono text-sm">Spotlight card (hover me)</p>
+          </Card>
+          <div className="spot-ember">
+            <Card interactive className="h-48">
+              <p className="font-mono text-sm">Spotlight card · spot-ember</p>
+            </Card>
+          </div>
+        </div>
+        <Reveal stagger className="mt-6 grid gap-4 md:grid-cols-3">
+          <Card>Reveal, staggered child 1</Card>
+          <Card>Child 2</Card>
+          <Card>Child 3</Card>
+        </Reveal>
+        <p className="mt-6">
+          <span className="font-display text-tagline font-semibold">
+            <span className="text-gradient">text-gradient</span>
+          </span>
+        </p>
+      </Section>
+
       <Section label="Components" heading={<h2>Project cover</h2>}>
         {project && (
           <ProjectCover
@@ -331,12 +386,14 @@ export default function Styleguide() {
                 {
                   key: "a",
                   date: "Oct 2025 – Sep 2026",
+                  duration: "1 year",
                   current: true,
                   children: <Card>Newest item ({accent})</Card>,
                 },
                 {
                   key: "b",
                   date: "Dec 2024 – Sep 2025",
+                  duration: "10 months",
                   children: <Card>Earlier item</Card>,
                 },
               ]}

@@ -1,13 +1,19 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Inter, JetBrains_Mono } from "next/font/google";
 
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SpotlightTracker } from "@/components/motion/SpotlightTracker";
 import { JsonLd } from "@/components/shared/JsonLd";
-import { getProfile, getPublishedCredentials } from "@/content";
+import {
+  getProfile,
+  getPublishedCredentials,
+  getSiteDescription,
+} from "@/content";
 import { personJsonLd } from "@/lib/json-ld";
 import { pageMetadata } from "@/lib/seo";
 import { siteUrl } from "@/lib/site";
+import { tokens } from "@/lib/tokens";
 
 import "./globals.css";
 
@@ -37,8 +43,14 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   ...pageMetadata({
     title: `${profile.name} — ${profile.title}`,
-    description: profile.positioning,
+    description: getSiteDescription(),
   }),
+};
+
+// M8.6: the browser UI colour follows the page background token.
+export const viewport: Viewport = {
+  themeColor: tokens.bg,
+  colorScheme: "dark",
 };
 
 const person = personJsonLd(profile, getPublishedCredentials("degree")[0]);
@@ -62,6 +74,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {children}
         </main>
         <SiteFooter />
+        <SpotlightTracker />
       </body>
     </html>
   );

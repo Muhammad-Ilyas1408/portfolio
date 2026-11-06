@@ -1,5 +1,6 @@
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { Card } from "@/components/ui/Card";
+import { Reveal } from "@/components/motion/Reveal";
 import { DisplaySection } from "@/components/ui/DisplaySection";
 import type { Principle } from "@/content/schema";
 
@@ -15,12 +16,15 @@ export function HowIWork({
 
   return (
     <DisplaySection
+      revealContent={false}
       id="how-i-work"
       number={number}
       eyebrow="Principles"
       title="How I work"
     >
-      <ol
+      <Reveal
+        as="ol"
+        stagger
         className={`grid gap-4 ${
           principles.length >= 3 ? "md:grid-cols-3" : "md:grid-cols-2"
         }`}
@@ -51,7 +55,7 @@ export function HowIWork({
             </Card>
           </li>
         ))}
-      </ol>
+      </Reveal>
     </DisplaySection>
   );
 }

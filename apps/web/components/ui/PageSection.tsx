@@ -1,5 +1,7 @@
 import type { ComponentProps, ReactNode } from "react";
 
+import { Reveal } from "@/components/motion/Reveal";
+
 import { accentText, type Accent } from "./Eyebrow";
 
 /**
@@ -33,24 +35,28 @@ export function PageSection({
       className={`py-12 md:py-16 ${className}`}
       {...rest}
     >
-      <div className="flex items-center gap-4">
-        {number && (
-          <span
-            aria-hidden="true"
-            className={`font-mono text-xs font-medium tracking-[0.16em] ${accentText[accent]}`}
-          >
-            {number}
-          </span>
+      <Reveal>
+        <div className="flex items-center gap-4">
+          {number && (
+            <span
+              aria-hidden="true"
+              className={`font-mono text-xs font-medium tracking-[0.16em] ${accentText[accent]}`}
+            >
+              {number}
+            </span>
+          )}
+          <span aria-hidden="true" className="h-px flex-1 bg-border" />
+        </div>
+        <h2 id={headingId} className="mt-6 text-display-3 text-balance">
+          {title}
+        </h2>
+        {intro && (
+          <div className="mt-4 max-w-[64ch] text-text-muted">{intro}</div>
         )}
-        <span aria-hidden="true" className="h-px flex-1 bg-border" />
-      </div>
-      <h2 id={headingId} className="mt-6 text-display-3 text-balance">
-        {title}
-      </h2>
-      {intro && (
-        <div className="mt-4 max-w-[64ch] text-text-muted">{intro}</div>
-      )}
-      <div className="mt-8 md:mt-10">{children}</div>
+      </Reveal>
+      <Reveal className="mt-8 md:mt-10" delay={80}>
+        {children}
+      </Reveal>
     </section>
   );
 }

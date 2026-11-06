@@ -1,10 +1,11 @@
 import { ImageResponse } from "next/og";
 
-import { getProfile } from "@/content";
+import { getHomeHero, getProfile } from "@/content";
 import { OgFrame, ogFonts, ogSize } from "@/lib/og";
 import { tokens } from "@/lib/tokens";
 
 const profile = getProfile();
+const { tagline } = getHomeHero();
 
 export const alt = `${profile.name} — ${profile.title}`;
 export const size = ogSize;
@@ -16,7 +17,7 @@ export default function Image() {
   const segments = profile.headline.split(" | ").slice(1);
 
   return new ImageResponse(
-    <OgFrame label={profile.title.toUpperCase()} footer={profile.positioning}>
+    <OgFrame label={profile.title.toUpperCase()} footer={tagline.join(" ")}>
       <div
         style={{
           display: "flex",

@@ -18,6 +18,14 @@ async function loadLazyImages(page: Page) {
       (image) => image.complete || !image.checkVisibility(),
     ),
   );
+  // M8.6: a fast scroll on a busy machine can skip a frame, so bring any
+  // reveal that is still hidden into view, then let its 500ms transition end.
+  for (const hidden of await page.locator('[data-reveal="hidden"]').all()) {
+    await hidden.scrollIntoViewIfNeeded();
+  }
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect(page.locator('[data-reveal="hidden"]')).toHaveCount(0);
+  await page.waitForTimeout(700);
 }
 
 // M8.5 design review: 1440×900 desktop and 390×844 phone.

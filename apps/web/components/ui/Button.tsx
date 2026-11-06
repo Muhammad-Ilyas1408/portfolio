@@ -7,7 +7,8 @@ export type ButtonSize = "md" | "lg";
 
 const variantClasses: Record<ButtonVariant, string> = {
   // The only place bg-colored text sits on a full-strength accent fill.
-  filled: "bg-signal text-bg hover:bg-signal/85",
+  // M8.6: plus a pointer-follow sheen (spotlight-button, globals.css).
+  filled: "spotlight-button bg-signal text-bg hover:bg-signal/90",
   outline:
     "border border-border bg-bg/40 text-text hover:border-text-muted/60 hover:bg-surface-raised",
   ghost: "text-text hover:bg-surface-raised",

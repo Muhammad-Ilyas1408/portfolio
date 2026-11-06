@@ -4,11 +4,11 @@
  * test fails if the two drift apart.
  */
 export const tokens = {
-  bg: "#0b0f14",
-  surface: "#11161d",
-  border: "#232b36",
-  text: "#e6eaf0",
-  "text-muted": "#8a96a6",
-  signal: "#5eead4",
-  ember: "#f5b454",
+  bg: "#0a0a14",
+  surface: "#12121d",
+  border: "#26263b",
+  text: "#ededf3",
+  "text-muted": "#8f8fa9",
+  signal: "#a08cff",
+  ember: "#c4f042",
 } as const;

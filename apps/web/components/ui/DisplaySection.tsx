@@ -1,5 +1,7 @@
 import type { ComponentProps, ReactNode } from "react";
 
+import { Reveal } from "@/components/motion/Reveal";
+
 import { ArrowLink } from "./ArrowLink";
 import { Container } from "./Container";
 import { Eyebrow, type Accent } from "./Eyebrow";
@@ -14,6 +16,8 @@ type DisplaySectionProps = Omit<ComponentProps<"section">, "title"> & {
   title: ReactNode;
   intro?: ReactNode;
   viewAll?: { href: string; label: string };
+  /** Off when the content reveals itself (a staggered card grid). */
+  revealContent?: boolean;
 };
 
 /** Home section primitive: eyebrow, number, display h2, intro and a "View all →" link. */
@@ -25,6 +29,7 @@ export function DisplaySection({
   title,
   intro,
   viewAll,
+  revealContent = true,
   className = "",
   children,
   ...rest
@@ -39,7 +44,7 @@ export function DisplaySection({
       {...rest}
     >
       <Container>
-        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-12">
+        <Reveal className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-12">
           <div className="max-w-3xl">
             <Eyebrow accent={accent} number={number}>
               {eyebrow}
@@ -62,8 +67,14 @@ export function DisplaySection({
               {viewAll.label}
             </ArrowLink>
           )}
-        </div>
-        <div className="mt-10 md:mt-14">{children}</div>
+        </Reveal>
+        {revealContent ? (
+          <Reveal className="mt-10 md:mt-14" delay={80}>
+            {children}
+          </Reveal>
+        ) : (
+          <div className="mt-10 md:mt-14">{children}</div>
+        )}
       </Container>
     </section>
   );

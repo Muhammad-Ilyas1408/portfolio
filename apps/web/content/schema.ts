@@ -342,8 +342,16 @@ export const HomeStat = z
 
 export const Home = z.object({
   proof: z.array(Claim).length(4),
-  // M8.5 hero: owner-provided h1 built from words in profile.headline.
-  hero: AccentedLine,
+  // M8.6 hero, the owner's own words (the h1 is profile.name, the role line
+  // profile.title, the first paragraph profile.intro, the tags the headline
+  // segments after the title).
+  hero: z.object({
+    greeting: z.string().min(1),
+    // Two display lines.
+    tagline: z.tuple([z.string().min(1), z.string().min(1)]),
+    // The second, slightly muted intro paragraph.
+    community: z.string().min(1),
+  }),
   stats: z.array(HomeStat).max(5),
   // "What I build": owner-provided in the M8.5 prompt.
   capabilities: z

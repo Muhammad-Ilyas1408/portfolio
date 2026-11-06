@@ -2,7 +2,7 @@ import { EvidenceChip } from "@/components/evidence/EvidenceChip";
 import { cardClasses } from "@/components/ui/Card";
 import { Timeline as TimelineList } from "@/components/ui/Timeline";
 import type { Role } from "@/content/schema";
-import { formatMonthRange } from "@/lib/format";
+import { formatDuration, formatMonthRange } from "@/lib/format";
 
 /** Community roles, newest first, on the shared timeline (ember). */
 export function Timeline({ roles }: { roles: Role[] }) {
@@ -15,6 +15,7 @@ export function Timeline({ roles }: { roles: Role[] }) {
       items={roles.map((role, index) => ({
         key: `${role.org}-${role.title}`,
         date: formatMonthRange(role.start, role.end),
+        duration: formatDuration(role.start, role.end),
         current: index === 0,
         children: (
           <article className={cardClasses({ className: "p-6 md:p-7" })}>

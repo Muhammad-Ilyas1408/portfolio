@@ -13,7 +13,7 @@ const profile = getProfile();
 // /contact intro used since M7.
 const contact = getHomeContact();
 const intro =
-  "Building something with LLMs, or running a tech community? Send a message — I'll reply by email.";
+  "Building something with LLMs, or running a tech community? Send a message and I'll reply by email.";
 
 export const metadata: Metadata = pageMetadata({
   title: `Contact · ${profile.name}`,

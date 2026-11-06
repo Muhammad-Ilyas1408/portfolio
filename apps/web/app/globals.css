@@ -3,21 +3,29 @@
 :root {
   color-scheme: dark;
 
-  --bg: #0b0f14;
-  --surface: #11161d;
-  --surface-raised: #171d26;
-  /* M8.5: the warm surface behind the home leadership band. */
-  --surface-warm: #15130f;
-  --border: #232b36;
-  --text: #e6eaf0;
-  --text-muted: #8a96a6;
-  --signal: #5eead4;
-  --signal-soft: #5eead41a;
-  --ember: #f5b454;
-  --ember-soft: #f5b4541a;
-  --verified: #6ee7a0;
+  /* M8.6 palette A (owner-chosen): ink-violet surfaces, violet for
+     engineering (signal), lime for leadership and community (ember, used
+     sparingly: links, stats, small details). Violet and lime never blend. */
+  --bg: #0a0a14;
+  --surface: #12121d;
+  --surface-raised: #191927;
+  /* The surface behind the home leadership band. */
+  --surface-warm: #0f0f18;
+  --border: #26263b;
+  --text: #ededf3;
+  --text-muted: #8f8fa9;
+  --signal: #a08cff;
+  --signal-soft: #a08cff1a;
+  --ember: #c4f042;
+  --ember-soft: #c4f04214;
+  /* Distinct from both accents. */
+  --verified: #34d399;
   --danger: #f87171;
   --danger-soft: #f871711a;
+  /* FlowLines and background glows: deep violet to lavender. (The tagline's
+     text gradient is violet to lime, in oklch.) */
+  --flow-a: #7b5cff;
+  --flow-b: #d4c8ff;
 }
 
 @theme inline {
@@ -80,6 +88,14 @@
   --text-stat: clamp(2.25rem, 1.7rem + 2vw, 3.5rem);
   --text-stat--line-height: 1;
   --text-stat--letter-spacing: -0.03em;
+  /* M8.6 hero: the role line under the name, 22px to 30px. */
+  --text-role: clamp(1.375rem, 1.1rem + 1vw, 1.875rem);
+  --text-role--line-height: 1.2;
+  --text-role--letter-spacing: -0.015em;
+  /* M8.6 hero: the two-line tagline, 28px to 48px. */
+  --text-tagline: clamp(1.75rem, 1.15rem + 2.3vw, 3rem);
+  --text-tagline--line-height: 1.12;
+  --text-tagline--letter-spacing: -0.025em;
 }
 
 /* Faint engineering-paper dot grid. */
@@ -94,19 +110,19 @@
    M8.5 follow-up: the second glow, centred on the hero's top edge under the
    logo, was removed; it showed as a teal smear on the header's hairline. */
 @utility hero-backdrop {
+  /* M8.6: the dot grid gave way to the FlowLines canvas; two soft glows stay
+     (accent top right, flow colour bottom left). */
   background-image:
     radial-gradient(
-      ellipse 60% 55% at 72% 38%,
-      color-mix(in oklab, var(--signal) 9%, transparent),
+      var(--in-oklch,) ellipse 55% 55% at 78% 30%,
+      color-mix(in oklab, var(--signal) 10%, transparent),
       transparent 70%
     ),
     radial-gradient(
-      color-mix(in oklab, var(--text) 9%, transparent) 1px,
-      transparent 1px
+      var(--in-oklch,) ellipse 45% 45% at 10% 90%,
+      color-mix(in oklab, var(--flow-a) 12%, transparent),
+      transparent 70%
     );
-  background-size:
-    100% 100%,
-    24px 24px;
   /* Fades in below the header and out at the bottom, so nothing bright meets
      the header's hairline (the sticky header's backdrop blur samples a few
      pixels past its own box). */
@@ -119,10 +135,42 @@
   );
 }
 
+/* M8.6: a soft bg-coloured wash behind the hero's text column, so the
+   paragraphs stay readable where the flow lines pass behind them. */
+@utility hero-scrim {
+  background-image: radial-gradient(
+    var(--in-oklch,) ellipse 50% 60% at 22% 55%,
+    color-mix(in oklab, var(--bg) 70%, transparent),
+    transparent 75%
+  );
+}
+
+/* M8.6 follow-up (owner decision): the second tagline line recreates the
+   palette A preview exactly: violet to lime in plain sRGB, lime from 85%, so
+   "Creating" is violet, "Real-" the soft transition, "World Impact" lime.
+   This is the ONE gradient that does not interpolate in oklch: the owner
+   chose the preview's look over the oklch version (unit-tested exception).
+   Without background-clip: text it falls back to solid violet. Every point
+   of the gradient passes AA on bg (its dimmest middle is checked in the
+   session log). */
+@utility text-gradient {
+  color: var(--signal);
+
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    background-image: linear-gradient(90deg, var(--signal), var(--ember) 85%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    /* When the line wraps (phones), each line gets the whole run. */
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+}
+
 /* The CTA band's glow. */
 @utility glow-signal {
   background-image: radial-gradient(
-    ellipse 70% 90% at 50% 120%,
+    var(--in-oklch,) ellipse 70% 90% at 50% 120%,
     color-mix(in oklab, var(--signal) 14%, transparent),
     transparent 70%
   );
@@ -132,7 +180,7 @@
 @utility cover-surface {
   background-image:
     radial-gradient(
-      circle at 85% 0%,
+      var(--in-oklch,) circle at 85% 0%,
       color-mix(in oklab, var(--signal) 16%, transparent),
       transparent 55%
     ),
@@ -141,11 +189,11 @@
       transparent 1px
     ),
     linear-gradient(
-      90deg,
+      var(--in-oklch,) 90deg,
       color-mix(in oklab, var(--text) 4%, transparent) 1px,
       transparent 1px
     ),
-    linear-gradient(160deg, var(--surface-raised), var(--bg));
+    linear-gradient(var(--in-oklch,) 160deg, var(--surface-raised), var(--bg));
   background-size:
     100% 100%,
     32px 32px,
@@ -213,7 +261,7 @@
 /* The soft glow behind the hero portrait frame. */
 @utility portrait-glow {
   background-image: radial-gradient(
-    closest-side,
+    var(--in-oklch,) closest-side,
     color-mix(in oklab, var(--signal) 14%, transparent),
     transparent
   );
@@ -222,30 +270,28 @@
 /* The leadership band's warm glow. */
 @utility ember-glow {
   background-image: radial-gradient(
-    ellipse 55% 70% at 0% 0%,
-    color-mix(in oklab, var(--ember) 8%, transparent),
+    var(--in-oklch,) ellipse 55% 70% at 0% 0%,
+    color-mix(in oklab, var(--ember) 5%, transparent),
     transparent 70%
   );
 }
 
 /* M8.5 B: the inner-page hero backdrop, a lighter hero-backdrop: a faint
-   accent glow at the top right over the dot grid. It fades in over the first
+   accent glow at the top right (M8.6: the dot grid gave way to FlowLines). It fades in over the first
    6rem, so nothing bright meets the sticky header's hairline, and fades out
    at the bottom. */
 @utility page-backdrop {
   background-image:
     radial-gradient(
-      ellipse 55% 70% at 85% 30%,
-      color-mix(in oklab, var(--signal) 7%, transparent),
+      var(--in-oklch,) ellipse 55% 70% at 85% 30%,
+      color-mix(in oklab, var(--signal) 8%, transparent),
       transparent 70%
     ),
     radial-gradient(
-      color-mix(in oklab, var(--text) 7%, transparent) 1px,
-      transparent 1px
+      var(--in-oklch,) ellipse 40% 60% at 5% 100%,
+      color-mix(in oklab, var(--flow-b) 6%, transparent),
+      transparent 70%
     );
-  background-size:
-    100% 100%,
-    24px 24px;
   mask-image: linear-gradient(
     to bottom,
     transparent,
@@ -257,19 +303,11 @@
 
 /* The same backdrop with an ember glow, for the leadership page. */
 @utility page-backdrop-ember {
-  background-image:
-    radial-gradient(
-      ellipse 55% 70% at 85% 30%,
-      color-mix(in oklab, var(--ember) 7%, transparent),
-      transparent 70%
-    ),
-    radial-gradient(
-      color-mix(in oklab, var(--text) 7%, transparent) 1px,
-      transparent 1px
-    );
-  background-size:
-    100% 100%,
-    24px 24px;
+  background-image: radial-gradient(
+    var(--in-oklch,) ellipse 55% 70% at 85% 30%,
+    color-mix(in oklab, var(--ember) 5%, transparent),
+    transparent 70%
+  );
   mask-image: linear-gradient(
     to bottom,
     transparent,
@@ -277,4 +315,164 @@
     #000 55%,
     transparent
   );
+}
+
+/* ------------------------------------------------------------------
+   M8.6 motion (owner-approved policy, see CLAUDE.md "Design system").
+   Everything here is off or static under prefers-reduced-motion.
+   ------------------------------------------------------------------ */
+
+/* FlowLines: the canvas fades in once its first frame is drawn, and fades
+   out at the edges so no line ends abruptly. */
+@utility flow-canvas {
+  opacity: 0;
+  transition: opacity 1.2s var(--ease-out-expo);
+  mask-image:
+    linear-gradient(to right, transparent, #000 18%, #000 82%, transparent),
+    linear-gradient(to bottom, transparent, #000 22%, #000 70%, transparent);
+  mask-composite: intersect;
+
+  &[data-ready] {
+    opacity: 1;
+  }
+}
+
+/* Reveal: hidden only after JS has checked the element is below the fold
+   (data-reveal="hidden"); without JS nothing is hidden. Max 16px, 500ms. */
+@utility reveal {
+  &[data-reveal="hidden"],
+  &[data-reveal="hidden"][data-stagger] > * {
+    opacity: 0;
+    translate: 0 14px;
+  }
+  &[data-stagger][data-reveal="hidden"] {
+    opacity: 1;
+    translate: none;
+  }
+  &[data-reveal="shown"],
+  &[data-reveal="shown"][data-stagger] > * {
+    transition:
+      opacity 500ms var(--ease-out-expo),
+      translate 500ms var(--ease-out-expo);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  &[data-reveal="shown"][data-stagger] {
+    transition: none;
+  }
+  &[data-reveal="shown"][data-stagger] > :nth-child(2) {
+    transition-delay: calc(var(--reveal-delay, 0ms) + 70ms);
+  }
+  &[data-reveal="shown"][data-stagger] > :nth-child(3) {
+    transition-delay: calc(var(--reveal-delay, 0ms) + 140ms);
+  }
+  &[data-reveal="shown"][data-stagger] > :nth-child(n + 4) {
+    transition-delay: calc(var(--reveal-delay, 0ms) + 210ms);
+  }
+}
+
+/* Spotlight: a soft glow inside the element and a brighter border near the
+   pointer. --sx/--sy are set on pointermove by SpotlightTracker (no React
+   re-renders); only for a fine pointer that can hover. */
+@utility spotlight {
+  isolation: isolate;
+  --spot: var(--signal);
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 300ms ease-out;
+  }
+  &::before {
+    background: radial-gradient(
+      var(--in-oklch,) 22rem circle at var(--sx, 50%) var(--sy, 50%),
+      color-mix(in oklab, var(--spot) 9%, transparent),
+      transparent 70%
+    );
+  }
+  /* The border ring: the same gradient, masked to a 1px frame. */
+  &::after {
+    z-index: 1;
+    padding: 1px;
+    background: radial-gradient(
+      var(--in-oklch,) 16rem circle at var(--sx, 50%) var(--sy, 50%),
+      color-mix(in oklab, var(--spot) 55%, transparent),
+      transparent 70%
+    );
+    mask:
+      linear-gradient(#000 0 0) content-box exclude,
+      linear-gradient(#000 0 0);
+  }
+
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    &:hover::before,
+    &:hover::after {
+      opacity: 1;
+    }
+  }
+}
+
+/* Leadership surfaces use a softer lime glow. */
+@utility spot-ember {
+  --spot: color-mix(in oklab, var(--ember) 70%, var(--surface));
+  & .spotlight {
+    --spot: color-mix(in oklab, var(--ember) 70%, var(--surface));
+  }
+}
+
+/* Primary buttons: a light sheen that follows the pointer. */
+@utility spotlight-button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 250ms ease-out;
+    background: radial-gradient(
+      var(--in-oklch,) 7rem circle at var(--sx, 50%) var(--sy, 50%),
+      color-mix(in oklab, white 40%, transparent),
+      transparent 70%
+    );
+  }
+
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    &:hover::before {
+      opacity: 1;
+    }
+  }
+}
+
+/* M8.6 follow-up: every colour gradient starts with var(--in-oklch,), so it
+   interpolates in oklch (no grey middle) where supported; elsewhere the
+   variable is empty and the gradient falls back to the default space. */
+@supports (background: linear-gradient(in oklch 90deg, red, blue)) {
+  :root {
+    --in-oklch: in oklch;
+  }
+}
+
+@theme {
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-canvas {
+    transition: none;
+  }
+  .reveal,
+  .reveal > * {
+    opacity: 1 !important;
+    translate: none !important;
+  }
 }

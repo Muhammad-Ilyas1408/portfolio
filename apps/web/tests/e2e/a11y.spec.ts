@@ -6,6 +6,9 @@ import { notFoundRoute, publicRoutes } from "./routes";
 // /contact error and success states are covered in contact.spec.ts.
 for (const url of [...publicRoutes, "/styleguide", notFoundRoute]) {
   test(`${url} has zero axe violations`, async ({ page }) => {
+    // A full-page axe scan of a long page can pass 30s when the whole suite
+    // runs in parallel (timeouts, never violations). Same assertions.
+    test.slow();
     await page.goto(url);
 
     const results = await new AxeBuilder({ page }).analyze();
@@ -17,6 +20,7 @@ for (const url of [...publicRoutes, "/styleguide", notFoundRoute]) {
 test("/leadership has zero axe violations with every event shown", async ({
   page,
 }) => {
+  test.slow();
   await page.goto("/leadership");
   await page.locator("#all-events > summary").click();
   await expect(page.locator("#all-events")).toHaveAttribute("open", "");

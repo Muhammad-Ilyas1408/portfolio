@@ -98,7 +98,7 @@ export default function CredentialsPage() {
       <PageHero
         eyebrow="Education · Awards · Certificates"
         title="Credentials"
-        intro="Certificates link to their issuer's verification page; the degree is shown with my final-year thesis."
+        intro="Each certificate links to its issuer's verification page. My degree is listed with my final-year thesis."
       />
       <Container>
         {getCredentialGroups().map((group, index) => (

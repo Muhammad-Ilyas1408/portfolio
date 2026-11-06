@@ -32,10 +32,12 @@ export const home: HomeInput = {
       status: "self-reported",
     },
   ],
-  // Owner-provided in the M8.5 prompt: words from profile.headline.
+  // Owner's own words (M8.6 prompt); the copy pass must not rewrite them.
   hero: {
-    text: "Building Generative AI & agentic systems",
-    accent: "agentic systems",
+    greeting: "Hello, I'm",
+    tagline: ["Engineering Intelligent Systems,", "Creating Real-World Impact"],
+    community:
+      "Outside of code, I was President of the Computing Students Society at the University of Peshawar for 2025–26, where our team of about 40 ran 18 events.",
   },
   // M8.5 stats row (owner-chosen in the follow-up). Text stats are split
   // out of existing claims (`from` is the exact source text); counted stats
@@ -109,7 +111,7 @@ export const home: HomeInput = {
     // The /leadership intro line.
     headline: {
       text: "From a GDSC team member to leading the Computing Students Society.",
-      accent: "leading the Computing Students Society",
+      accent: "leading the Computing Students Society.",
     },
     // All self-reported, split out of chapter, role and initiative claims.
     stats: [
@@ -165,7 +167,7 @@ export const home: HomeInput = {
       text: "Building something with LLMs, or running a tech community? Let's talk.",
       accent: "Let's talk.",
     },
-    line: "Send a message — I'll reply by email.",
+    line: "Send a message and I'll reply by email.",
   },
   // Shown oldest to newest.
   leadershipPath: [

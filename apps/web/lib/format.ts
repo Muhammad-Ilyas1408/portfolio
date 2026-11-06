@@ -62,3 +62,24 @@ export function monthsInRange(start: string, end: string) {
   const [endYear, endMonth] = end.split("-").map(Number);
   return (endYear - startYear) * 12 + (endMonth - startMonth) + 1;
 }
+
+const plural = (count: number, word: string) =>
+  `${count} ${word}${count === 1 ? "" : "s"}`;
+
+/**
+ * The length of a role, from its "YYYY-MM" dates, months counted inclusive:
+ * "2025-01", "2025-04" → "4 months"; "2025-10", "2026-09" → "1 year";
+ * "2024-12", "2026-02" → "1 year 3 months". No end (ongoing) → undefined,
+ * because a static build can't know today's month.
+ */
+export function formatDuration(start: string, end?: string) {
+  if (!end) return undefined;
+  const total = monthsInRange(start, end);
+  if (total < 1) return undefined;
+  const years = Math.floor(total / 12);
+  const months = total % 12;
+  if (years === 0) return plural(months, "month");
+  return months === 0
+    ? plural(years, "year")
+    : `${plural(years, "year")} ${plural(months, "month")}`;
+}

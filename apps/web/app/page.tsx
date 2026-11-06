@@ -7,6 +7,7 @@ import { HowIWork } from "@/components/home/HowIWork";
 import { LeadershipBand } from "@/components/home/LeadershipBand";
 import { Recognition } from "@/components/home/Recognition";
 import { StatsRow } from "@/components/home/StatsRow";
+import { TechStack } from "@/components/home/TechStack";
 import { WhatIBuild } from "@/components/home/WhatIBuild";
 import { WorkedWith } from "@/components/home/WorkedWith";
 import {
@@ -22,6 +23,8 @@ import {
   getPrinciples,
   getProfile,
   getRecognition,
+  getSiteDescription,
+  getSkills,
   getWorkedWith,
 } from "@/content";
 import { formatEventRange } from "@/lib/format";
@@ -32,7 +35,7 @@ const profile = getProfile();
 // Absolute URLs resolve against metadataBase (NEXT_PUBLIC_SITE_URL, root layout).
 export const metadata: Metadata = pageMetadata({
   title: `${profile.name} — ${profile.title}`,
-  description: profile.positioning,
+  description: getSiteDescription(),
   path: "/",
 });
 
@@ -47,6 +50,7 @@ export default function Home() {
   // Numbered in render order; sections without content are left out.
   const numbered = [
     getCapabilities().length > 0 && "build",
+    getSkills().some((group) => group.skills.length > 0) && "stack",
     featured.length > 0 && "work",
     getPrinciples().length > 0 && "principles",
     "leadership",
@@ -61,6 +65,11 @@ export default function Home() {
       <StatsRow stats={getHomeStats()} />
       <WorkedWith orgs={getWorkedWith()} />
       <WhatIBuild capabilities={getCapabilities()} number={number("build")} />
+      <TechStack
+        groups={getSkills()}
+        featured={featured.map(({ project }) => project)}
+        number={number("stack")}
+      />
       <FeaturedWork
         projects={featured}
         internship={getInternship()}

@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import { cardClasses } from "@/components/ui/Card";
+import { Reveal } from "@/components/motion/Reveal";
 import { DisplaySection } from "@/components/ui/DisplaySection";
 import type { Credential } from "@/content/schema";
 
@@ -21,6 +22,7 @@ export function Recognition({
 
   return (
     <DisplaySection
+      revealContent={false}
       id="recognition"
       number={number}
       accent="ember"
@@ -28,7 +30,11 @@ export function Recognition({
       title="Awards and recognition"
       viewAll={{ href: "/credentials#awards", label: "All awards" }}
     >
-      <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <Reveal
+        as="ul"
+        stagger
+        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+      >
         {awards.map((award) => {
           const photo = award.photos?.[0];
           const { title, detail } = splitAwardName(award.name);
@@ -58,7 +64,7 @@ export function Recognition({
             </li>
           );
         })}
-      </ul>
+      </Reveal>
     </DisplaySection>
   );
 }

@@ -80,7 +80,7 @@ test.describe("/contact", () => {
       "Building something with LLMs, or running a tech community? Let's talk.",
     );
     await expect(page.getByRole("main")).toContainText(
-      "Send a message — I'll reply by email.",
+      "Send a message and I'll reply by email.",
     );
 
     const aside = page.getByRole("complementary", { name: "Direct links" });
@@ -311,6 +311,9 @@ test.describe("/contact", () => {
   test("has zero axe violations when idle, with errors and on success", async ({
     page,
   }) => {
+    // Three full axe scans: about 5s alone, but past the default 30s when
+    // the whole suite runs in parallel. Same assertions, more time.
+    test.slow();
     await mockContact(page, { status: 202, body: { ok: true } });
     await page.goto("/contact");
     expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);

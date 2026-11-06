@@ -6,7 +6,7 @@ import { getProfile } from "@/content";
 import { pageMetadata } from "@/lib/seo";
 
 const description =
-  "This page does not exist. Go back to the home page or see the projects.";
+  "There's nothing at this address. Try the home page or my projects.";
 
 // No canonical: a 404 has no URL of its own to point at. Next.js already
 // marks it noindex.

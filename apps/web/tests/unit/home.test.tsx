@@ -34,36 +34,84 @@ import {
 } from "@/lib/format";
 
 describe("headlineTags", () => {
-  it("keeps the headline segments after the h1's subject", () => {
+  it("keeps the three headline segments after the title", () => {
     expect(headlineTags(getProfile().headline)).toEqual([
+      "Generative AI & Agentic Systems",
       "LLM Engineering, RAG & FastAPI",
       "Deep Learning & NLP",
     ]);
   });
 });
 
-describe("Hero", () => {
-  it("shows the eyebrow, the accented h1 and the focus tags", () => {
-    render(<Hero profile={getProfile()} hero={getHomeHero()} />);
+// M8.6: the owner's own words, used exactly.
+const OWNER_INTRO =
+  "I'm an AI/ML Engineer with a background in Computer Science and a passion for building practical AI applications. My work focuses on Machine Learning, Deep Learning, and LLM-powered systems, including RAG and agentic applications. I enjoy taking ideas from experimentation to working software, combining AI engineering with backend development to solve real-world problems.";
+const OWNER_COMMUNITY =
+  "Outside of code, I was President of the Computing Students Society at the University of Peshawar for 2025–26, where our team of about 40 ran 18 events.";
 
-    expect(
-      screen.getByText("Muhammad Ilyas · AI/ML Engineer"),
-    ).toBeInTheDocument();
-    const h1 = screen.getByRole("heading", {
-      level: 1,
-      name: "Building Generative AI & agentic systems",
-    });
-    expect(within(h1).getByText("agentic systems")).toHaveClass("text-signal");
+describe("Hero", () => {
+  it("shows the owner's hero text exactly, in order", () => {
+    const { container } = render(
+      <Hero profile={getProfile()} hero={getHomeHero()} />,
+    );
+
+    const h1 = screen.getByRole("heading", { level: 1 });
+    expect(h1).toHaveTextContent(/^Muhammad Ilyas$/);
+    const texts = [
+      "Hello, I'm",
+      "Muhammad Ilyas",
+      "AI/ML Engineer",
+      "Engineering Intelligent Systems,",
+      "Creating Real-World Impact",
+      OWNER_INTRO,
+      OWNER_COMMUNITY,
+    ];
+    const content = container.textContent ?? "";
+    let from = 0;
+    for (const text of texts) {
+      const at = content.indexOf(text, from);
+      expect(at, text).toBeGreaterThanOrEqual(0);
+      from = at + text.length;
+    }
     const tags = screen.getByRole("list", { name: "Focus areas" });
-    expect(within(tags).getAllByRole("listitem")).toHaveLength(2);
+    expect(
+      within(tags)
+        .getAllByRole("listitem")
+        .map((li) => li.textContent),
+    ).toEqual([
+      "Generative AI & Agentic Systems",
+      "LLM Engineering, RAG & FastAPI",
+      "Deep Learning & NLP",
+    ]);
   });
 
-  it("uses only words from the headline in the h1", () => {
-    const headline = getProfile().headline.toLowerCase();
-    // "Building" is the owner-provided verb (M8.5 prompt).
-    for (const word of getHomeHero().text.split(" ").slice(1)) {
-      expect(headline).toContain(word.toLowerCase());
-    }
+  it("drops the old eyebrow and h1", () => {
+    const { container } = render(
+      <Hero profile={getProfile()} hero={getHomeHero()} />,
+    );
+    expect(container).not.toHaveTextContent("Muhammad Ilyas · AI/ML Engineer");
+    expect(container).not.toHaveTextContent("Building Generative AI");
+  });
+
+  it("puts the tagline's second line in the violet-to-lime gradient and the role in signal", () => {
+    render(<Hero profile={getProfile()} hero={getHomeHero()} />);
+    const second = screen.getByText(
+      (_, el) => el?.classList.contains("text-gradient") ?? false,
+    );
+    expect(second).toHaveTextContent(/^Creating Real-World Impact$/);
+    expect(within(second).getByText("Real-World")).toHaveClass(
+      "whitespace-nowrap",
+    );
+    expect(screen.getByText("AI/ML Engineer")).toHaveClass("text-signal");
+  });
+
+  it("renders the flow lines as a decorative canvas", () => {
+    const { container } = render(
+      <Hero profile={getProfile()} hero={getHomeHero()} />,
+    );
+    const canvas = container.querySelector("canvas");
+    expect(canvas).toHaveAttribute("aria-hidden", "true");
+    expect(canvas).toHaveAttribute("data-flow", "hero");
   });
 
   it("links the CTAs", () => {
@@ -101,13 +149,25 @@ describe("Hero", () => {
 describe("AccentText", () => {
   it("colors only a phrase that is in the text", () => {
     const { container, rerender } = render(
-      <AccentText text="Talk to us now" phrase="to us" accent="ember" />,
+      <AccentText text="Talk to us now" phrase="to us" />,
     );
     expect(container).toHaveTextContent("Talk to us now");
-    expect(screen.getByText("to us")).toHaveClass("text-ember");
+    expect(screen.getByText("to us")).toHaveClass("text-signal");
 
     rerender(<AccentText text="Talk to us now" phrase="missing" />);
     expect(container.querySelector("span")).toBeNull();
+  });
+
+  it("sets an ember phrase in lime and leaves the rest in the text colour", () => {
+    const { container } = render(
+      <h2>
+        <AccentText text="Talk to us now" phrase="to us" accent="ember" />
+      </h2>,
+    );
+    expect(container).toHaveTextContent("Talk to us now");
+    expect(screen.getByText("to us")).toHaveClass("text-ember");
+    // Only the phrase is wrapped.
+    expect(container.querySelectorAll("span")).toHaveLength(1);
   });
 });
 
@@ -389,6 +449,7 @@ describe("Home", () => {
       "Highlights",
       "Where I've worked and led",
       "What I build",
+      "Tools I work with",
       "Featured work",
       "How I work",
       "From a GDSC team member to leading the Computing Students Society.",
@@ -397,11 +458,12 @@ describe("Home", () => {
     ]);
   });
 
-  it("numbers the sections 01–05 in order", () => {
+  it("numbers the sections 01–06 in order", () => {
     render(<Home />);
 
     for (const [index, id] of [
       "what-i-build",
+      "tech-stack",
       "work",
       "how-i-work",
       "leadership",

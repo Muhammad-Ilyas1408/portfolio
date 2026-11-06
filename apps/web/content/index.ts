@@ -270,6 +270,14 @@ export const getPrinciples = () => principles;
 export const getDpSgdExplainer = () => dpSgdExplainer;
 export const getHomeProof = () => home.proof;
 export const getHomeHero = () => home.hero;
+/**
+ * The site and home description (metadata, OG): the hero tagline and the
+ * first sentence of the intro, both in the owner's words.
+ */
+export const getSiteDescription = () =>
+  `${home.hero.tagline.join(" ").replace(/,\s*$/, "")}. ${
+    profile.intro.split(/(?<=\.)\s/)[0]
+  }`;
 export const getHomeStats = () => home.stats;
 export const getCapabilities = () => capabilities;
 export const getHomeLeadership = () => ({

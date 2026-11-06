@@ -3,7 +3,8 @@ import { Fragment } from "react";
 import { accentText, type Accent } from "./Eyebrow";
 
 /**
- * Renders `text` with its first occurrence of `phrase` in an accent color.
+ * Renders `text` with its first occurrence of `phrase` in an accent color
+ * (violet for signal, lime for ember); the rest keeps the normal text color.
  * The phrase must already be part of the text, so no new words appear.
  */
 export function AccentText({

@@ -25,7 +25,7 @@ The Flood-Aware CV line also merges three separate measurements into one. The si
 
 - **Structure:** apps live only in `apps/web` (Next.js) and `apps/api` (FastAPI). M0 deletes the empty `frontend/` and `backend/` folders, so there is never a second, competing structure.
 - **In v1:** the core pages, project case studies, responsive layout, accessibility, SEO fundamentals, essential tests and a secure contact form.
-- **Deferred to v1.1:** analytics, live GitHub stats, entrance and scroll animations, Lighthouse CI automation, the external link checker, WebKit end-to-end tests, a light theme, and the "Ask about my work" assistant.
+- **Deferred to v1.1:** analytics, live GitHub stats, the scroll-drawn timeline (section reveals and ambient motion moved into v1 with M8.6), Lighthouse CI automation, the external link checker, WebKit end-to-end tests, a light theme, and the "Ask about my work" assistant.
 - **Evidence rules:** never invent facts, personal contributions, credentials, dates or metrics. Anything unresolved stays a `TODO` or `published: false`.
 - **API scope:** `GET /health` and `POST /contact` only. No database and no authentication unless a real requirement appears and you approve it.
 - **Costs:** v1 targets $0. No paid service is created or deployed without your explicit confirmation (section 7).
@@ -162,29 +162,33 @@ Removed in M5: Kaggle Intro to Machine Learning, and IBM "Generative AI and LLMs
 
 ## 3. Brand and visual identity
 
-**Positioning line:** *AI/ML Engineer building grounded, agentic systems — and the communities that build them.*
+**Positioning line (M8.6 copy pass, owner to review):** *I build LLM-powered and agentic systems, and I led the Computing Students Society at the University of Peshawar.* It is the footer line; page metadata now uses the hero tagline plus the first intro sentence. Previously: *AI/ML Engineer building grounded, agentic systems — and the communities that build them.*
 
-**Concept: "Signal and Ember."** The site's two halves get two accent colors that never compete. **Signal** (cool teal) marks engineering work: projects, skills, experience, code. **Ember** (warm amber) marks people work: leadership, community, teaching, awards. A visitor learns the code in seconds. Teal means *what he built*, amber means *who he built it with*. Pages that join both, like About and the hero, use both accents sparingly.
+**Concept: "Signal and Ember."** The site's two halves get two accent colors that never compete. **Signal** (violet since M8.6; teal before) marks engineering work: projects, skills, experience, code. **Ember** (lime since M8.6; amber before) marks people work: leadership, community, teaching, awards. A visitor learns the code in seconds. Violet means *what he built*, lime means *who he built it with*. Pages that join both, like About and the hero, use both accents sparingly.
 
 **The evidence system is the signature.** Every claim gets a small mono chip: `REPO`, `LIVE`, `DEVPOST`, `CERT`, `CHANGELOG`, `THESIS` or `WEBSITE`. Each chip links to its proof. Verified chips get a green dot; self-reported items get no chip. This turns Flood-Aware's "never fabricate" principle into the site's identity.
 
 ### Color tokens (dark theme, the default)
 
+**M8.6 palette A (owner-chosen, 2026-11-07):** ink-violet surfaces, violet for engineering (`signal`), lime for leadership and community (`ember`). **Lime rule (M8.6 follow-up, owner decision):** lime may be used for accent phrases in display headings (e.g. "leading the Computing Students Society." on `/leadership` and the home leadership band) and for leadership stats, links and small details; never for body paragraphs or large filled areas (buttons stay violet). The hero tagline's second line ("Creating Real-World Impact") recreates the palette A preview exactly: a plain sRGB `linear-gradient(90deg, signal, ember 85%)`, so it is violet on "Creating", a soft transition over "Real-" and full lime on "World Impact"; each wrapped line on a phone gets the full run, and it is solid violet where `background-clip: text` is unsupported (owner decision, M8.6 follow-up 3). Every other colour gradient interpolates in oklch, so none turns grey in the middle; FlowLines stay violet → lavender. The M1 teal/amber values are replaced.
+
 | Token | Hex | Use |
 | --- | --- | --- |
-| `bg` | #0B0F14 | Page background (deep ink, slightly blue) |
-| `surface` | #11161D | Cards, panels |
-| `surface-raised` | #171D26 | Hover, modals, active cards |
-| `border` | #232B36 | Hairlines, dividers |
-| `text` | #E6EAF0 | Body and headings |
-| `text-muted` | #8A96A6 | Metadata, captions (about 6.7:1 on bg) |
-| `signal` | #5EEAD4 | Engineering accent: links, project highlights, focus rings |
-| `signal-soft` | #5EEAD4 at 10% | Engineering tints, chip backgrounds |
-| `ember` | #F5B454 | Leadership accent: timeline nodes, community highlights, awards |
-| `ember-soft` | #F5B454 at 10% | Leadership tints |
-| `verified` | #6EE7A0 | Verified dot on evidence chips, and the Live status pill |
-| `danger` | #F87171 | Errors only: validation messages, invalid-field borders, error panels (about 6.9:1 on bg, 6.6:1 on surface) |
+| `bg` | #0A0A14 | Page background (ink violet); also `theme-color` |
+| `surface` | #12121D | Cards, panels |
+| `surface-raised` | #191927 | Hover, modals, active cards |
+| `surface-warm` | #0F0F18 | Home leadership band (a neutral ink lift; lime comes only from its glow and details) |
+| `border` | #26263B | Hairlines, dividers |
+| `text` | #EDEDF3 | Body and headings (16.9:1 on bg) |
+| `text-muted` | #8F8FA9 | Metadata, captions (6.3:1 on bg, 5.5:1 on surface-raised) |
+| `signal` | #A08CFF | Engineering accent: links, highlights, focus rings, primary buttons (7.2:1 on bg) |
+| `signal-soft` | #A08CFF at 10% | Engineering tints, chip backgrounds |
+| `ember` | #C4F042 | Leadership accent (lime): timeline nodes, leadership stats and links (14.9:1 on bg) |
+| `ember-soft` | #C4F042 at 8% | Leadership tints |
+| `verified` | #34D399 | Verified dot and the Live pill; distinct from both accents (10.2:1) |
+| `danger` | #F87171 | Errors only (7.1:1 on bg) |
 | `danger-soft` | #F87171 at 10% | Error panel background |
+| `flow-a` / `flow-b` | #7B5CFF / #D4C8FF | FlowLines and background glows: deep violet to lavender (decorative) |
 
 Rules: an accent stays under about 10% of any screen; only bg-colored text may sit on a full-strength accent fill, and only on primary buttons; focus rings use `signal` everywhere. Danger is used only for errors. A light theme comes from the same token names in phase 2. The tokens make it a one-file change.
 
@@ -202,8 +206,8 @@ All three load through `next/font` (self-hosted, no layout shift). Scale: 14 / 1
 
 - **Grid:** 12 columns, 1200px max width, 24px gutters on desktop and 16px on mobile. Sections open with a mono label (`02 — Projects`).
 - **Texture:** one faint dot grid behind the hero only, like engineering paper. No gradients or glassmorphism elsewhere.
-- **Motion:** v1 uses only hover and focus transitions: 150ms color and border changes, plus a 2px lift on project cards. All of it is off under `prefers-reduced-motion`. Section reveals and the scroll-drawn timeline are deferred to v1.1.
-- **Banned:** skill bars and percentages, typing-effect headlines, particle backgrounds, cursor followers, and any counters for numbers we can't source.
+- **Motion (M8.6, owner-approved; replaces "hover and focus only"):** allowed are (a) an ambient background of thin flowing lines behind the home hero and the CTA band, with a calmer variant behind `PageHero` on inner pages; (b) a one-time gentle reveal of section headers and card grids as they scroll in (fade plus a rise of at most 16px, at most 500ms, small stagger); (c) a pointer-follow glow ("spotlight") on cards and primary buttons; (d) hover and focus transitions (150ms color and border changes, a 2px lift on cards). Required: all of it off or static under `prefers-reduced-motion`; animations pause when off-screen (IntersectionObserver) or when the tab is hidden; content is fully visible with JS disabled (the reveal only enhances); no layout shift (CLS 0); Lighthouse at 1× stays at 95 or above; no animation library (CSS, SVG or a tiny canvas only); no count-up numbers, carousels or marquees. The scroll-drawn timeline stays deferred to v1.1.
+- **Banned:** skill bars and percentages, typing-effect headlines, particle backgrounds, cursor followers (the M8.6 card/button spotlight is a glow inside the element, not a follower), count-up numbers, carousels, marquees, and any counters for numbers we can't source.
 
 ## 4. Information architecture
 
@@ -293,7 +297,7 @@ As built in M5. Sections are numbered and left out when empty.
 
 ### Credentials `/credentials`
 
-As built in M5. Groups in this order, each with an anchor: **Degree** (`#degree`) · **Awards** (`#awards`) · **Specializations** (`#specializations`) · **Courses** (`#courses`) · **Training** (`#training`). Empty groups are left out; unpublished items never render. Awards show a thumbnail (`next/image`) that opens the full image in a new tab, plus title, issuer, date and note; extra photos are text links. Specializations and courses show "Verify ↗" (signal). Training shows its period and length. The degree shows its years, completion month, and the Flood-Aware FYP with its supervisor. Note under the heading: "Certificates link to their issuer's verification page; the degree is shown with my final-year thesis."
+As built in M5. Groups in this order, each with an anchor: **Degree** (`#degree`) · **Awards** (`#awards`) · **Specializations** (`#specializations`) · **Courses** (`#courses`) · **Training** (`#training`). Empty groups are left out; unpublished items never render. Awards show a thumbnail (`next/image`) that opens the full image in a new tab, plus title, issuer, date and note; extra photos are text links. Specializations and courses show "Verify ↗" (signal). Training shows its period and length. The degree shows its years, completion month, and the Flood-Aware FYP with its supervisor. Note under the heading (M8.6 copy pass): "Each certificate links to its issuer's verification page. My degree is listed with my final-year thesis."
 
 ### About `/about`
 
@@ -306,7 +310,7 @@ As built in M5.
 
 ### Contact `/contact`
 
-Signal accent. Title "Contact · Muhammad Ilyas"; description `profile.positioning`. Intro: "Building something with LLMs, or running a tech community? Send a message — I'll reply by email." The form is on the left; a "Direct links" panel (Email, LinkedIn, GitHub, Download CV, from `profile`) sits on the right from 1024px and below the form on smaller screens.
+Signal accent. Title "Contact · Muhammad Ilyas"; description `profile.positioning`. Intro (M8.6 copy pass): "Building something with LLMs, or running a tech community? Send a message and I'll reply by email." The form is on the left; a "Direct links" panel (Email, LinkedIn, GitHub, Download CV, from `profile`) sits on the right from 1024px and below the form on smaller screens.
 
 - **Fields:** Name (2–80), Email, Reason (a "Choose a reason" placeholder, then Job opportunity · Collaboration · Speaking or community · Other), and Message (20–5000, with a live "n / 5000" counter that counts characters the way the API does). A honeypot field `website` ("Leave this field empty") is visually hidden, `aria-hidden`, `tabIndex -1` and `autoComplete="off"`.
 - **Validation:** client-side with the shared Zod schema on submit, then live as the visitor fixes fields. Each field has a visible label; errors appear under it with `aria-invalid` and `aria-describedby`, and the first invalid field gets focus. A 422 from the API maps onto the matching fields (first one focused); errors for other keys (e.g. `body`) show as a general error.
@@ -454,7 +458,7 @@ Visitor ──HTTPS──▶ Vercel · Next.js
   - The contact form runs Zod with `z.config({ jitless: true })` (`lib/contact.ts`), so Zod never probes `new Function`, which would be reported as a CSP violation.
   - `Strict-Transport-Security: max-age=63072000; includeSubDomains`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy: camera=(), microphone=(), geolocation=()`.
 - **Site URL (M8):** `NEXT_PUBLIC_SITE_URL` (default `http://localhost:3000`; set on Vercel in M9) feeds `metadataBase`, canonicals, Open Graph URLs, the sitemap, robots and JSON-LD (`lib/site.ts`).
-- **Motion:** CSS transitions only, with no animation library in v1.
+- **Motion:** CSS transitions plus three small client components from M8.6 (`FlowLines` canvas, `Reveal`, `Spotlight`); no animation library.
 - **Images:** `next/image` serves AVIF/WebP. Your portrait is at most 1200px at the source.
 - **SEO (built in M8):**
   - **Metadata:** each route calls `pageMetadata()` (`lib/seo.ts`) for its own title, description, canonical, Open Graph (title, description, url, type `website`, or `article` on case studies, site name, image) and a `summary_large_image` Twitter card. Next.js merges `openGraph` shallowly, and a page that sets it loses the parent's file-based image, so every page names its image explicitly. The 404 has no canonical and is noindex; `/styleguide` stays noindex.
@@ -603,6 +607,7 @@ Run the milestones in order, one Claude Code session each. After M1 and M3, brin
 | M7 | Contact form integration | Form wired to the API with every state; e2e tests with the API mocked |
 | M8 | SEO, accessibility and performance pass | Every target in section 9 met |
 | M8.5 | Design polish (A: foundations + home, B: inner pages) | A: fluid display type, eyebrow/section/card/stat primitives, sticky header, multi-column footer and the redesigned home, axe clean, Lighthouse ≥ 95 on `/`. B: inner pages on the same primitives. **Done 2026-11-06** |
+| M8.6 | Visual identity, motion and copy | Motion policy recorded; owner-chosen palette in `@theme`; FlowLines, Reveal and Spotlight (paused off-screen, static under reduced motion, content visible without JS); owner's hero copy; copy pass; tech stack, durations, back to top; Lighthouse ≥ 95 with CLS 0 on `/`, `/projects/flood-aware`, `/leadership` |
 | M9 | Deploy and docs | Current costs confirmed by you; deployed by you on free tiers; `API.md`, `DEPLOY.md`, `CONTENT-GUIDE.md` and the README written |
 
 **M0 — setup**

@@ -2,14 +2,18 @@ import type { ComponentProps } from "react";
 
 export type CardVariant = "default" | "numbered" | "stat";
 
-/** Surface, hairline border, top-edge highlight; brighter border and a 2px lift on hover/focus-within. */
+/**
+ * Surface, hairline border, top-edge highlight. Interactive cards also get a
+ * brighter border, a 2px lift on hover/focus-within and the pointer spotlight
+ * (M8.6; the glow colour follows `--spot`, ember inside `spot-ember`).
+ */
 export function cardClasses({
   interactive = false,
   className = "",
 }: { interactive?: boolean; className?: string } = {}) {
   return `edge-highlight relative rounded-xl border border-border bg-surface ${
     interactive
-      ? "transition duration-150 hover:border-text-muted/50 focus-within:border-text-muted/50 motion-safe:hover:-translate-y-0.5 motion-safe:focus-within:-translate-y-0.5"
+      ? "spotlight transition duration-200 hover:border-text-muted/50 focus-within:border-text-muted/50 motion-safe:hover:-translate-y-0.5 motion-safe:focus-within:-translate-y-0.5"
       : ""
   } ${className}`;
 }

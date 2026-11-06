@@ -4,6 +4,7 @@ const sectionHeadings = [
   "Highlights",
   "Where I've worked and led",
   "What I build",
+  "Tools I work with",
   "Featured work",
   "How I work",
   "From a GDSC team member to leading the Computing Students Society.",
@@ -23,7 +24,7 @@ test.describe("home at 1440px", () => {
     await expect(
       main.getByRole("heading", {
         level: 1,
-        name: "Building Generative AI & agentic systems",
+        name: "Muhammad Ilyas",
       }),
     ).toBeVisible();
     await expect(main.getByRole("heading", { level: 2 })).toHaveText(
@@ -218,8 +219,9 @@ test("home metadata keeps the name", async ({ page }) => {
   await page.goto("/");
 
   await expect(page).toHaveTitle("Muhammad Ilyas — AI/ML Engineer");
+  // M8.6: the owner's tagline and the first sentence of the intro.
   const description =
-    "AI/ML Engineer building grounded, agentic systems — and the communities that build them.";
+    "Engineering Intelligent Systems, Creating Real-World Impact. I'm an AI/ML Engineer with a background in Computer Science and a passion for building practical AI applications.";
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
     "content",
     description,

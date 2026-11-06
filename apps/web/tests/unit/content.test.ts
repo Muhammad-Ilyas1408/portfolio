@@ -163,7 +163,10 @@ describe("getters", () => {
 
     expect(result.location).toBe("Pakistan");
     expect(result.headline).toMatch(/^AI\/ML Engineer \| Generative AI/);
-    expect(result.intro).toContain("President (2025–26)");
+    // M8.6: the owner's first hero paragraph.
+    expect(result.intro).toMatch(
+      /^I'm an AI\/ML Engineer with a background in Computer Science/,
+    );
     expect(result).not.toHaveProperty("availability");
   });
 

@@ -8,7 +8,7 @@ import { pageMetadata } from "@/lib/seo";
 
 const projectTitles = getProjects().map((project) => project.title);
 // The page's existing description doubles as its intro.
-const description = `Case studies of ${projectTitles.join(" and ")}: architecture, engineering decisions and results, each linked to its evidence.`;
+const description = `Case studies of ${projectTitles.join(" and ")}. Each result links to the proof behind it.`;
 
 export const metadata: Metadata = pageMetadata({
   title: `Projects — ${getProfile().name}`,

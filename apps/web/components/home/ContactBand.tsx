@@ -1,10 +1,11 @@
+import { FlowLines } from "@/components/motion/FlowLines";
 import { AccentText } from "@/components/ui/AccentText";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import type { Home } from "@/content/schema";
 
-/** The final CTA band, on a signal glow. */
+/** The final CTA band, on a signal glow and the FlowLines band variant. */
 export function ContactBand({
   contact,
   email,
@@ -17,8 +18,9 @@ export function ContactBand({
   return (
     <section
       aria-labelledby="contact-heading"
-      className="glow-signal relative border-t border-border py-20 md:py-28 lg:py-32"
+      className="glow-signal relative isolate overflow-hidden border-t border-border py-20 md:py-28 lg:py-32"
     >
+      <FlowLines variant="band" className="-z-10" />
       <Container className="flex flex-col items-center text-center">
         <Eyebrow>Contact</Eyebrow>
         <h2

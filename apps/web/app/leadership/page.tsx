@@ -95,7 +95,7 @@ export default function LeadershipPage() {
   ].filter((section) => !!section);
 
   return (
-    <>
+    <div className="spot-ember">
       <PageHero
         eyebrow="Leadership & community"
         accent="ember"
@@ -116,6 +116,6 @@ export default function LeadershipPage() {
           </PageSection>
         ))}
       </Container>
-    </>
+    </div>
   );
 }

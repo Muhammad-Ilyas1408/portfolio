@@ -1,5 +1,6 @@
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { Card } from "@/components/ui/Card";
+import { Reveal } from "@/components/motion/Reveal";
 import { DisplaySection } from "@/components/ui/DisplaySection";
 import type { Project } from "@/content/schema";
 
@@ -16,12 +17,17 @@ export function WhatIBuild({
 
   return (
     <DisplaySection
+      revealContent={false}
       id="what-i-build"
       number={number}
       eyebrow="Capabilities"
       title="What I build"
     >
-      <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <Reveal
+        as="ul"
+        stagger
+        className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
+      >
         {capabilities.map((capability, index) => (
           <li key={capability.title} className="flex">
             <Card
@@ -57,7 +63,7 @@ export function WhatIBuild({
             </Card>
           </li>
         ))}
-      </ul>
+      </Reveal>
     </DisplaySection>
   );
 }

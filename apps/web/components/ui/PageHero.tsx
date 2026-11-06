@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import { FlowLines } from "@/components/motion/FlowLines";
+
 import { AccentText } from "./AccentText";
 import { Container } from "./Container";
 import { Eyebrow, type Accent } from "./Eyebrow";
@@ -55,6 +57,8 @@ export function PageHero({
         aria-hidden="true"
         className={`${backdrops[accent]} pointer-events-none absolute inset-0 -z-10`}
       />
+      {/* M8.6: the calmer FlowLines variant. */}
+      <FlowLines variant="page" accent={accent} className="-z-10" />
       <Container className="pt-10 pb-14 md:pt-16 md:pb-20">
         {before && <div className="mb-8 md:mb-10">{before}</div>}
         <div
@@ -82,7 +86,9 @@ export function PageHero({
               intro && <div className={introClasses}>{intro}</div>
             )}
             {meta.length > 0 && (
-              <dl className="mt-8 flex flex-wrap gap-x-10 gap-y-5 border-t border-border pt-6 md:mt-10">
+              // M8.6: a fixed 2-column grid below 1024px, so the items never re-wrap
+              // when the web font swaps in (that caused a 0.019 layout shift).
+              <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 border-t border-border pt-6 md:mt-10 lg:flex lg:flex-wrap lg:gap-x-10">
                 {meta.map((item) => (
                   <div key={item.label} className="min-w-0">
                     <dt className="font-mono text-xs tracking-[0.16em] text-text-muted uppercase">

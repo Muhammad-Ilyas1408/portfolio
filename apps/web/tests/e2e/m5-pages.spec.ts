@@ -133,7 +133,9 @@ test("the presidency note links to the events section", async ({ page }) => {
   await expect(chapter).toContainText(
     "The All events and programmes section below also includes the CSS AI Bootcamp 2025 (before my term) and TechRise '26 (after the report).",
   );
-  await chapter.getByRole("link", { name: "All events and programmes" }).click();
+  await chapter
+    .getByRole("link", { name: "All events and programmes" })
+    .click();
   await expect(page).toHaveURL(/#events$/);
   await expect(page.locator("#events")).toBeInViewport();
 });

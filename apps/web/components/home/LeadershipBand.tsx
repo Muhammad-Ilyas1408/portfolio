@@ -28,7 +28,7 @@ export function LeadershipBand({
     <section
       id="leadership"
       aria-labelledby="leadership-heading"
-      className="relative isolate overflow-hidden border-y border-border bg-surface-warm py-16 md:py-20 lg:py-24"
+      className="spot-ember relative isolate overflow-hidden border-y border-border bg-surface-warm py-16 md:py-20 lg:py-24"
     >
       <div
         aria-hidden="true"
@@ -50,7 +50,7 @@ export function LeadershipBand({
             />
           </h2>
           {stats.length > 0 && (
-            <ul className="mt-12 grid grid-cols-2 gap-x-6 gap-y-10 border-t border-ember/25 pt-10 md:gap-x-10">
+            <ul className="mt-12 grid grid-cols-2 gap-x-6 gap-y-10 border-t border-ember/15 pt-10 md:gap-x-10">
               {stats.map((stat) => (
                 <li key={stat.label}>
                   <Stat
@@ -73,7 +73,7 @@ export function LeadershipBand({
             )}
           </div>
         </div>
-        <figure className="edge-highlight rounded-2xl border border-ember/25 bg-bg/60 p-2.5">
+        <figure className="edge-highlight rounded-2xl border border-ember/15 bg-bg/60 p-2.5">
           <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-surface-raised">
             <Image
               src={photo.src}

@@ -28,12 +28,16 @@
 ## Scope (v1)
 - Apps live only in `apps/web` (Next.js 16) and `apps/api` (FastAPI).
 - The API has `GET /health` and `POST /contact` only. No database, no authentication.
-- Deferred to v1.1: analytics, live GitHub stats, entrance/scroll animations, Lighthouse CI, link checker, WebKit e2e, light theme.
+- Deferred to v1.1: analytics, live GitHub stats, Lighthouse CI, link checker, WebKit e2e, light theme.
 
 ## Design system
 - Use theme tokens only (`bg`, `surface`, `signal`, `ember`, ...). No raw hex values in components.
-- Signal (teal) = engineering content. Ember (amber) = leadership/community content.
-- v1 motion = hover and focus transitions only, off under `prefers-reduced-motion`.
+- Signal (violet since M8.6) = engineering content. Ember (lime since M8.6) = leadership/community content.
+- Lime (ember) may be used for accent phrases in display headings and for leadership stats, links and small details. Never for body paragraphs or large filled areas (buttons stay violet).
+- Gradients interpolate in oklch (`var(--in-oklch,)` in `globals.css`), so none turns grey in the middle. The one owner-approved exception is the hero tagline (`text-gradient`): plain sRGB violet → lime at 85%, matching the palette A preview.
+- Motion (owner-approved in M8.6, replaces "hover and focus only"):
+  - Allowed: (a) an ambient animated background of flowing lines behind the home hero and the CTA band (a calmer variant behind `PageHero`); (b) a one-time gentle reveal of sections as they scroll in (fade plus a rise of at most 16px, at most 500ms); (c) a pointer-follow glow ("spotlight") on cards and primary buttons; (d) hover and focus transitions.
+  - Required: everything off or static under `prefers-reduced-motion`; animations pause when off-screen (IntersectionObserver) or the tab is hidden; content fully visible with JS disabled (the reveal only enhances); no layout shift (CLS 0); Lighthouse at 1× stays at 95+; no animation library (CSS, SVG or a tiny canvas only); no count-up numbers, carousels or marquees.
 - Every interactive element is keyboard-accessible with a visible focus ring.
 
 ## Security

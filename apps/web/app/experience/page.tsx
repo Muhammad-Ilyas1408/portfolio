@@ -12,12 +12,16 @@ import {
   getInternship,
   getProfile,
 } from "@/content";
-import { formatEventRange, formatMonthRange } from "@/lib/format";
+import {
+  formatDuration,
+  formatEventRange,
+  formatMonthRange,
+} from "@/lib/format";
 import { pageMetadata } from "@/lib/seo";
 
 // The page's existing description doubles as its intro.
 const description =
-  "AI/ML engineering internship in LLM fine-tuning and DP-SGD, and teaching two AI bootcamps.";
+  "My AI/ML engineering internship, where I worked on LLM fine-tuning and DP-SGD, and the two AI bootcamps I taught.";
 
 export const metadata: Metadata = pageMetadata({
   title: `Experience — ${getProfile().name}`,
@@ -52,6 +56,7 @@ export default function ExperiencePage() {
             {
               key: internship.title,
               date: formatMonthRange(internship.start, internship.end),
+              duration: formatDuration(internship.start, internship.end),
               current: true,
               children: (
                 <InternshipCard

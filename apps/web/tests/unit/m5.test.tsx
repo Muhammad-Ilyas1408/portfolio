@@ -321,13 +321,12 @@ describe("pages", () => {
       "All events and programmes",
       "Recognition",
     ]);
-    // M8.5 B: the intro line is now the h1, with its accent phrase.
-    expect(
-      screen.getByRole("heading", {
-        level: 1,
-        name: "From a GDSC team member to leading the Computing Students Society.",
-      }),
-    ).toBeInTheDocument();
+    // M8.5 B: the intro line is the h1. M8.6: the ember phrase is split into
+    // spans (the words around it are dimmed), so check the text.
+    const h1 = screen.getByRole("heading", { level: 1 });
+    expect(h1).toHaveTextContent(
+      "From a GDSC team member to leading the Computing Students Society.",
+    );
     expect(
       screen.getByText(
         "Computing Students Society, University of Peshawar, during my term as President (Oct 2025 – Sep 2026).",
