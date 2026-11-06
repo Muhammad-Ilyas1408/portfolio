@@ -58,6 +58,28 @@ export const Claim = z
     error: "verified claims need evidence",
   });
 
+/**
+ * M8.5 B: a claim split into a display numeral and a short label, for stat
+ * rows. The value must appear in the claim's own text ("~2 s" may stand for
+ * "about 2 s"); the status and evidence stay the claim's.
+ */
+export const ClaimStat = z.object({
+  value: z.string().min(1),
+  label: z.string().min(1),
+  detail: z.string().min(1).optional(),
+});
+
+export function statInText(value: string, text: string) {
+  return text.includes(value) || text.includes(value.replace(/^~/, "about "));
+}
+
+/** A claim that may carry a stat split; the stat's value must be in its text. */
+export const StatClaim = z
+  .intersection(Claim, z.object({ stat: ClaimStat.optional() }))
+  .refine((claim) => !claim.stat || statInText(claim.stat.value, claim.text), {
+    error: "a stat's value must come from its claim's text",
+  });
+
 export const Profile = z.object({
   name: z.string().min(1),
   title: z.string().min(1),
@@ -76,7 +98,8 @@ export const Profile = z.object({
     email: z.string().regex(/^mailto:[^@\s]+@[^@\s]+$/),
     github: HttpsUrl,
     linkedin: HttpsUrl,
-    kaggle: HttpsUrl,
+    // Optional: the owner chose to skip Kaggle (M8.5 B).
+    kaggle: HttpsUrl.optional(),
     source: HttpsUrl,
   }),
 });
@@ -107,7 +130,10 @@ export const Project = z.object({
   // `highlight: true` marks the results shown on the home card, in this order.
   results: z
     .array(
-      z.intersection(Claim, z.object({ highlight: z.boolean().optional() })),
+      z.intersection(
+        StatClaim,
+        z.object({ highlight: z.boolean().optional() }),
+      ),
     )
     .default([]),
   links: z.array(Evidence).default([]),
@@ -398,7 +424,7 @@ export const Chapter = z.object({
     })
     .optional(),
   source: z.object({ label: z.string().min(1), url: HttpsUrl.optional() }),
-  stats: z.array(Claim).min(1),
+  stats: z.array(StatClaim).min(1),
 });
 
 // The /about principle cards, each linking to a case-study anchor.
@@ -434,6 +460,8 @@ export const SkillGroup = z.object({
 
 export type Evidence = z.output<typeof Evidence>;
 export type Claim = z.output<typeof Claim>;
+export type StatClaim = z.output<typeof StatClaim>;
+export type ClaimStat = z.output<typeof ClaimStat>;
 export type Profile = z.output<typeof Profile>;
 export type Project = z.output<typeof Project>;
 export type Role = z.output<typeof Role>;

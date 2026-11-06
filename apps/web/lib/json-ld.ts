@@ -23,7 +23,7 @@ export function personJsonLd(profile: Profile, degree?: Credential): Thing {
     sameAs: [
       profile.links.github,
       profile.links.linkedin,
-      profile.links.kaggle,
+      ...(profile.links.kaggle ? [profile.links.kaggle] : []),
     ],
   };
 }

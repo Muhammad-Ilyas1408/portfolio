@@ -1,8 +1,8 @@
 import { StatChips } from "@/components/shared/StatChips";
-import { TextLink } from "@/components/shared/TextLink";
+import { ArrowLink } from "@/components/ui/ArrowLink";
+import { cardClasses } from "@/components/ui/Card";
 import { initiativeId } from "@/content";
 import type { Initiative } from "@/content/schema";
-import { formatEventRange } from "@/lib/format";
 
 /** A bootcamp on /experience, linking to its row on /leadership. */
 export function TeachingCard({
@@ -13,23 +13,31 @@ export function TeachingCard({
   title?: string;
 }) {
   return (
-    <article className="flex flex-col rounded-lg border border-border bg-surface p-6">
-      <p className="font-mono text-sm text-text-muted">
-        {formatEventRange(initiative.start, initiative.end)}
+    <article
+      className={cardClasses({
+        interactive: true,
+        className: "flex flex-col p-6 md:p-8",
+      })}
+    >
+      <h3 className="font-display text-xl leading-snug font-semibold tracking-tight text-balance">
+        {title}
+      </h3>
+      <p className="mt-2 text-sm font-medium text-signal">
+        {initiative.myRole}
       </p>
-      <h3 className="mt-1">{title}</h3>
-      <p className="mt-1 text-sm text-signal">{initiative.myRole}</p>
-      <div className="mt-4">
+      {initiative.summary && (
+        <p className="mt-4 max-w-[68ch] text-text/90">{initiative.summary}</p>
+      )}
+      <div className="mt-5">
         <StatChips stats={initiative.stats} accent="signal" />
       </div>
-      {initiative.summary && <p className="mt-4">{initiative.summary}</p>}
-      <div className="mt-auto pt-4">
-        <TextLink
+      <div className="mt-6 border-t border-border pt-4">
+        <ArrowLink
           href={`/leadership#${initiativeId(initiative)}`}
           aria-label={`${initiative.name} on the Leadership page`}
         >
-          On the Leadership page <span aria-hidden="true">→</span>
-        </TextLink>
+          On the Leadership page
+        </ArrowLink>
       </div>
     </article>
   );

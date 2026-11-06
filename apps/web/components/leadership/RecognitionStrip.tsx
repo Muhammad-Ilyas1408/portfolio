@@ -1,41 +1,56 @@
 import Image from "next/image";
 
-import { TextLink } from "@/components/shared/TextLink";
+import { splitAwardName } from "@/components/home/Recognition";
+import { ArrowLink } from "@/components/ui/ArrowLink";
+import { cardClasses } from "@/components/ui/Card";
 import type { Credential } from "@/content/schema";
 import { formatYearMonth } from "@/lib/format";
 
-/** One award with its photo, and a link to every award on /credentials. */
+/** One award with its whole photo, and a link to every award on /credentials. */
 export function RecognitionStrip({ award }: { award: Credential }) {
   const photo = award.photos?.[0];
+  const { title, detail } = splitAwardName(award.name);
 
   return (
-    <div className="flex flex-col gap-6 rounded-lg border border-border bg-surface p-6 sm:flex-row sm:items-center">
+    <figure
+      className={cardClasses({
+        className:
+          "grid gap-6 p-2.5 sm:grid-cols-[minmax(0,16rem)_minmax(0,1fr)] sm:items-center sm:gap-10",
+      })}
+    >
       {photo && (
-        <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden rounded-md border border-border bg-surface-raised sm:w-56">
+        <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-surface-raised">
           <Image
             src={photo.src}
             alt={photo.alt}
             fill
-            sizes="(min-width: 640px) 224px, 100vw"
-            className="object-cover"
+            sizes="(min-width: 640px) 256px, 100vw"
+            className="object-contain p-3"
           />
         </div>
       )}
-      <div>
-        <h3>{award.name}</h3>
-        <p className="mt-1 text-sm text-text-muted">
+      <figcaption className="px-3.5 pb-4 sm:px-0 sm:pr-8 sm:pb-0">
+        <span className="block font-display text-xl leading-snug font-semibold tracking-tight">
+          {title}
+        </span>
+        {detail && <span className="mt-1 block text-text-muted">{detail}</span>}
+        <span className="mt-3 block text-sm text-text-muted">
           {award.issuer}
           {award.date && (
             <span className="font-mono"> · {formatYearMonth(award.date)}</span>
           )}
-        </p>
-        {award.note && <p className="mt-1 text-sm">{award.note}</p>}
-        <div className="mt-2">
-          <TextLink href="/credentials#awards" accent="ember">
-            See all awards <span aria-hidden="true">→</span>
-          </TextLink>
-        </div>
-      </div>
-    </div>
+        </span>
+        {award.note && (
+          <span className="mt-3 block max-w-[60ch] text-sm text-text/90">
+            {award.note}
+          </span>
+        )}
+        <span className="mt-4 block">
+          <ArrowLink href="/credentials#awards" accent="ember">
+            See all awards
+          </ArrowLink>
+        </span>
+      </figcaption>
+    </figure>
   );
 }

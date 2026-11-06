@@ -1,29 +1,38 @@
 import type { Metadata } from "next";
 
 import { Button } from "@/components/ui/Button";
-import { Container } from "@/components/ui/Container";
+import { PageHero } from "@/components/ui/PageHero";
 import { getProfile } from "@/content";
 import { pageMetadata } from "@/lib/seo";
+
+const description =
+  "This page does not exist. Go back to the home page or see the projects.";
 
 // No canonical: a 404 has no URL of its own to point at. Next.js already
 // marks it noindex.
 export const metadata: Metadata = pageMetadata({
   title: `Page not found — ${getProfile().name}`,
-  description:
-    "This page does not exist. Go back to the home page or see the projects.",
+  description,
 });
 
 export default function NotFound() {
   return (
-    <Container className="py-16">
-      <p className="font-mono text-sm text-signal">404</p>
-      <h1 className="mt-2">Page not found</h1>
-      <div className="mt-6 flex flex-wrap gap-4">
-        <Button href="/">Home</Button>
-        <Button href="/projects" variant="outline">
-          Work
-        </Button>
-      </div>
-    </Container>
+    <div className="flex flex-1 flex-col">
+      <PageHero
+        eyebrow="404"
+        title="Page not found"
+        intro={description}
+        actions={
+          <>
+            <Button href="/" size="lg">
+              Home
+            </Button>
+            <Button href="/projects" variant="outline" size="lg">
+              Work
+            </Button>
+          </>
+        }
+      />
+    </div>
   );
 }

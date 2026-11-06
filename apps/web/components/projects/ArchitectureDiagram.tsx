@@ -130,7 +130,7 @@ export function ArchitectureDiagram({
                 width={boxW}
                 height={BOX_H}
                 rx={8}
-                className="fill-surface stroke-border"
+                className="fill-bg stroke-border"
                 strokeWidth={1.5}
               />
               <text

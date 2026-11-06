@@ -246,6 +246,8 @@ Every fact comes from `content/` (`profile.ts`, `home.ts`, `projects.ts`, `roles
 5. **Credentials row (`03 — Credentials`).** Only published credentials: the degree and the HackVortex Codestorm 5 award, whose "Verify ↗" link goes to its proof. A link reads "All credentials →".
 6. **Contact band.** "Building something with LLMs, or running a tech community? Let's talk." Buttons: **Email me** (filled, mailto) and **Contact form** (outline, `/contact`).
 
+**M8.5 B update (owner prompt), applies to every inner page below:** each page opens with a shared `PageHero` (eyebrow, display h1, intro, optional meta row and actions, light backdrop; teal, ember on Leadership) and uses numbered `PageSection`s. `/projects` reuses the home case-study cards (generated architecture cover until `Project.cover` is set). Case studies: back link, eyebrow (type · period) with status pill, meta row (role, team, supervisor, period), Live/Repo/Devpost buttons and a wide architecture cover; then At a glance → Results (claims with a `stat` split shown as numerals with their evidence chips; others as a list) → Architecture → Key decisions → Hard problems → What I'd do next → Team & credit, an "On this page" list from 1280px, prev/next cards and the home contact band. `/experience` and `/leadership` use a shared `Timeline`; Leadership's h1 is its existing intro line and the presidency figures come first, as an ember stat grid. `/credentials`: degree card, award and certificate image cards (whole image, never cropped; a lone image or an award without one shows as a full-width row), specialization cards, hairline rows for courses and training. `/about`: hero with the framed portrait. `/contact`: h1 "… Let's talk.", form in a card, direct links in a card. Content: `Claim.stat` (value must appear in the claim text), every presidency figure needs one (build check); `links.kaggle` is optional and unset (owner decision). The sections below keep the original specs for history.
+
 ### Projects `/projects`
 
 - No filter chips in v1: with two projects they add nothing. Deferred until there are enough projects to filter (All · Agentic/RAG · Full-stack · ML, synced to `?tag=`).
@@ -600,7 +602,7 @@ Run the milestones in order, one Claude Code session each. After M1 and M3, brin
 | M6 | Contact API | FastAPI endpoints, security and the full pytest suite passing |
 | M7 | Contact form integration | Form wired to the API with every state; e2e tests with the API mocked |
 | M8 | SEO, accessibility and performance pass | Every target in section 9 met |
-| M8.5 | Design polish (A: foundations + home, B: inner pages) | A: fluid display type, eyebrow/section/card/stat primitives, sticky header, multi-column footer and the redesigned home, axe clean, Lighthouse ≥ 95 on `/`. B: inner pages on the same primitives |
+| M8.5 | Design polish (A: foundations + home, B: inner pages) | A: fluid display type, eyebrow/section/card/stat primitives, sticky header, multi-column footer and the redesigned home, axe clean, Lighthouse ≥ 95 on `/`. B: inner pages on the same primitives. **Done 2026-11-06** |
 | M9 | Deploy and docs | Current costs confirmed by you; deployed by you on free tiers; `API.md`, `DEPLOY.md`, `CONTENT-GUIDE.md` and the README written |
 
 **M0 — setup**

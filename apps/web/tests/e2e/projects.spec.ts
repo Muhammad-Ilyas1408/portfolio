@@ -4,19 +4,27 @@ import { expect, test } from "@playwright/test";
 const caseStudies = {
   "flood-aware": {
     title: "Flood-Aware",
+    // M8.5 B order; the page ends with the home contact band.
     headings: [
       "At a glance",
+      "Results",
       "Architecture",
       "Key decisions",
       "Hard problems",
-      "Results",
-      "Team & credit",
       "What I'd do next",
+      "Team & credit",
+      "Building something with LLMs, or running a tech community? Let's talk.",
     ],
   },
   storyweave: {
     title: "StoryWeave",
-    headings: ["At a glance", "Architecture", "Results", "Team & credit"],
+    headings: [
+      "At a glance",
+      "Results",
+      "Architecture",
+      "Team & credit",
+      "Building something with LLMs, or running a tech community? Let's talk.",
+    ],
   },
 } as const;
 
@@ -33,7 +41,8 @@ test("/projects shows one card per project", async ({ page }) => {
     page.getByRole("heading", { level: 2, name: "StoryWeave" }),
   ).toBeVisible();
   await expect(
-    page.getByRole("link", { name: "Flood-Aware case study" }),
+    // M8.5 B: the same card as Featured work on home.
+    page.getByRole("link", { name: "Read case study: Flood-Aware" }),
   ).toHaveAttribute("href", "/projects/flood-aware");
 });
 

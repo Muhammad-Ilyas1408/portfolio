@@ -61,6 +61,12 @@ const credentials = z
 const skills = z.array(SkillGroup).parse(rawSkills);
 const home = Home.parse(rawHome);
 const chapter = Chapter.parse(rawChapter);
+// M8.5 B: /leadership shows the figures as a stat grid, which only renders
+// claims with a stat split; a figure without one would silently disappear.
+for (const claim of chapter.stats) {
+  if (!claim.stat)
+    throw new Error(`Chapter figure "${claim.text}" needs a stat`);
+}
 const principles = z.array(Principle).parse(rawPrinciples);
 const dpSgdExplainer = Explainer.parse(rawDpSgdExplainer);
 

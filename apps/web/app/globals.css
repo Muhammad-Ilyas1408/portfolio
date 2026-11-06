@@ -68,6 +68,14 @@
   --text-display-2: clamp(2rem, 1.35rem + 2.2vw, 3.25rem);
   --text-display-2--line-height: 1.06;
   --text-display-2--letter-spacing: -0.025em;
+  /* M8.5 B: inner-page h1, 36px on phones, 64px on desktop. */
+  --text-display-page: clamp(2.25rem, 1.55rem + 2.9vw, 4rem);
+  --text-display-page--line-height: 1.04;
+  --text-display-page--letter-spacing: -0.03em;
+  /* M8.5 B: inner-page section h2 and large card titles, 28px to 40px. */
+  --text-display-3: clamp(1.75rem, 1.4rem + 1.2vw, 2.5rem);
+  --text-display-3--line-height: 1.1;
+  --text-display-3--letter-spacing: -0.02em;
   /* Big stat numerals. */
   --text-stat: clamp(2.25rem, 1.7rem + 2vw, 3.5rem);
   --text-stat--line-height: 1;
@@ -217,5 +225,56 @@
     ellipse 55% 70% at 0% 0%,
     color-mix(in oklab, var(--ember) 8%, transparent),
     transparent 70%
+  );
+}
+
+/* M8.5 B: the inner-page hero backdrop, a lighter hero-backdrop: a faint
+   accent glow at the top right over the dot grid. It fades in over the first
+   6rem, so nothing bright meets the sticky header's hairline, and fades out
+   at the bottom. */
+@utility page-backdrop {
+  background-image:
+    radial-gradient(
+      ellipse 55% 70% at 85% 30%,
+      color-mix(in oklab, var(--signal) 7%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      color-mix(in oklab, var(--text) 7%, transparent) 1px,
+      transparent 1px
+    );
+  background-size:
+    100% 100%,
+    24px 24px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 6rem,
+    #000 55%,
+    transparent
+  );
+}
+
+/* The same backdrop with an ember glow, for the leadership page. */
+@utility page-backdrop-ember {
+  background-image:
+    radial-gradient(
+      ellipse 55% 70% at 85% 30%,
+      color-mix(in oklab, var(--ember) 7%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      color-mix(in oklab, var(--text) 7%, transparent) 1px,
+      transparent 1px
+    );
+  background-size:
+    100% 100%,
+    24px 24px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 6rem,
+    #000 55%,
+    transparent
   );
 }

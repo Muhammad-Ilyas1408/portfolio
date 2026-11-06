@@ -1,3 +1,4 @@
+import { buttonClasses } from "@/components/ui/Button";
 import { initiativeId } from "@/content";
 import type { Initiative } from "@/content/schema";
 import { formatEventRange } from "@/lib/format";
@@ -24,34 +25,38 @@ const headings = ["Date", "Event", "Format", "Focus", "Attendance", "My role"];
 /** Shown before a cell's value only when the table is stacked as cards. */
 function CellLabel({ children }: { children: string }) {
   return (
-    <span className="font-mono text-sm text-text-muted lg:hidden">
+    <span className="font-mono text-xs tracking-wide text-text-muted lg:hidden">
       {children}:{" "}
     </span>
   );
 }
 
 const cell =
-  "max-lg:block lg:border-t lg:border-border lg:px-3 lg:py-4 lg:align-top";
+  "max-lg:block lg:border-t lg:border-border lg:px-4 lg:py-5 lg:align-top lg:first:pl-0";
 
 function EventRow({ initiative }: { initiative: Initiative }) {
   return (
     <tr
       id={initiativeId(initiative)}
-      className="scroll-mt-20 target:bg-ember-soft max-lg:grid max-lg:gap-1 max-lg:rounded-lg max-lg:border max-lg:border-border max-lg:bg-surface max-lg:p-4"
+      className="scroll-mt-24 target:bg-ember-soft max-lg:grid max-lg:gap-1.5 max-lg:border-t max-lg:border-border max-lg:py-5"
     >
-      <td className={`${cell} font-mono whitespace-nowrap text-ember`}>
+      <td
+        className={`${cell} font-mono text-xs tracking-wide whitespace-nowrap text-ember lg:pt-6`}
+      >
         {formatEventRange(initiative.start, initiative.end)}
       </td>
-      <th scope="row" className={`${cell} font-normal lg:min-w-56`}>
-        <span className="text-base font-semibold">{initiative.name}</span>
+      <th scope="row" className={`${cell} font-normal lg:w-[38%]`}>
+        <span className="text-base font-semibold text-text">
+          {initiative.name}
+        </span>
         {initiative.summary && (
-          <span className="mt-1 block text-text-muted">
+          <span className="mt-1 block max-w-[60ch] text-text-muted">
             {initiative.summary}
           </span>
         )}
         {initiative.photos.length > 0 && (
           <details className="mt-2">
-            <summary className="inline-flex min-h-11 cursor-pointer items-center rounded-md font-semibold text-ember">
+            <summary className="inline-flex min-h-11 cursor-pointer items-center rounded-md font-mono text-xs font-medium tracking-wide text-ember uppercase">
               Photos ({initiative.photos.length})
             </summary>
             <div className="mt-2 max-w-xl">
@@ -64,7 +69,7 @@ function EventRow({ initiative }: { initiative: Initiative }) {
           </details>
         )}
       </th>
-      <td className={cell}>
+      <td className={`${cell} lg:whitespace-nowrap`}>
         <CellLabel>Format</CellLabel>
         {formats[initiative.format]}
       </td>
@@ -94,18 +99,22 @@ function Table({
   initiatives: Initiative[];
 }) {
   return (
-    <table className="w-full border-collapse text-left text-sm max-lg:block">
+    <table className="w-full border-collapse text-left text-sm max-lg:block lg:border-b lg:border-border">
       <caption className={captionClassName}>{caption}</caption>
       <thead className="max-lg:hidden">
-        <tr className="font-mono text-text-muted">
+        <tr className="font-mono text-xs tracking-[0.16em] text-text-muted uppercase">
           {headings.map((heading) => (
-            <th key={heading} scope="col" className="px-3 pb-2 font-normal">
+            <th
+              key={heading}
+              scope="col"
+              className="px-4 pb-3 font-normal first:pl-0"
+            >
               {heading}
             </th>
           ))}
         </tr>
       </thead>
-      <tbody className="max-lg:grid max-lg:gap-3">
+      <tbody className="max-lg:grid max-lg:border-b max-lg:border-border">
         {initiatives.map((initiative) => (
           <EventRow key={initiativeId(initiative)} initiative={initiative} />
         ))}
@@ -129,15 +138,25 @@ export function EventsTable({ initiatives }: { initiatives: Initiative[] }) {
     <div>
       <Table
         caption="Newest first. All figures are self-reported."
-        captionClassName="mb-3 text-left font-mono text-sm text-text-muted max-lg:block"
+        captionClassName="mb-5 text-left font-mono text-xs tracking-wide text-text-muted max-lg:block"
         initiatives={shown}
       />
       {rest.length > 0 && (
-        <details id="all-events" className="mt-4 max-lg:mt-3">
-          <summary className="inline-flex min-h-11 cursor-pointer items-center rounded-md font-semibold text-ember">
+        <details id="all-events" className="group/all mt-6">
+          <summary
+            className={buttonClasses(
+              "outline",
+              "cursor-pointer list-none [&::-webkit-details-marker]:hidden",
+            )}
+          >
             Show all {initiatives.length} events
+            {/* A CSS chevron, so the summary's text stays "Show all N events". */}
+            <span
+              aria-hidden="true"
+              className="mb-1 size-2 rotate-45 border-r-2 border-b-2 border-ember transition-transform duration-150 group-open/all:mt-1.5 group-open/all:mb-0 group-open/all:rotate-[225deg]"
+            />
           </summary>
-          <div className="mt-3">
+          <div className="mt-6">
             <Table
               caption="Earlier events, newest first."
               captionClassName="sr-only"

@@ -26,11 +26,18 @@ const reviewSizes = [
   { width: 1440, height: 900 },
 ] as const;
 
+// M8.5 B: every route at both review sizes.
 for (const [name, url] of [
   ["home", "/"],
   ["styleguide", "/styleguide"],
   ["projects", "/projects"],
+  ["flood-aware", "/projects/flood-aware"],
+  ["storyweave", "/projects/storyweave"],
+  ["experience", "/experience"],
   ["leadership", "/leadership"],
+  ["credentials", "/credentials"],
+  ["about", "/about"],
+  ["not-found", "/does-not-exist"],
 ] as const) {
   for (const { width, height } of reviewSizes) {
     test(`screenshot ${name} at ${width}px`, async ({ page }) => {
@@ -43,25 +50,6 @@ for (const [name, url] of [
       });
     });
   }
-}
-
-for (const [name, url, width] of [
-  ["flood-aware", "/projects/flood-aware", 390],
-  ["flood-aware", "/projects/flood-aware", 1280],
-  ["storyweave", "/projects/storyweave", 1280],
-  ["experience", "/experience", 1280],
-  ["credentials", "/credentials", 1280],
-  ["about", "/about", 1280],
-] as const) {
-  test(`screenshot ${name} at ${width}px`, async ({ page }) => {
-    await page.setViewportSize({ width, height: 844 });
-    await page.goto(url);
-    await loadLazyImages(page);
-    await page.screenshot({
-      path: `${dir}/${name}-${width}.png`,
-      fullPage: true,
-    });
-  });
 }
 
 test("screenshot open mobile menu at 390px", async ({ page }) => {
@@ -83,55 +71,55 @@ test("screenshot open mobile menu at 390px", async ({ page }) => {
 // The contact API is mocked (see contact.spec.ts); no request leaves the page.
 const contactEndpoint = `${(process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000").replace(/\/+$/, "")}/contact`;
 
-for (const width of [390, 1280]) {
+for (const { width, height } of reviewSizes) {
   test(`screenshot contact at ${width}px`, async ({ page }) => {
-    await page.setViewportSize({ width, height: 844 });
+    await page.setViewportSize({ width, height });
     await page.goto("/contact");
     await page.screenshot({
       path: `${dir}/contact-${width}.png`,
       fullPage: true,
     });
   });
+
+  test(`screenshot contact errors at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height });
+    await page.goto("/contact");
+    await page.getByRole("button", { name: "Send message" }).click();
+    await expect(
+      page.getByRole("main").getByLabel("Name", { exact: true }),
+    ).toBeFocused();
+    await page.screenshot({
+      path: `${dir}/contact-errors-${width}.png`,
+      fullPage: true,
+    });
+  });
+
+  test(`screenshot contact success at ${width}px`, async ({ page }) => {
+    await page.route(contactEndpoint, (route) =>
+      route.fulfill({
+        status: 202,
+        headers: { "access-control-allow-origin": "*" },
+        contentType: "application/json",
+        body: JSON.stringify({ ok: true }),
+      }),
+    );
+    await page.setViewportSize({ width, height });
+    await page.goto("/contact");
+    const main = page.getByRole("main");
+    await main.getByLabel("Name", { exact: true }).fill("Ada Lovelace");
+    await main.getByLabel("Email", { exact: true }).fill("ada@example.com");
+    await main.getByLabel("Reason", { exact: true }).selectOption("job");
+    await main
+      .getByLabel("Message", { exact: true })
+      .fill("Hello, I would like to talk about an engineering role.");
+    await page.getByRole("button", { name: "Send message" }).click();
+    await expect(page.getByTestId("contact-success")).toBeFocused();
+    await page.screenshot({
+      path: `${dir}/contact-success-${width}.png`,
+      fullPage: true,
+    });
+  });
 }
-
-test("screenshot contact errors at 390px", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/contact");
-  await page.getByRole("button", { name: "Send message" }).click();
-  await expect(
-    page.getByRole("main").getByLabel("Name", { exact: true }),
-  ).toBeFocused();
-  await page.screenshot({
-    path: `${dir}/contact-errors-390.png`,
-    fullPage: true,
-  });
-});
-
-test("screenshot contact success at 1280px", async ({ page }) => {
-  await page.route(contactEndpoint, (route) =>
-    route.fulfill({
-      status: 202,
-      headers: { "access-control-allow-origin": "*" },
-      contentType: "application/json",
-      body: JSON.stringify({ ok: true }),
-    }),
-  );
-  await page.setViewportSize({ width: 1280, height: 844 });
-  await page.goto("/contact");
-  const main = page.getByRole("main");
-  await main.getByLabel("Name", { exact: true }).fill("Ada Lovelace");
-  await main.getByLabel("Email", { exact: true }).fill("ada@example.com");
-  await main.getByLabel("Reason", { exact: true }).selectOption("job");
-  await main
-    .getByLabel("Message", { exact: true })
-    .fill("Hello, I would like to talk about an engineering role.");
-  await page.getByRole("button", { name: "Send message" }).click();
-  await expect(page.getByTestId("contact-success")).toBeFocused();
-  await page.screenshot({
-    path: `${dir}/contact-success-1280.png`,
-    fullPage: true,
-  });
-});
 
 for (const [name, url] of [
   ["og-default", "/opengraph-image"],

@@ -2,12 +2,16 @@ import type { Metadata } from "next";
 
 import { ContactForm } from "@/components/contact/ContactForm";
 import { cvHref } from "@/components/layout/nav";
-import { PageHeader } from "@/components/shared/PageHeader";
+import { cardClasses } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
-import { getProfile } from "@/content";
+import { PageHero } from "@/components/ui/PageHero";
+import { getHomeContact, getProfile } from "@/content";
 import { pageMetadata } from "@/lib/seo";
 
 const profile = getProfile();
+// The home contact band's headline and line; together they are the
+// /contact intro used since M7.
+const contact = getHomeContact();
 const intro =
   "Building something with LLMs, or running a tech community? Send a message — I'll reply by email.";
 
@@ -19,77 +23,104 @@ export const metadata: Metadata = pageMetadata({
 });
 
 const linkClasses =
-  "inline-flex min-h-11 items-center gap-1 rounded-md font-semibold text-signal underline-offset-4 transition-colors duration-150 hover:underline";
+  "group/arrow inline-flex min-h-11 items-center gap-1.5 rounded-md font-semibold text-text underline-offset-4 transition-colors duration-150 hover:text-signal hover:underline";
+
+function DirectLink({
+  label,
+  href,
+  text,
+  external = false,
+  download = false,
+  mono = false,
+}: {
+  label: string;
+  href: string;
+  text: string;
+  external?: boolean;
+  download?: boolean;
+  mono?: boolean;
+}) {
+  return (
+    <li className="py-4 first:pt-0 last:pb-0">
+      <span className="block font-mono text-xs tracking-[0.16em] text-text-muted uppercase">
+        {label}
+      </span>
+      <a
+        href={href}
+        download={download || undefined}
+        {...(external && { target: "_blank", rel: "noopener noreferrer" })}
+        className={`${linkClasses} ${mono ? "font-mono text-sm font-medium break-all" : ""}`}
+      >
+        {text}
+        {external && <span className="sr-only"> (opens in a new tab)</span>}
+        <span
+          aria-hidden="true"
+          className="inline-block text-signal transition-transform duration-150 group-hover/arrow:translate-x-0.5"
+        >
+          {external ? "↗" : download ? "↓" : "→"}
+        </span>
+      </a>
+    </li>
+  );
+}
 
 export default function ContactPage() {
   const { links } = profile;
   const address = links.email.replace(/^mailto:/, "");
 
   return (
-    <Container>
-      <PageHeader label="Contact" title="Contact">
-        <p>{intro}</p>
-      </PageHeader>
+    <>
+      <PageHero
+        eyebrow="Contact"
+        title={contact.headline.text}
+        accentPhrase={contact.headline.accent}
+        intro={contact.line}
+      />
+      <Container className="py-14 md:py-20">
+        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.75fr)_minmax(0,1fr)] lg:gap-8">
+          <div className={cardClasses({ className: "min-w-0 p-6 md:p-10" })}>
+            <ContactForm email={links.email} />
+          </div>
 
-      <div className="grid gap-12 py-12 md:py-16 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-        <div className="min-w-0">
-          <ContactForm email={links.email} />
-        </div>
-
-        <aside aria-labelledby="direct-heading" className="min-w-0">
-          <h2 id="direct-heading" className="text-lg">
-            Direct links
-          </h2>
-          <ul className="mt-4 divide-y divide-border rounded-lg border border-border bg-surface px-4">
-            <li className="py-2">
-              <span className="block font-mono text-sm text-text-muted">
-                Email
-              </span>
-              <a href={links.email} className={`${linkClasses} break-all`}>
-                {address}
-              </a>
-            </li>
-            <li className="py-2">
-              <span className="block font-mono text-sm text-text-muted">
-                LinkedIn
-              </span>
-              <a
+          <aside
+            aria-labelledby="direct-heading"
+            className={cardClasses({ className: "min-w-0 p-6 md:p-8" })}
+          >
+            <h2
+              id="direct-heading"
+              className="font-display text-xl font-semibold tracking-tight"
+            >
+              Direct links
+            </h2>
+            <ul className="mt-6 divide-y divide-border border-t border-border pt-4">
+              <DirectLink
+                label="Email"
+                href={links.email}
+                text={address}
+                mono
+              />
+              <DirectLink
+                label="LinkedIn"
                 href={links.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={linkClasses}
-              >
-                LinkedIn profile
-                <span className="sr-only"> (opens in a new tab)</span>
-                <span aria-hidden="true">↗</span>
-              </a>
-            </li>
-            <li className="py-2">
-              <span className="block font-mono text-sm text-text-muted">
-                GitHub
-              </span>
-              <a
+                text="LinkedIn profile"
+                external
+              />
+              <DirectLink
+                label="GitHub"
                 href={links.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={linkClasses}
-              >
-                GitHub profile
-                <span className="sr-only"> (opens in a new tab)</span>
-                <span aria-hidden="true">↗</span>
-              </a>
-            </li>
-            <li className="py-2">
-              <span className="block font-mono text-sm text-text-muted">
-                CV
-              </span>
-              <a href={cvHref} download className={linkClasses}>
-                Download CV
-              </a>
-            </li>
-          </ul>
-        </aside>
-      </div>
-    </Container>
+                text="GitHub profile"
+                external
+              />
+              <DirectLink
+                label="CV"
+                href={cvHref}
+                text="Download CV"
+                download
+              />
+            </ul>
+          </aside>
+        </div>
+      </Container>
+    </>
   );
 }

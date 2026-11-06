@@ -54,6 +54,13 @@ export const projects: ProjectInput[] = [
       // Highlighted results show on the home card, in this order.
       {
         text: "348 backend tests passing (53 skipped) in the latest recorded run",
+        // M8.5 B: stat splits for the case-study "Results" row; each value
+        // is taken from the claim's own text (checked by the schema).
+        stat: {
+          value: "348",
+          label: "Backend tests passing",
+          detail: "53 skipped, latest recorded run",
+        },
         status: "verified",
         highlight: true,
         evidence: {
@@ -64,6 +71,11 @@ export const projects: ProjectInput[] = [
       },
       {
         text: "Production GIS warm-up takes about 2 s on Railway",
+        stat: {
+          value: "~2 s",
+          label: "Production GIS warm-up",
+          detail: "On Railway",
+        },
         status: "verified",
         highlight: true,
         evidence: {
@@ -74,6 +86,7 @@ export const projects: ProjectInput[] = [
       },
       {
         text: "7 evidence tools",
+        stat: { value: "7", label: "Evidence tools" },
         status: "verified",
         highlight: true,
         evidence: {
@@ -84,6 +97,7 @@ export const projects: ProjectInput[] = [
       },
       {
         text: "150 villages and 51 shelters",
+        stat: { value: "150", label: "Villages", detail: "And 51 shelters" },
         status: "verified",
         evidence: {
           kind: "changelog",
@@ -102,6 +116,12 @@ export const projects: ProjectInput[] = [
       },
       {
         text: "Per-request GIS collection went from about 90 s–4 min to about 30 s, by caching the parsed data at startup",
+        stat: {
+          value: "~30 s",
+          label: "Per-request GIS collection",
+          detail:
+            "From about 90 s–4 min, by caching the parsed data at startup",
+        },
         status: "verified",
         evidence: {
           kind: "changelog",
@@ -111,6 +131,12 @@ export const projects: ProjectInput[] = [
       },
       {
         text: "Regional data extraction shrank the OSM file from 147.2 MiB to 4.2 MiB and the WorldPop raster from 134.9 MiB to 2.0 MiB; local startup dropped from 5–6 min to 39 s, with analysis results bit-for-bit identical",
+        stat: {
+          value: "39 s",
+          label: "Local startup",
+          detail:
+            "From 5–6 min, after regional extraction (OSM 147.2 → 4.2 MiB, WorldPop 134.9 → 2.0 MiB); results bit-for-bit identical",
+        },
         status: "verified",
         evidence: {
           kind: "changelog",
@@ -165,6 +191,11 @@ export const projects: ProjectInput[] = [
     results: [
       {
         text: "1st place, HackVortex Codestorm 5",
+        stat: {
+          value: "1st",
+          label: "Place at HackVortex Codestorm 5",
+          detail: "Team of 4",
+        },
         status: "verified",
         evidence: {
           kind: "devpost",

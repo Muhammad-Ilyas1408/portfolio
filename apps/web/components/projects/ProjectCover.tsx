@@ -12,13 +12,17 @@ export function ProjectCover({
   project,
   steps,
   index,
+  layout = "stacked",
   className = "",
 }: {
   project: Project;
   steps: CaseStudy["architecture"]["steps"];
   index: number;
+  /** "wide": nodes in a row from 768px, for the case-study header. */
+  layout?: "stacked" | "wide";
   className?: string;
 }) {
+  const wide = layout === "wide";
   if (project.cover) {
     return (
       <div
@@ -28,7 +32,11 @@ export function ProjectCover({
           src={project.cover.src}
           alt={project.cover.alt}
           fill
-          sizes="(min-width: 1024px) 600px, 100vw"
+          sizes={
+            wide
+              ? "(min-width: 1280px) 1200px, 100vw"
+              : "(min-width: 1024px) 600px, 100vw"
+          }
           className="object-cover"
         />
       </div>
@@ -49,15 +57,32 @@ export function ProjectCover({
       </div>
 
       {shown.length > 0 && (
-        <ol className="mx-auto flex w-full max-w-xs flex-col items-stretch">
+        <ol
+          className={
+            wide
+              ? "mx-auto flex w-full max-w-xs flex-col items-stretch md:max-w-none md:flex-row md:items-stretch md:gap-10 lg:gap-14"
+              : "mx-auto flex w-full max-w-xs flex-col items-stretch"
+          }
+        >
           {shown.map((step, i) => {
             const last = i === shown.length - 1;
             return (
-              <li key={step.id} className="flex flex-col items-center">
+              <li
+                key={step.id}
+                className={`flex flex-col items-center ${
+                  wide ? "relative md:min-w-0 md:flex-1" : ""
+                }`}
+              >
+                {wide && i > 0 && (
+                  // Wide layout: equal nodes, the connector spans the gap.
+                  <span className="absolute top-1/2 right-full hidden h-px w-10 bg-border md:block lg:w-14">
+                    <span className="absolute top-1/2 left-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-signal/70" />
+                  </span>
+                )}
                 <div
                   className={`edge-highlight flex w-full items-center gap-3 rounded-lg border bg-bg/90 px-3 py-2.5 ${
-                    last ? "border-signal/60" : "border-border"
-                  }`}
+                    wide ? "md:h-full md:items-start md:py-3" : ""
+                  } ${last ? "border-signal/60" : "border-border"}`}
                 >
                   <span
                     className={`grid size-7 shrink-0 place-items-center rounded-md border font-mono text-xs ${
@@ -68,13 +93,19 @@ export function ProjectCover({
                   >
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <span className="truncate text-sm text-text">
+                  <span
+                    className={`text-sm text-text ${wide ? "truncate md:whitespace-normal md:pt-1 md:leading-snug" : "truncate"}`}
+                  >
                     {step.label}
                   </span>
                 </div>
                 {!last && (
                   // Hairline connector with a small node dot.
-                  <span className="relative h-6 w-px bg-border">
+                  <span
+                    className={`relative h-6 w-px shrink-0 bg-border ${
+                      wide ? "md:hidden" : ""
+                    }`}
+                  >
                     <span className="absolute top-1/2 left-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-signal/70" />
                   </span>
                 )}

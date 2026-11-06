@@ -5,9 +5,10 @@ const pages = {
   "/experience": { title: "Experience", headings: ["Industry", "Teaching"] },
   "/leadership": {
     title: "Leadership",
+    // M8.5 B: the presidency numbers come first, then the roles.
     headings: [
-      "Progression",
       "My presidency in numbers (2025–26)",
+      "Progression",
       "Featured initiatives",
       "All events and programmes",
       "Recognition",

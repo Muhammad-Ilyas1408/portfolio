@@ -13,8 +13,12 @@ import { DisplaySection } from "@/components/ui/DisplaySection";
 import { Divider } from "@/components/ui/Divider";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Section } from "@/components/ui/Section";
+import { PageHero } from "@/components/ui/PageHero";
+import { PageSection } from "@/components/ui/PageSection";
 import { Stat } from "@/components/ui/Stat";
-import { getCaseStudy, getProfile, getProject } from "@/content";
+import { StatGrid } from "@/components/ui/StatGrid";
+import { Timeline } from "@/components/ui/Timeline";
+import { getCaseStudy, getChapter, getProfile, getProject } from "@/content";
 
 export const metadata: Metadata = {
   title: `Styleguide — ${getProfile().name}`,
@@ -52,6 +56,14 @@ const typeScale = [
 const displayScale = [
   { size: "display-1 · 40–76px", className: "text-display-1" },
   { size: "display-2 · 32–52px", className: "text-display-2" },
+  {
+    size: "display-page · 36–64px (inner-page h1)",
+    className: "text-display-page",
+  },
+  {
+    size: "display-3 · 28–40px (inner-page h2, card titles)",
+    className: "text-display-3",
+  },
   { size: "stat · 36–56px", className: "text-stat" },
 ];
 
@@ -222,6 +234,22 @@ export default function Styleguide() {
             />
             <p className="relative p-4 font-mono text-sm">hero-backdrop</p>
           </div>
+          <div className="relative h-40 overflow-hidden rounded-xl border border-border">
+            <div
+              aria-hidden="true"
+              className="page-backdrop absolute inset-0"
+            />
+            <p className="relative p-4 font-mono text-sm">page-backdrop</p>
+          </div>
+          <div className="relative h-40 overflow-hidden rounded-xl border border-border">
+            <div
+              aria-hidden="true"
+              className="page-backdrop-ember absolute inset-0"
+            />
+            <p className="relative p-4 font-mono text-sm">
+              page-backdrop-ember
+            </p>
+          </div>
           <div className="glow-signal h-40 rounded-xl border border-border p-4 font-mono text-sm">
             glow-signal
           </div>
@@ -256,6 +284,75 @@ export default function Styleguide() {
       >
         <Card>Section content</Card>
       </DisplaySection>
+
+      <Section label="Components" heading={<h2>PageHero</h2>}>
+        <div className="-mx-5 overflow-hidden rounded-xl border border-border sm:-mx-6 lg:mx-0">
+          <PageHero
+            headingLevel="h3"
+            eyebrow="Eyebrow"
+            title="Inner-page hero with an accent phrase"
+            accentPhrase="accent phrase"
+            intro="Eyebrow, display title, intro, an optional meta row and actions, over a light backdrop that fades in below the header."
+            meta={[
+              { label: "Meta", value: "Small mono labels" },
+              { label: "Period", value: "Jun – Aug 2026" },
+            ]}
+            actions={
+              <>
+                <Button href="/styleguide" size="lg">
+                  Primary
+                </Button>
+                <Button href="/styleguide" variant="outline" size="lg">
+                  Secondary
+                </Button>
+              </>
+            }
+          />
+        </div>
+      </Section>
+
+      <PageSection
+        id="page-section-sample"
+        number="01"
+        title="PageSection: numbered hairline and display h2"
+        intro="Used for every section of an inner page."
+      >
+        <Card>Section content</Card>
+      </PageSection>
+
+      <Section label="Components" heading={<h2>Timeline</h2>}>
+        <div className="grid gap-12">
+          {(["signal", "ember"] as const).map((accent) => (
+            <Timeline
+              key={accent}
+              accent={accent}
+              label={`Sample ${accent} timeline`}
+              items={[
+                {
+                  key: "a",
+                  date: "Oct 2025 – Sep 2026",
+                  current: true,
+                  children: <Card>Newest item ({accent})</Card>,
+                },
+                {
+                  key: "b",
+                  date: "Dec 2024 – Sep 2025",
+                  children: <Card>Earlier item</Card>,
+                },
+              ]}
+            />
+          ))}
+        </div>
+      </Section>
+
+      <Section label="Components" heading={<h2>StatGrid</h2>}>
+        <StatGrid
+          claims={getChapter().stats}
+          accent="ember"
+          columns={5}
+          label="Sample stat grid"
+        />
+      </Section>
 
       <Section label="Components" heading={<h2>Section</h2>}>
         <Section label="01 — Signal" heading={<h3>Signal accent</h3>} />

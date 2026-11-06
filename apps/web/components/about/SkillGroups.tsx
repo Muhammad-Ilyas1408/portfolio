@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { cardClasses } from "@/components/ui/Card";
 import type { SkillGroup } from "@/content/schema";
 
 export type UsedInTarget = { label: string; href: string };
@@ -17,20 +18,20 @@ export function SkillGroups({
   if (visible.length === 0) return null;
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {visible.map((group, index) => (
         <section
           key={group.name}
           aria-labelledby={`skills-group-${index}`}
-          className="rounded-lg border border-border bg-surface p-5"
+          className={cardClasses({ className: "p-6 md:p-7" })}
         >
           <h3
             id={`skills-group-${index}`}
-            className="font-mono text-sm font-medium text-signal"
+            className="border-b border-border pb-4 font-mono text-xs font-medium tracking-[0.16em] text-signal uppercase"
           >
             {group.name}
           </h3>
-          <ul className="mt-3 grid gap-2">
+          <ul className="mt-4 grid gap-3">
             {group.skills.map((skill) => {
               const links = skill.usedIn.flatMap((id) =>
                 targets[id] ? [targets[id]] : [],

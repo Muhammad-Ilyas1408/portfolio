@@ -313,17 +313,20 @@ describe("pages", () => {
   it("/leadership shows its five sections in order", () => {
     render(<LeadershipPage />);
 
+    // M8.5 B: the presidency numbers come first, then the roles.
     expect(h2s()).toEqual([
-      "Progression",
       "My presidency in numbers (2025–26)",
+      "Progression",
       "Featured initiatives",
       "All events and programmes",
       "Recognition",
     ]);
+    // M8.5 B: the intro line is now the h1, with its accent phrase.
     expect(
-      screen.getByText(
-        "From a GDSC team member to leading the Computing Students Society.",
-      ),
+      screen.getByRole("heading", {
+        level: 1,
+        name: "From a GDSC team member to leading the Computing Students Society.",
+      }),
     ).toBeInTheDocument();
     expect(
       screen.getByText(

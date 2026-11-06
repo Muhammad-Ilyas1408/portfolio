@@ -20,7 +20,6 @@ export const profile: ProfileInput = {
     email: "mailto:muhammadilyas.ai.eng@gmail.com",
     github: "https://github.com/Muhammad-Ilyas1408",
     linkedin: "https://www.linkedin.com/in/muhammad-ilyas-ds/",
-    kaggle: "https://www.kaggle.com/muhammadilyasm",
     source: "https://github.com/Muhammad-Ilyas1408/portfolio",
   },
 };

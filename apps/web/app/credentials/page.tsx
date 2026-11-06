@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
 
 import {
-  CredentialItem,
+  AwardCard,
+  CredentialRow,
   DegreeItem,
+  SpecializationCard,
 } from "@/components/credentials/CredentialItem";
-import { PageHeader } from "@/components/shared/PageHeader";
 import { Container } from "@/components/ui/Container";
-import { Section } from "@/components/ui/Section";
+import { PageHero } from "@/components/ui/PageHero";
+import { PageSection, sectionNumber } from "@/components/ui/PageSection";
 import { getCredentialGroups, getProfile, getProject } from "@/content";
+import type { Credential } from "@/content/schema";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -17,49 +20,98 @@ export const metadata: Metadata = pageMetadata({
   path: "/credentials",
 });
 
-export default function CredentialsPage() {
-  const groups = getCredentialGroups();
-  const fyp = getProject("flood-aware");
+const fyp = getProject("flood-aware");
 
+/** Each group's layout: degree card, image cards, prominent cards or rows. */
+function GroupItems({ items }: { items: Credential[] }) {
+  switch (items[0]?.kind) {
+    case "degree":
+      return (
+        <ul className="grid gap-4">
+          {items.map((credential) => (
+            <li key={credential.name}>
+              <DegreeItem
+                credential={credential}
+                fyp={
+                  fyp && {
+                    title: fyp.title,
+                    href: `/projects/${fyp.slug}`,
+                    supervisor: fyp.supervisor,
+                  }
+                }
+              />
+            </li>
+          ))}
+        </ul>
+      );
+    case "award":
+    case "certificate": {
+      // Photos in a grid of image cards; a lone photo, and items without
+      // one, as full-width rows (so no empty cells or stand-in images).
+      const withPhoto = items.filter((item) => item.photos?.[0]);
+      const rows =
+        withPhoto.length === 1
+          ? items
+          : items.filter((item) => !item.photos?.[0]);
+      const grid = withPhoto.length === 1 ? [] : withPhoto;
+      return (
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {grid.map((credential) => (
+            <li key={credential.name}>
+              <AwardCard credential={credential} />
+            </li>
+          ))}
+          {rows.map((credential) => (
+            <li key={credential.name} className="sm:col-span-full">
+              <AwardCard credential={credential} layout="row" />
+            </li>
+          ))}
+        </ul>
+      );
+    }
+    case "specialization":
+      return (
+        <ul className="grid gap-4 md:grid-cols-3">
+          {items.map((credential) => (
+            <li key={credential.name}>
+              <SpecializationCard credential={credential} />
+            </li>
+          ))}
+        </ul>
+      );
+    default:
+      return (
+        <ul className="divide-y divide-border border-y border-border">
+          {items.map((credential) => (
+            <li key={credential.name}>
+              <CredentialRow credential={credential} />
+            </li>
+          ))}
+        </ul>
+      );
+  }
+}
+
+export default function CredentialsPage() {
   return (
-    <Container>
-      <PageHeader label="Credentials" title="Credentials">
-        <p className="text-base text-text-muted">
-          Certificates link to their issuer&apos;s verification page; the degree
-          is shown with my final-year thesis.
-        </p>
-      </PageHeader>
-      {groups.map((group, index) => (
-        <Section
-          key={group.id}
-          id={group.id}
-          className="scroll-mt-20"
-          label={String(index + 1).padStart(2, "0")}
-          aria-labelledby={`${group.id}-heading`}
-          heading={<h2 id={`${group.id}-heading`}>{group.title}</h2>}
-        >
-          <ul className="grid gap-4 lg:grid-cols-2">
-            {group.items.map((credential) => (
-              <li key={credential.name}>
-                {credential.kind === "degree" ? (
-                  <DegreeItem
-                    credential={credential}
-                    fyp={
-                      fyp && {
-                        title: fyp.title,
-                        href: `/projects/${fyp.slug}`,
-                        supervisor: fyp.supervisor,
-                      }
-                    }
-                  />
-                ) : (
-                  <CredentialItem credential={credential} />
-                )}
-              </li>
-            ))}
-          </ul>
-        </Section>
-      ))}
-    </Container>
+    <>
+      <PageHero
+        eyebrow="Education · Awards · Certificates"
+        title="Credentials"
+        intro="Certificates link to their issuer's verification page; the degree is shown with my final-year thesis."
+      />
+      <Container>
+        {getCredentialGroups().map((group, index) => (
+          <PageSection
+            key={group.id}
+            id={group.id}
+            number={sectionNumber(index)}
+            title={group.title}
+          >
+            <GroupItems items={group.items} />
+          </PageSection>
+        ))}
+      </Container>
+    </>
   );
 }

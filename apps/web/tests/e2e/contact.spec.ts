@@ -75,8 +75,12 @@ test.describe("/contact", () => {
       "href",
       /\/contact$/,
     );
+    // M8.5 B: the intro is now the h1 ("… Let's talk.") and its line.
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "Building something with LLMs, or running a tech community? Let's talk.",
+    );
     await expect(page.getByRole("main")).toContainText(
-      "Building something with LLMs, or running a tech community? Send a message — I'll reply by email.",
+      "Send a message — I'll reply by email.",
     );
 
     const aside = page.getByRole("complementary", { name: "Direct links" });

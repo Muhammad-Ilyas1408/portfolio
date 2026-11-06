@@ -25,7 +25,9 @@ type Status =
   | { kind: "error"; messages: string[]; mailto: boolean };
 
 const fieldClasses =
-  "mt-2 block w-full min-h-11 rounded-md border border-border bg-surface px-3 py-2 text-base text-text transition-colors duration-150 placeholder:text-text-muted hover:border-text-muted aria-invalid:border-danger disabled:cursor-not-allowed disabled:opacity-60";
+  "mt-2 block w-full min-h-12 rounded-lg border border-border bg-bg px-4 py-2.5 text-base text-text transition-colors duration-150 placeholder:text-text-muted hover:border-text-muted/60 focus-visible:border-signal aria-invalid:border-danger aria-invalid:bg-danger-soft disabled:cursor-not-allowed disabled:opacity-60";
+
+const labelClasses = "text-sm font-semibold text-text";
 
 const defaultValues = { name: "", email: "", message: "", website: "" };
 
@@ -154,7 +156,7 @@ export function ContactForm({
         {status.kind === "error" && (
           <div
             data-testid="contact-status"
-            className="mb-6 rounded-lg border border-danger bg-danger-soft p-4 text-text"
+            className="mb-8 rounded-lg border border-danger/60 bg-danger-soft p-5 text-text"
           >
             {status.messages.map((text) => (
               <p key={text}>{text}</p>
@@ -178,10 +180,18 @@ export function ContactForm({
           ref={successRef}
           tabIndex={-1}
           data-testid="contact-success"
-          className="rounded-lg border border-signal bg-signal-soft p-6 outline-none focus-visible:outline-2"
+          className="rounded-lg border border-signal/50 bg-signal-soft p-6 outline-none focus-visible:outline-2 md:p-8"
         >
-          <h2 className="text-xl">Message sent</h2>
-          <p className="mt-2">{statusMessages.success}</p>
+          <span
+            aria-hidden="true"
+            className="grid size-10 place-items-center rounded-full border border-signal/50 font-mono text-signal"
+          >
+            ✓
+          </span>
+          <h2 className="mt-5 font-display text-display-3 font-bold">
+            Message sent
+          </h2>
+          <p className="mt-3 text-lg text-text/90">{statusMessages.success}</p>
           <button
             type="button"
             onClick={sendAnother}
@@ -207,7 +217,7 @@ export function ContactForm({
           </h2>
 
           {!enabled && (
-            <div className="mb-6 rounded-lg border border-danger bg-danger-soft p-4">
+            <div className="mb-8 rounded-lg border border-danger/60 bg-danger-soft p-5">
               <p>{statusMessages.unavailable}</p>
               <p className="mt-2">
                 <a
@@ -223,7 +233,7 @@ export function ContactForm({
           <fieldset disabled={!enabled} className="m-0 min-w-0 border-0 p-0">
             <div className="grid gap-6 md:grid-cols-2">
               <div>
-                <label htmlFor={`${id}-name`} className="font-semibold">
+                <label htmlFor={`${id}-name`} className={labelClasses}>
                   Name
                 </label>
                 <input
@@ -242,7 +252,7 @@ export function ContactForm({
               </div>
 
               <div>
-                <label htmlFor={`${id}-email`} className="font-semibold">
+                <label htmlFor={`${id}-email`} className={labelClasses}>
                   Email
                 </label>
                 <input
@@ -265,7 +275,7 @@ export function ContactForm({
             </div>
 
             <div className="mt-6">
-              <label htmlFor={`${id}-reason`} className="font-semibold">
+              <label htmlFor={`${id}-reason`} className={labelClasses}>
                 Reason
               </label>
               <select
@@ -294,7 +304,7 @@ export function ContactForm({
             </div>
 
             <div className="mt-6">
-              <label htmlFor={`${id}-message`} className="font-semibold">
+              <label htmlFor={`${id}-message`} className={labelClasses}>
                 Message
               </label>
               <textarea
@@ -344,7 +354,8 @@ export function ContactForm({
               disabled={sending || !enabled}
               className={buttonClasses(
                 "filled",
-                "mt-8 gap-2 disabled:cursor-not-allowed disabled:opacity-70",
+                "mt-8 w-full gap-2 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto",
+                "lg",
               )}
             >
               {sending && (
@@ -365,8 +376,14 @@ export function ContactForm({
 function FieldError({ id, message }: { id: string; message?: string }) {
   if (!message) return null;
   return (
-    <p id={id} className="mt-1 text-sm text-danger">
-      {message}
+    <p id={id} className="mt-2 flex items-start gap-2 text-sm text-text">
+      {/* The icon is decorative (CSS content, not text); the message carries
+          the error, so it never relies on color alone. */}
+      <span
+        aria-hidden="true"
+        className="mt-0.5 grid size-4 shrink-0 place-items-center rounded-full bg-danger font-mono text-[0.625rem] leading-none font-bold text-bg before:content-['!']"
+      />
+      <span className="text-danger">{message}</span>
     </p>
   );
 }

@@ -8,12 +8,13 @@ import {
 } from "@/components/leadership/FeaturedInitiatives";
 import { RecognitionStrip } from "@/components/leadership/RecognitionStrip";
 import { Timeline } from "@/components/leadership/Timeline";
-import { PageHeader } from "@/components/shared/PageHeader";
 import { Container } from "@/components/ui/Container";
-import { Section } from "@/components/ui/Section";
+import { PageHero } from "@/components/ui/PageHero";
+import { PageSection, sectionNumber } from "@/components/ui/PageSection";
 import {
   getChapter,
   getCommunityRoles,
+  getHomeLeadership,
   getInitiativeByName,
   getInitiatives,
   getProfile,
@@ -48,17 +49,22 @@ export default function LeadershipPage() {
     (credential) => credential.name === recognitionAward,
   );
 
-  // Sections are numbered in the order they render.
+  const chapter = getChapter();
+  const { headline } = getHomeLeadership();
+
+  // Sections are numbered in the order they render (M8.5 B: the numbers
+  // first, then the roles).
   const sections = [
+    {
+      id: "chapter",
+      title: chapter.title,
+      intro: chapter.intro,
+      body: <ChapterStats chapter={chapter} />,
+    },
     roles.length > 0 && {
       id: "progression",
       title: "Progression",
       body: <Timeline roles={roles} />,
-    },
-    {
-      id: "chapter",
-      title: getChapter().title,
-      body: <ChapterStats chapter={getChapter()} />,
     },
     (lead || bootcamps.length > 0) && {
       id: "featured",
@@ -89,25 +95,27 @@ export default function LeadershipPage() {
   ].filter((section) => !!section);
 
   return (
-    <Container>
-      <PageHeader label="Leadership" title="Leadership" accent="ember">
-        <p>
-          From a GDSC team member to leading the Computing Students Society.
-        </p>
-      </PageHeader>
-      {sections.map((section, index) => (
-        <Section
-          key={section.id}
-          id={section.id}
-          accent="ember"
-          className="scroll-mt-20"
-          label={String(index + 1).padStart(2, "0")}
-          aria-labelledby={`${section.id}-heading`}
-          heading={<h2 id={`${section.id}-heading`}>{section.title}</h2>}
-        >
-          {section.body}
-        </Section>
-      ))}
-    </Container>
+    <>
+      <PageHero
+        eyebrow="Leadership & community"
+        accent="ember"
+        title={headline.text}
+        accentPhrase={headline.accent}
+      />
+      <Container>
+        {sections.map((section, index) => (
+          <PageSection
+            key={section.id}
+            id={section.id}
+            accent="ember"
+            number={sectionNumber(index)}
+            title={section.title}
+            intro={"intro" in section ? section.intro : undefined}
+          >
+            {section.body}
+          </PageSection>
+        ))}
+      </Container>
+    </>
   );
 }

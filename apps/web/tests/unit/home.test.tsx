@@ -2,11 +2,10 @@ import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import Home from "@/app/page";
-import { projectEyebrow } from "@/components/home/FeaturedWork";
+import { projectEyebrow } from "@/components/projects/CaseStudyCard";
 import { headlineTags, Hero } from "@/components/home/Hero";
 import { splitAwardName } from "@/components/home/Recognition";
 import { StatsRow } from "@/components/home/StatsRow";
-import { homeResults } from "@/components/projects/ProjectCard";
 import { ProjectCover } from "@/components/projects/ProjectCover";
 import { AccentText } from "@/components/ui/AccentText";
 import {
@@ -27,7 +26,7 @@ import {
   getRoles,
   getWorkedWith,
 } from "@/content";
-import { HomeStat } from "@/content/schema";
+import { HomeStat, StatClaim, statInText } from "@/content/schema";
 import {
   formatEventRange,
   formatMonthRange,
@@ -302,27 +301,51 @@ describe("project cover", () => {
   });
 });
 
-describe("homeResults", () => {
-  it("shows Flood-Aware's three highlighted results, in order", () => {
-    expect(homeResults(getProject("flood-aware")!).map((r) => r.text)).toEqual([
-      "348 backend tests passing (53 skipped) in the latest recorded run",
-      "Production GIS warm-up takes about 2 s on Railway",
-      "7 evidence tools",
+describe("stat splits (M8.5 B)", () => {
+  it("takes every case-study and presidency stat value from its claim's text", () => {
+    const claims = [
+      ...getProjects().flatMap((project) => project.results),
+      ...getChapter().stats,
+    ];
+    for (const claim of claims) {
+      if (!claim.stat) continue;
+      expect(statInText(claim.stat.value, claim.text), claim.text).toBe(true);
+    }
+  });
+
+  it("splits Flood-Aware's results into six numbers and keeps the rest", () => {
+    const results = getProject("flood-aware")!.results;
+    expect(results.flatMap((r) => (r.stat ? [r.stat.value] : []))).toEqual([
+      "348",
+      "~2 s",
+      "7",
+      "150",
+      "~30 s",
+      "39 s",
+    ]);
+    expect(results.filter((r) => !r.stat).map((r) => r.text)).toEqual([
+      "Golden-set evaluation with real API calls",
     ]);
   });
 
-  it("falls back to the first 3 verified results when none are highlighted", () => {
-    const project = getProject("flood-aware")!;
-    const results = [
-      { text: "Self", status: "self-reported" as const },
-      ...project.results.map((result) => ({ ...result, highlight: undefined })),
-    ];
-    expect(homeResults({ ...project, results }).map((r) => r.text)).toEqual(
-      project.results
-        .filter((r) => r.status === "verified")
-        .slice(0, 3)
-        .map((r) => r.text),
-    );
+  it("gives every presidency figure a stat", () => {
+    expect(getChapter().stats.map((claim) => claim.stat?.value)).toEqual([
+      "18",
+      "2,200+",
+      "14",
+      "4",
+      "~300",
+    ]);
+  });
+
+  it("rejects a stat whose value is not in its claim", () => {
+    expect(
+      StatClaim.safeParse({
+        text: "7 evidence tools",
+        status: "self-reported",
+        stat: { value: "8", label: "Evidence tools" },
+      }).success,
+    ).toBe(false);
   });
 });
 

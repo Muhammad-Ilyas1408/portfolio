@@ -20,16 +20,44 @@ export const chapter: ChapterInput = {
   stats: [
     {
       text: "18 events and programmes (11 online, 7 on campus)",
+      // M8.5 B: stat splits; each value comes from the claim's own text.
+      stat: {
+        value: "18",
+        label: "Events and programmes",
+        detail: "11 online · 7 on campus",
+      },
       status: "self-reported",
     },
-    { text: "2,200+ total attendances (cumulative)", status: "self-reported" },
-    { text: "14 guest speakers", status: "self-reported" },
+    {
+      text: "2,200+ total attendances (cumulative)",
+      stat: {
+        value: "2,200+",
+        label: "Total attendances",
+        detail: "Cumulative",
+      },
+      status: "self-reported",
+    },
+    {
+      text: "14 guest speakers",
+      stat: { value: "14", label: "Guest speakers" },
+      status: "self-reported",
+    },
     {
       text: "4 partner organizations: Supabase Peshawar, TechKhwa, SMIT and SheTech",
+      stat: {
+        value: "4",
+        label: "Partner organizations",
+        detail: "Supabase Peshawar, TechKhwa, SMIT and SheTech",
+      },
       status: "self-reported",
     },
     {
       text: "~300 freshers reached through class-to-class visits",
+      stat: {
+        value: "~300",
+        label: "Freshers reached",
+        detail: "Through class-to-class visits",
+      },
       status: "self-reported",
     },
   ],

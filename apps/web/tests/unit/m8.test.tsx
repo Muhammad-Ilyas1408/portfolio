@@ -185,12 +185,9 @@ describe("JSON-LD", () => {
         "@type": "CollegeOrUniversity",
         name: "University of Peshawar",
       },
-      sameAs: [
-        profile.links.github,
-        profile.links.linkedin,
-        profile.links.kaggle,
-      ],
+      sameAs: [profile.links.github, profile.links.linkedin],
     });
+    expect(JSON.stringify(person)).not.toMatch(/kaggle/i);
     expect(person.email).not.toMatch(/^mailto:/);
   });
 

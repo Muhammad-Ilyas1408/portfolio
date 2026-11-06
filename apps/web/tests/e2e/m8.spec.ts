@@ -207,7 +207,8 @@ test.describe("JSON-LD", () => {
       jobTitle: "AI/ML Engineer",
       alumniOf: { name: "University of Peshawar" },
     });
-    expect(person.sameAs).toHaveLength(3);
+    // GitHub and LinkedIn; Kaggle was removed (owner decision, M8.5 B).
+    expect(person.sameAs).toHaveLength(2);
   });
 
   test("case studies add a CreativeWork that references the Person", async ({

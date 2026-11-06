@@ -2,31 +2,36 @@ import type { Metadata } from "next";
 
 import { InternshipCard } from "@/components/experience/InternshipCard";
 import { TeachingCard } from "@/components/experience/TeachingCard";
-import { PageHeader } from "@/components/shared/PageHeader";
 import { Container } from "@/components/ui/Container";
-import { Section } from "@/components/ui/Section";
+import { PageHero } from "@/components/ui/PageHero";
+import { PageSection, sectionNumber } from "@/components/ui/PageSection";
+import { Timeline } from "@/components/ui/Timeline";
 import {
   getDpSgdExplainer,
   getInitiativeByName,
   getInternship,
   getProfile,
 } from "@/content";
+import { formatEventRange, formatMonthRange } from "@/lib/format";
 import { pageMetadata } from "@/lib/seo";
+
+// The page's existing description doubles as its intro.
+const description =
+  "AI/ML engineering internship in LLM fine-tuning and DP-SGD, and teaching two AI bootcamps.";
 
 export const metadata: Metadata = pageMetadata({
   title: `Experience — ${getProfile().name}`,
-  description:
-    "AI/ML engineering internship in LLM fine-tuning and DP-SGD, and teaching two AI bootcamps.",
+  description,
   path: "/experience",
 });
 
-// The bootcamps taught, oldest first, with the title shown on this page.
+// The bootcamps taught, newest first, with the title shown on this page.
 const teaching = [
-  { name: "CSS AI Bootcamp 2025" },
   {
     name: "CSS Summer Bootcamp 2026 (3 tracks)",
     title: "CSS Summer Bootcamp 2026 — AI & Data Science track",
   },
+  { name: "CSS AI Bootcamp 2025" },
 ];
 
 export default function ExperiencePage() {
@@ -36,37 +41,65 @@ export default function ExperiencePage() {
     return initiative ? [{ initiative, title }] : [];
   });
 
+  const sections = [
+    internship && {
+      id: "industry",
+      title: "Industry",
+      body: (
+        <Timeline
+          label="Industry roles"
+          items={[
+            {
+              key: internship.title,
+              date: formatMonthRange(internship.start, internship.end),
+              current: true,
+              children: (
+                <InternshipCard
+                  role={internship}
+                  explainer={getDpSgdExplainer()}
+                />
+              ),
+            },
+          ]}
+        />
+      ),
+    },
+    bootcamps.length > 0 && {
+      id: "teaching",
+      title: "Teaching",
+      body: (
+        <Timeline
+          label="Bootcamps taught, newest first"
+          items={bootcamps.map(({ initiative, title }, index) => ({
+            key: initiative.name,
+            date: formatEventRange(initiative.start, initiative.end),
+            current: index === 0,
+            children: <TeachingCard initiative={initiative} title={title} />,
+          }))}
+        />
+      ),
+    },
+  ].filter((section) => !!section);
+
   return (
-    <Container>
-      <PageHeader label="Experience" title="Experience" />
-      {internship && (
-        <Section
-          id="industry"
-          label="01"
-          aria-labelledby="industry-heading"
-          heading={<h2 id="industry-heading">Industry</h2>}
-        >
-          <InternshipCard role={internship} explainer={getDpSgdExplainer()} />
-        </Section>
-      )}
-      {bootcamps.length > 0 && (
-        <Section
-          id="teaching"
-          label={internship ? "02" : "01"}
-          aria-labelledby="teaching-heading"
-          heading={<h2 id="teaching-heading">Teaching</h2>}
-        >
-          <div className="grid gap-6 md:grid-cols-2">
-            {bootcamps.map(({ initiative, title }) => (
-              <TeachingCard
-                key={initiative.name}
-                initiative={initiative}
-                title={title}
-              />
-            ))}
-          </div>
-        </Section>
-      )}
-    </Container>
+    <>
+      <PageHero
+        eyebrow="Industry · Teaching"
+        title="Experience"
+        intro={description}
+      />
+      <Container>
+        {sections.map((section, index) => (
+          <PageSection
+            key={section.id}
+            id={section.id}
+            number={sectionNumber(index)}
+            title={section.title}
+          >
+            {section.body}
+          </PageSection>
+        ))}
+      </Container>
+    </>
   );
 }
