@@ -6,6 +6,8 @@
   --bg: #0b0f14;
   --surface: #11161d;
   --surface-raised: #171d26;
+  /* M8.5: the warm surface behind the home leadership band. */
+  --surface-warm: #15130f;
   --border: #232b36;
   --text: #e6eaf0;
   --text-muted: #8a96a6;
@@ -23,6 +25,7 @@
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-surface-raised: var(--surface-raised);
+  --color-surface-warm: var(--surface-warm);
   --color-border: var(--border);
   --color-text: var(--text);
   --color-text-muted: var(--text-muted);
@@ -39,9 +42,12 @@
   --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 }
 
-/* Type scale: 14 / 17 / 20 / 28 / 40 / 64 px, in rem so browser font-size settings apply. */
+/* Type scale: 14 / 17 / 20 / 28 / 40 / 64 px, in rem so browser font-size settings apply.
+   M8.5 adds xs (13px eyebrows), fluid display sizes and the stat numeral. */
 @theme {
   --text-*: initial;
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.4;
   --text-sm: 0.875rem;
   --text-sm--line-height: 1.5;
   --text-base: 1.0625rem;
@@ -54,21 +60,108 @@
   --text-2xl--line-height: 1.15;
   --text-3xl: 4rem;
   --text-3xl--line-height: 1.05;
+  /* Hero h1: 40px at 390px wide, 76px from about 1300px. */
+  --text-display-1: clamp(2.5rem, 1.6rem + 3.8vw, 4.75rem);
+  --text-display-1--line-height: 1.02;
+  --text-display-1--letter-spacing: -0.03em;
+  /* Section h2: 32px on phones, 52px on desktop. */
+  --text-display-2: clamp(2rem, 1.35rem + 2.2vw, 3.25rem);
+  --text-display-2--line-height: 1.06;
+  --text-display-2--letter-spacing: -0.025em;
+  /* Big stat numerals. */
+  --text-stat: clamp(2.25rem, 1.7rem + 2vw, 3.5rem);
+  --text-stat--line-height: 1;
+  --text-stat--letter-spacing: -0.03em;
 }
 
-/* Faint engineering-paper dot grid, used behind the hero only. */
+/* Faint engineering-paper dot grid. */
 @utility dot-grid {
   background-image: radial-gradient(var(--border) 1px, transparent 1px);
   background-size: 24px 24px;
   background-position: center top;
 }
 
+/* The hero's one static decorative layer: a soft signal glow over the dot
+   grid, faded out at the edges. Tokens at very low opacity, no images.
+   M8.5 follow-up: the second glow, centred on the hero's top edge under the
+   logo, was removed; it showed as a teal smear on the header's hairline. */
+@utility hero-backdrop {
+  background-image:
+    radial-gradient(
+      ellipse 60% 55% at 72% 38%,
+      color-mix(in oklab, var(--signal) 9%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      color-mix(in oklab, var(--text) 9%, transparent) 1px,
+      transparent 1px
+    );
+  background-size:
+    100% 100%,
+    24px 24px;
+  /* Fades in below the header and out at the bottom, so nothing bright meets
+     the header's hairline (the sticky header's backdrop blur samples a few
+     pixels past its own box). */
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 7rem,
+    #000 60%,
+    transparent
+  );
+}
+
+/* The CTA band's glow. */
+@utility glow-signal {
+  background-image: radial-gradient(
+    ellipse 70% 90% at 50% 120%,
+    color-mix(in oklab, var(--signal) 14%, transparent),
+    transparent 70%
+  );
+}
+
+/* Typographic project cover: a token gradient plus the faint grid. */
+@utility cover-surface {
+  background-image:
+    radial-gradient(
+      circle at 85% 0%,
+      color-mix(in oklab, var(--signal) 16%, transparent),
+      transparent 55%
+    ),
+    linear-gradient(
+      color-mix(in oklab, var(--text) 4%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--text) 4%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(160deg, var(--surface-raised), var(--bg));
+  background-size:
+    100% 100%,
+    32px 32px,
+    32px 32px,
+    100% 100%;
+}
+
+/* The subtle top-edge highlight on cards. */
+@utility edge-highlight {
+  box-shadow: inset 0 1px 0 0 color-mix(in oklab, var(--text) 6%, transparent);
+}
+
 @layer base {
+  html {
+    /* Anchored sections clear the sticky header. */
+    scroll-padding-top: 5rem;
+  }
+
   body {
     background: var(--bg);
     color: var(--text);
     font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-    font-size: var(--text-base);
+    /* 17px on phones, 18px on desktop. */
+    font-size: clamp(1.0625rem, 1rem + 0.2vw, 1.125rem);
     line-height: var(--text-base--line-height);
   }
 
@@ -107,4 +200,22 @@
       transition: none !important;
     }
   }
+}
+
+/* The soft glow behind the hero portrait frame. */
+@utility portrait-glow {
+  background-image: radial-gradient(
+    closest-side,
+    color-mix(in oklab, var(--signal) 14%, transparent),
+    transparent
+  );
+}
+
+/* The leadership band's warm glow. */
+@utility ember-glow {
+  background-image: radial-gradient(
+    ellipse 55% 70% at 0% 0%,
+    color-mix(in oklab, var(--ember) 8%, transparent),
+    transparent 70%
+  );
 }

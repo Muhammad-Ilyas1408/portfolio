@@ -1,23 +1,50 @@
+import { AccentText } from "@/components/ui/AccentText";
 import { Button } from "@/components/ui/Button";
+import { Container } from "@/components/ui/Container";
+import { Eyebrow } from "@/components/ui/Eyebrow";
+import type { Home } from "@/content/schema";
 
-export function ContactBand({ email }: { email: string }) {
+/** The final CTA band, on a signal glow. */
+export function ContactBand({
+  contact,
+  email,
+}: {
+  contact: Home["contact"];
+  email: string;
+}) {
+  const address = email.replace(/^mailto:/, "");
+
   return (
     <section
       aria-labelledby="contact-heading"
-      className="my-12 rounded-lg border border-border bg-surface px-6 py-10 md:my-16 md:px-10"
+      className="glow-signal relative border-t border-border py-20 md:py-28 lg:py-32"
     >
-      <h2 id="contact-heading" className="max-w-[28ch]">
-        Building something with LLMs, or running a tech community? Let&apos;s
-        talk.
-      </h2>
-      <div className="mt-6 flex flex-wrap gap-3">
-        <Button href={email} variant="filled" prefetch={false}>
-          Email me
-        </Button>
-        <Button href="/contact" variant="outline">
-          Contact form
-        </Button>
-      </div>
+      <Container className="flex flex-col items-center text-center">
+        <Eyebrow>Contact</Eyebrow>
+        <h2
+          id="contact-heading"
+          className="mt-6 max-w-[22ch] text-display-2 text-balance"
+        >
+          <AccentText
+            text={contact.headline.text}
+            phrase={contact.headline.accent}
+          />
+        </h2>
+        <p className="mt-6 text-lg text-balance text-text-muted">
+          {contact.line}
+        </p>
+        <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:gap-6">
+          <Button href="/contact" variant="filled" size="lg" prefetch={false}>
+            Contact me
+          </Button>
+          <a
+            href={email}
+            className="inline-flex min-h-11 items-center rounded-md font-mono text-sm text-text underline underline-offset-4 transition-colors duration-150 hover:text-signal"
+          >
+            {address}
+          </a>
+        </div>
+      </Container>
     </section>
   );
 }

@@ -111,6 +111,9 @@ export const Project = z.object({
     )
     .default([]),
   links: z.array(Evidence).default([]),
+  // A real screenshot for the home case-study card. Without one, the card
+  // shows a typographic cover built from the case study's architecture.
+  cover: Photo.optional(),
   featured: z.boolean(),
   order: z.number().int(),
 });
@@ -268,8 +271,76 @@ export const Initiative = z
   });
 
 // Home-page content. The proof strip holds exactly four claims.
+// A headline with one phrase in an accent color; the phrase must be in the text.
+const AccentedLine = z
+  .object({ text: z.string().min(1), accent: z.string().min(1) })
+  .refine((line) => line.text.includes(line.accent), {
+    error: "accent must be part of the text",
+  });
+
+const InternalHref = z.string().regex(/^\/[^\s]*$/);
+
+// A number split out of an existing claim. `from` is the claim's exact text
+// (or its start),
+// and a unit test checks that it exists in content and contains the value.
+export const HomeStat = z
+  .object({
+    value: z.string().min(1),
+    label: z.string().min(1),
+    detail: z.string().min(1).optional(),
+    href: InternalHref,
+    accent: z.enum(["signal", "ember"]),
+    // Either split out of a claim (`from`)…
+    from: z.string().min(1).optional(),
+    // …or a count of published content, checked in content/index.ts.
+    count: z.enum(["live-projects", "specializations"]).optional(),
+    // Counted stats link to the page holding each item's proof instead.
+    status: z.enum(["verified", "self-reported"]).optional(),
+    evidence: Evidence.optional(),
+  })
+  .refine((stat) => !stat.from !== !stat.count, {
+    error: "a stat needs exactly one of `from` or `count`",
+  })
+  // "~40" stands for "about 40" in the source.
+  .refine(
+    (stat) =>
+      !stat.from || stat.from.includes(stat.value.replace(/^~/, "about ")),
+    { error: "value must come from its source text" },
+  )
+  .refine((stat) => !!stat.count || !!stat.status, {
+    error: "a stat split from a claim keeps the claim's status",
+  })
+  .refine((stat) => stat.status !== "verified" || !!stat.evidence, {
+    error: "verified stats need evidence",
+  });
+
 export const Home = z.object({
   proof: z.array(Claim).length(4),
+  // M8.5 hero: owner-provided h1 built from words in profile.headline.
+  hero: AccentedLine,
+  stats: z.array(HomeStat).max(5),
+  // "What I build": owner-provided in the M8.5 prompt.
+  capabilities: z
+    .array(
+      z.object({
+        title: z.string().min(1),
+        line: z.string().min(1),
+        projects: z.array(z.string().min(1)).min(1),
+      }),
+    )
+    .max(4),
+  leadership: z.object({
+    headline: AccentedLine,
+    stats: z.array(HomeStat).max(4),
+    // The initiative and photo index shown in the band.
+    photo: z.object({
+      initiative: z.string().min(1),
+      index: z.number().int().min(0),
+    }),
+  }),
+  // Award names, in order, shown with their photos.
+  recognition: z.array(z.string().min(1)).max(4),
+  contact: z.object({ headline: AccentedLine, line: z.string().min(1) }),
   // The community roles shown in the leadership preview, matched by org and title.
   leadershipPath: z
     .array(z.object({ org: z.string().min(1), title: z.string().min(1) }))
@@ -370,6 +441,7 @@ export type CaseStudy = z.output<typeof CaseStudy>;
 export type Initiative = z.output<typeof Initiative>;
 export type Credential = z.output<typeof Credential>;
 export type Home = z.output<typeof Home>;
+export type HomeStat = z.output<typeof HomeStat>;
 export type Chapter = z.output<typeof Chapter>;
 export type Principle = z.output<typeof Principle>;
 export type Explainer = z.output<typeof Explainer>;

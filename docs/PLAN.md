@@ -223,6 +223,8 @@ Sitemap
 └── /cv.pdf            Static file
 ```
 
+**M8.5 update (owner prompt):** the header is sticky with a "MI" mark; the desktop nav is Work · Experience · Leadership · Credentials · About with a filled **Contact** button (Download CV moved to the hero, mobile menu and footer). The footer has four columns (Navigate · Work · Community · Connect; no Kaggle, owner decision) and a bottom row "© year Muhammad Ilyas" / "Built with Next.js & FastAPI · Source on GitHub". The text below is the original M1 spec.
+
 **Main navigation (desktop):** Work · Experience · Leadership · Credentials · About, with a Contact link and a filled "Download CV" button on the right. On mobile it becomes a full-width disclosure panel (not a sheet) with the same links in the same order and the CV button. The active page is marked with `aria-current="page"`.
 
 **Footer:** email, GitHub, LinkedIn, Kaggle, a "Source on GitHub" link, and the current year.
@@ -234,6 +236,8 @@ Sitemap
 ### Home `/`
 
 Every fact comes from `content/` (`profile.ts`, `home.ts`, `projects.ts`, `roles.ts`, `initiatives.ts`, `credentials.ts`).
+
+**M8.5 A replaced the layout below** (owner prompt): hero (eyebrow "Muhammad Ilyas · AI/ML Engineer", h1 "Building Generative AI & agentic systems" with "agentic systems" in signal, intro, the last two headline segments as tags, View projects · Download CV · Leadership & community →, framed portrait) → stats row (2 live AI projects · 1st place · 3 Coursera specializations · 2025–26 President; counts are checked against content, text stats are split from existing claims; 348 tests and 7 evidence tools stay on the Flood-Aware case study) → "Where I've worked and led" (orgs from community and industry roles only) → 01 What I build (4 owner-provided capabilities) → 02 Featured work (case-study cards; until `Project.cover` is set the cover is a decorative diagram of the first architecture steps and the stack, without the project name; plus the internship row) → 03 How I work (the principles as numbered cards) → 04 Leadership band (ember, 4 self-reported stats, TechRise '26 photo) → 05 Awards and recognition (4 award photos) → contact CTA band. Page metadata still uses the name. The M3 text below is kept for history.
 
 1. **Hero.** A mono label `AI/ML ENGINEER` (no city or country), then the h1 with your name. Below it, a mono role line built from `profile.headline`: the first segment ("AI/ML Engineer") is dropped and the rest are joined with " · ". Then the intro paragraph (`profile.intro`, max 68ch). Buttons: **View work** (filled, `/projects`), **Download CV** (outline, `/cv.pdf`, downloads) and **Contact** (ghost, `/contact`). On desktop your portrait sits on the right in a rounded-square frame with a thin signal border; on mobile it sits above the label at a modest size. With no portrait, the hero is a single column with no placeholder. A faint dot grid sits behind the hero only. There is no availability chip (dropped in M2.1).
 2. **Proof strip.** Four facts with no counters, in a compact row (2×2 on mobile): "Flood-Aware — live, 348 backend tests passing" (verified, Changelog) · "HackVortex Codestorm 5 — 1st place" (verified, Devpost) · "President, Computing Students Society 2025–26" (self-reported) · "AI/ML Engineering Intern — LLM fine-tuning and DP-SGD" (self-reported). Verified items show an evidence chip linking to their proof; self-reported items show no chip.
@@ -596,6 +600,7 @@ Run the milestones in order, one Claude Code session each. After M1 and M3, brin
 | M6 | Contact API | FastAPI endpoints, security and the full pytest suite passing |
 | M7 | Contact form integration | Form wired to the API with every state; e2e tests with the API mocked |
 | M8 | SEO, accessibility and performance pass | Every target in section 9 met |
+| M8.5 | Design polish (A: foundations + home, B: inner pages) | A: fluid display type, eyebrow/section/card/stat primitives, sticky header, multi-column footer and the redesigned home, axe clean, Lighthouse ≥ 95 on `/`. B: inner pages on the same primitives |
 | M9 | Deploy and docs | Current costs confirmed by you; deployed by you on free tiers; `API.md`, `DEPLOY.md`, `CONTENT-GUIDE.md` and the README written |
 
 **M0 — setup**

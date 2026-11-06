@@ -35,33 +35,45 @@ export function MobileNav() {
   }, [open]);
 
   return (
-    <div className="md:hidden">
+    <div className="lg:hidden">
       <Button
         ref={buttonRef}
-        variant="ghost"
-        className="border border-border"
+        variant="outline"
         aria-expanded={open}
         aria-controls={PANEL_ID}
         onClick={() => setOpen((current) => !current)}
+        className="gap-2.5"
       >
+        <span aria-hidden="true" className="flex w-4 flex-col gap-[5px]">
+          <span
+            className={`h-px w-full bg-current transition-transform duration-150 ${open ? "translate-y-[3px] rotate-45" : ""}`}
+          />
+          <span
+            className={`h-px w-full bg-current transition-transform duration-150 ${open ? "-translate-y-[3px] -rotate-45" : ""}`}
+          />
+        </span>
         Menu
       </Button>
       <nav
         id={PANEL_ID}
         aria-label="Main"
         hidden={!open}
-        className="absolute inset-x-0 top-full z-10 border-b border-border bg-surface px-4 py-4 opacity-100 transition-opacity duration-150 starting:opacity-0"
+        className="absolute inset-x-0 top-full z-30 h-[calc(100dvh-4rem)] overflow-y-auto border-b border-border bg-bg px-5 pt-4 pb-10 opacity-100 transition-opacity duration-150 sm:px-6 starting:opacity-0"
       >
-        <ul>
+        <ul className="divide-y divide-border border-b border-border">
           {navLinks.map(({ href, label }) => (
             <li key={href}>
               <Link
                 href={href}
                 onClick={close}
                 aria-current={isActive(pathname, href) ? "page" : undefined}
-                className="flex min-h-11 items-center text-text underline-offset-4 aria-[current=page]:text-signal aria-[current=page]:underline"
+                className="group flex min-h-16 items-center justify-between font-display text-2xl font-semibold tracking-tight text-text transition-colors duration-150 hover:text-signal aria-[current=page]:text-signal"
               >
                 {label}
+                <span
+                  aria-hidden="true"
+                  className="size-1.5 rounded-full bg-signal opacity-0 group-aria-[current=page]:opacity-100"
+                />
               </Link>
             </li>
           ))}
@@ -69,10 +81,11 @@ export function MobileNav() {
         <Button
           href={cvHref}
           variant="outline"
+          size="lg"
           download
           prefetch={false}
           onClick={close}
-          className="mt-4 w-full"
+          className="mt-8 w-full"
         >
           Download CV
         </Button>

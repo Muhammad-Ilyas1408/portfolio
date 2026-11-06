@@ -23,9 +23,32 @@ test.describe("at 1280px", () => {
     const nav = page.getByRole("navigation", { name: "Main" });
     await expect(nav.getByRole("link", { name: "Work" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Menu" })).toBeHidden();
+    // Contact is the header's primary button, not a nav link, on desktop.
+    await expect(nav.getByRole("link")).toHaveText([
+      "Work",
+      "Experience",
+      "Leadership",
+      "Credentials",
+      "About",
+    ]);
     await expect(
-      page.getByRole("banner").getByRole("link", { name: "Download CV" }),
-    ).toBeVisible();
+      page.getByRole("banner").getByRole("link", { name: "Contact" }),
+    ).toHaveAttribute("href", "/contact");
+  });
+
+  test("the active page has aria-current and an accent underline", async ({
+    page,
+  }) => {
+    await page.goto("/leadership");
+
+    const active = page
+      .getByRole("navigation", { name: "Main" })
+      .getByRole("link", { name: "Leadership" });
+    await expect(active).toHaveAttribute("aria-current", "page");
+    const underline = await active.evaluate(
+      (link) => getComputedStyle(link, "::after").opacity,
+    );
+    expect(underline).toBe("1");
   });
 
   test("the skip link moves focus to main", async ({ page }) => {
@@ -76,38 +99,64 @@ test.describe("at 375px", () => {
   });
 });
 
-test("footer links are in order and only external ones open a new tab", async ({
+test("footer columns hold the right links; only external ones open a new tab", async ({
   page,
 }) => {
   await page.goto("/");
+  const footer = page.getByRole("contentinfo");
+  const column = (name: string) =>
+    footer
+      .getByRole("navigation", { name: `Footer: ${name}` })
+      .getByRole("link");
 
-  const links = page.getByRole("contentinfo").getByRole("link");
-  await expect(links).toHaveText([
+  await expect(column("Navigate")).toHaveText([
+    "Home",
+    "Work",
+    "Experience",
+    "Leadership",
+    "Credentials",
+    "About",
+    "Contact",
+  ]);
+  await expect(column("Work")).toHaveText(["Flood-Aware", "StoryWeave"]);
+  await expect(column("Community")).toHaveText(["Leadership", "Credentials"]);
+  await expect(column("Connect")).toHaveText([
     "Email",
-    "GitHub",
-    "LinkedIn",
-    "Kaggle",
-    "Source on GitHub",
+    "LinkedIn↗",
+    "GitHub↗",
+    "Download CV",
   ]);
 
-  const email = links.first();
+  const email = column("Connect").first();
   await expect(email).toHaveAttribute(
     "href",
     "mailto:muhammadilyas.ai.eng@gmail.com",
   );
   await expect(email).not.toHaveAttribute("target");
-  await expect(email).not.toHaveAttribute("rel");
+  await expect(column("Connect").last()).toHaveAttribute("download");
 
-  for (const index of [1, 2, 3, 4]) {
-    await expect(links.nth(index)).toHaveAttribute("target", "_blank");
-    await expect(links.nth(index)).toHaveAttribute(
+  for (const index of [1, 2]) {
+    await expect(column("Connect").nth(index)).toHaveAttribute(
+      "target",
+      "_blank",
+    );
+    await expect(column("Connect").nth(index)).toHaveAttribute(
       "rel",
       "noopener noreferrer",
     );
   }
+  // The owner chose to skip Kaggle (M8.5 follow-up).
+  await expect(footer.getByRole("link", { name: /Kaggle/ })).toHaveCount(0);
+  await expect(
+    footer.getByRole("link", { name: "Source on GitHub" }),
+  ).toHaveAttribute("target", "_blank");
+  await expect(footer).toContainText(
+    `© ${new Date().getFullYear()} Muhammad Ilyas`,
+  );
+  await expect(footer).toContainText("Built with Next.js & FastAPI");
 });
 
-for (const width of [360, 390, 768, 1024, 1280]) {
+for (const width of [360, 390, 768, 1024, 1280, 1440]) {
   test(`no horizontal scroll at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
 

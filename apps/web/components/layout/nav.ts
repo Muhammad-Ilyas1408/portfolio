@@ -7,6 +7,11 @@ export const navLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
+/** The desktop nav: Contact is the header's primary button instead. */
+export const desktopNavLinks = navLinks.filter(
+  ({ href }) => href !== "/contact",
+);
+
 // TODO: public/cv.pdf arrives later (PLAN.md section 11, item 8).
 export const cvHref = "/cv.pdf";
 

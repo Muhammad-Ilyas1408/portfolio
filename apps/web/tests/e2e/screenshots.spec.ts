@@ -20,14 +20,23 @@ async function loadLazyImages(page: Page) {
   );
 }
 
+// M8.5 design review: 1440×900 desktop and 390×844 phone.
+const reviewSizes = [
+  { width: 390, height: 844 },
+  { width: 1440, height: 900 },
+] as const;
+
 for (const [name, url] of [
   ["home", "/"],
   ["styleguide", "/styleguide"],
+  ["projects", "/projects"],
+  ["leadership", "/leadership"],
 ] as const) {
-  for (const width of [390, 1280]) {
+  for (const { width, height } of reviewSizes) {
     test(`screenshot ${name} at ${width}px`, async ({ page }) => {
-      await page.setViewportSize({ width, height: 844 });
+      await page.setViewportSize({ width, height });
       await page.goto(url);
+      await loadLazyImages(page);
       await page.screenshot({
         path: `${dir}/${name}-${width}.png`,
         fullPage: true,
@@ -37,13 +46,10 @@ for (const [name, url] of [
 }
 
 for (const [name, url, width] of [
-  ["projects", "/projects", 1280],
   ["flood-aware", "/projects/flood-aware", 390],
   ["flood-aware", "/projects/flood-aware", 1280],
   ["storyweave", "/projects/storyweave", 1280],
   ["experience", "/experience", 1280],
-  ["leadership", "/leadership", 1280],
-  ["leadership", "/leadership", 390],
   ["credentials", "/credentials", 1280],
   ["about", "/about", 1280],
 ] as const) {
