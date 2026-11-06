@@ -1,4 +1,5 @@
 import { storyWeaveDevpost } from "./projects";
+import { connectedPakistan } from "./roles";
 import type { CredentialInput } from "./schema";
 
 // Owner-provided in the M5 prompt. Dates and awards are self-reported unless
@@ -63,12 +64,45 @@ export const credentials: CredentialInput[] = [
     "/images/awards/excellence-2024-25.jpg",
   ),
   {
+    name: "Appreciation Award — Connected Pakistan Conference 2024 (CPC 2024)",
+    issuer: connectedPakistan,
+    // The certificate shows no date, so none is given.
+    note: "Presented by Connected Pakistan in appreciation of contributions to shaping Pakistan's tech industry.",
+    kind: "award",
+    photos: [
+      {
+        src: "/images/awards/connected-pakistan-cpc-2024.jpg",
+        alt: "Framed Connected Pakistan Conference 2024 appreciation award presented to Muhammad Ilyas, signed by the Founder CEO of Connected Pakistan.",
+      },
+    ],
+    published: true,
+  },
+  {
     name: "HackVortex Codestorm 5 — 1st place (team, StoryWeave)",
     issuer: "HackVortex Codestorm 5",
     // Self-reported by the owner.
     date: "2025-10",
     kind: "award",
     verifyUrl: storyWeaveDevpost,
+    published: true,
+  },
+
+  // Certificates
+  {
+    name: "Certificate of Participation — HackVortex Codestorm #5",
+    issuer: "HackVortex",
+    // Same month as the StoryWeave project period (self-reported).
+    date: "2025-10",
+    // The certificate's own wording. It does not say 1st place; that claim
+    // rests on the Devpost evidence.
+    note: "Presented for an outstanding project in HackVortex Codestorm #5.",
+    kind: "certificate",
+    photos: [
+      {
+        src: "/images/certificates/hackvortex-codestorm-5.jpg",
+        alt: "HackVortex Codestorm #5 certificate of participation presented to Muhammad Ilyas for an outstanding project.",
+      },
+    ],
     published: true,
   },
 

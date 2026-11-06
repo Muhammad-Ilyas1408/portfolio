@@ -84,8 +84,12 @@ export const Profile = z.object({
 export const Project = z.object({
   slug: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/),
   title: z.string().min(1),
+  // The full official title, e.g. of a thesis. Shown once on the case study.
+  thesisTitle: z.string().min(1).optional(),
   summary: z.string().min(1),
   role: z.string().min(1),
+  // One line on what the owner built, shown in the "My role" card.
+  roleSummary: z.string().min(1).optional(),
   team: z
     .array(
       z.object({ name: z.string().min(1), role: z.string().min(1).optional() }),
@@ -285,7 +289,15 @@ export const Credential = z
       .optional(),
     // A span known to the month, e.g. a training programme.
     period: z.object({ start: YearMonth, end: YearMonth }).optional(),
-    kind: z.enum(["degree", "specialization", "course", "training", "award"]),
+    kind: z.enum([
+      "degree",
+      "specialization",
+      "course",
+      "training",
+      "award",
+      // A certificate that is not an award, e.g. a hackathon participation certificate.
+      "certificate",
+    ]),
     // A short line shown under the issuer, e.g. "Presented at TechRise '26".
     note: z.string().min(1).optional(),
     verifyUrl: HttpsUrl.optional(),
@@ -301,6 +313,19 @@ export const Credential = z
 // "Chapter in numbers": self-reported figures with a named, unlinked source.
 export const Chapter = z.object({
   title: z.string().min(1),
+  // One line under the heading that says whose term the figures cover.
+  intro: z.string().min(1).optional(),
+  // A muted line under the source; `link` is rendered between before and after.
+  note: z
+    .object({
+      before: z.string(),
+      link: z.object({
+        label: z.string().min(1),
+        href: z.string().regex(/^#[a-z0-9-]+$/),
+      }),
+      after: z.string(),
+    })
+    .optional(),
   source: z.object({ label: z.string().min(1), url: HttpsUrl.optional() }),
   stats: z.array(Claim).min(1),
 });

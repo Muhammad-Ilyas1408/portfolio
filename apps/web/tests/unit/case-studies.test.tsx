@@ -7,6 +7,7 @@ import {
   wrapLabel,
 } from "@/components/projects/ArchitectureDiagram";
 import {
+  AtAGlance,
   Decisions,
   HardProblems,
   Limitations,
@@ -241,6 +242,60 @@ describe("case-study template", () => {
       screen.queryByRole("heading", { name: "What the team did" }),
     ).not.toBeInTheDocument();
     expect(screen.getByText("Hamad Khan")).toBeInTheDocument();
+  });
+});
+
+describe("Flood-Aware role card and title", () => {
+  it("shows the role and what I built in the My role card", () => {
+    const project = getProject("flood-aware")!;
+    render(
+      <AtAGlance project={project} caseStudy={getCaseStudy("flood-aware")!} />,
+    );
+    const card = screen.getByText("My role").parentElement!;
+    expect(card).toHaveTextContent(
+      "Co-developer, BS CS Final Year Project (team of 2)",
+    );
+    expect(card).toHaveTextContent(
+      "Built the LangGraph decision agent, the GIS pipeline, the RAG pipeline, the Next.js frontend, the deployment, and the backend test suite and evaluation.",
+    );
+  });
+
+  it("renders no role summary when a project has none", () => {
+    const project = getProject("storyweave")!;
+    expect(project.roleSummary).toBeUndefined();
+    render(
+      <AtAGlance project={project} caseStudy={getCaseStudy("storyweave")!} />,
+    );
+    const card = screen.getByText("My role").parentElement!;
+    expect(card.querySelector("dd")!.textContent).toBe(project.role);
+  });
+
+  it("uses the new summary and shows the thesis title once", () => {
+    const project = getProject("flood-aware")!;
+    expect(project.summary).toBe(
+      "LLM-driven multi-source flood monitoring and decision support for the River Swat Basin.",
+    );
+    render(<TeamAndCredit project={project} />);
+    expect(screen.getAllByText("Thesis title")).toHaveLength(1);
+    expect(
+      screen.getByText(
+        "Flood-Aware: LLM-Driven Multi-Source Flood Monitoring and Decision Support System for the River Swat Basin",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("never says Swat River Basin", () => {
+    const text = JSON.stringify([
+      getProject("flood-aware"),
+      getCaseStudy("flood-aware"),
+    ]);
+    expect(text).not.toContain("Swat River Basin");
+  });
+
+  it("gives every project a non-empty role", () => {
+    for (const project of getProjects()) {
+      expect(project.role.trim().length, project.slug).toBeGreaterThan(0);
+    }
   });
 });
 

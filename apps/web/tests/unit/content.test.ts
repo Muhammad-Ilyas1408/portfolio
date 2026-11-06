@@ -85,9 +85,9 @@ describe("content files", () => {
 
   it("have the expected counts", () => {
     expect(projects).toHaveLength(2);
-    expect(roles).toHaveLength(7);
+    expect(roles).toHaveLength(6);
     expect(initiatives).toHaveLength(20);
-    expect(credentials).toHaveLength(20);
+    expect(credentials).toHaveLength(22);
     expect(skills).toHaveLength(6);
     expect(skills.flatMap((group) => group.skills)).toHaveLength(30);
   });
@@ -170,15 +170,16 @@ describe("getters", () => {
   it("never returns unpublished credentials", () => {
     const published = getPublishedCredentials();
 
-    expect(published).toHaveLength(20);
+    expect(published).toHaveLength(22);
     expect(published.every((item) => item.published)).toBe(true);
     expect(getPublishedCredentials("degree").map((c) => c.name)).toEqual([
       "BS Computer Science",
     ]);
-    expect(getPublishedCredentials("award")).toHaveLength(6);
+    expect(getPublishedCredentials("award")).toHaveLength(7);
     expect(getPublishedCredentials("specialization")).toHaveLength(3);
     expect(getPublishedCredentials("course")).toHaveLength(9);
     expect(getPublishedCredentials("training")).toHaveLength(1);
+    expect(getPublishedCredentials("certificate")).toHaveLength(1);
   });
 
   it("returns published initiatives, newest first", () => {
@@ -226,13 +227,48 @@ describe("getters", () => {
     const result = getRoles();
     const starts = result.map((item) => item.start);
 
-    expect(result).toHaveLength(7);
+    expect(result).toHaveLength(6);
     expect(starts).toEqual(starts.toSorted().toReversed());
     expect(result[0].title).toBe("President");
     expect(result.at(-1)?.title).toBe("AI/ML Team Member");
     expect(result.at(-1)?.org).toBe(
       "Google Developer Student Clubs (GDSC), University of Peshawar",
     );
+  });
+
+  it("has one Connected Pakistan role, Team Member from Oct 2024 to Jan 2025", () => {
+    const connected = getRoles().filter(
+      (role) => role.org === "Connected Pakistan",
+    );
+    expect(connected).toHaveLength(1);
+    expect(connected[0]).toMatchObject({
+      title: "Team Member",
+      start: "2024-10",
+      end: "2025-01",
+      track: "community",
+      published: true,
+      myContributions: [
+        "Selected as a Connected Pakistan Ambassador, then joined the Connected Pakistan team as a Team Member for the Connected Pakistan Conference 2024 (CPC 2024).",
+      ],
+    });
+    expect(getRoles().some((role) => role.title === "Ambassador")).toBe(false);
+  });
+
+  it("lists the four GDG on Campus contributions in order", () => {
+    const gdg = getRoles().find(
+      (role) => role.org === "GDG on Campus University of Peshawar",
+    )!;
+    expect(gdg).toMatchObject({
+      title: "Executive Team Member",
+      start: "2024-10",
+      end: "2025-05",
+    });
+    expect(gdg.myContributions).toEqual([
+      "Co-led a career guidance and LinkedIn session.",
+      "Co-led a New Year session.",
+      "Hosted the Cyber Security and Virtualization session.",
+      "Hosted the Hult Prize 2025: Turning Ideas into Impact session.",
+    ]);
   });
 
   it("links skills only to known projects or the internship", () => {

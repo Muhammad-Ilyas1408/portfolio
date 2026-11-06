@@ -60,7 +60,7 @@ Every item on the site carries one of three evidence labels. **Verified** means 
 
 | # | Project | Your role | Status | Evidence | Facts we can show |
 | --- | --- | --- | --- | --- | --- |
-| 1 | [Flood-Aware](https://github.com/Muhammad-Ilyas1408/flood-aware) | BS CS Final Year Project (team of 2) | Complete, deployed | Repo, changelog, thesis photo, live app | 7 evidence tools; 150 villages and 51 shelters; 348 backend tests passing (53 skipped) in the latest recorded run; golden-set evaluation with real API calls; startup cut from 5–6 min to 39 s; production GIS warm-up about 2 s; data files cut from 147.2 MiB to 4.2 MiB (OSM) and 134.9 MiB to 2.0 MiB (WorldPop) |
+| 1 | [Flood-Aware](https://github.com/Muhammad-Ilyas1408/flood-aware) | Co-developer, BS CS Final Year Project (team of 2) | Complete, deployed | Repo, changelog, thesis photo, live app | 7 evidence tools; 150 villages and 51 shelters; 348 backend tests passing (53 skipped) in the latest recorded run; golden-set evaluation with real API calls; startup cut from 5–6 min to 39 s; production GIS warm-up about 2 s; data files cut from 147.2 MiB to 4.2 MiB (OSM) and 134.9 MiB to 2.0 MiB (WorldPop) |
 | 2 | [StoryWeave](https://github.com/JawadGigyani/StoryWeave) | Full-Stack Developer: Docker, deployment, infrastructure (team of 4) | Complete, demo live | Repo README, [Devpost](https://devpost.com/software/story-weave) | 1st place at HackVortex Codestorm 5; 6-stage LangGraph pipeline (Gemini, ElevenLabs, FFmpeg); deployed with Docker on DigitalOcean |
 | 3 | Internship: fine-tuning and DP-SGD | Intern | Done, Jan–Apr 2025 | Self-reported (CV, M5 summary) | Summary: low-resource language model adaptation through LoRA/QLoRA, and DP-SGD with Opacus, focusing on the trade-offs between model performance, training stability and privacy. TinyLlama with Unsloth and LoRA/QLoRA; Opacus DP-SGD with gradient clipping and noise injection. No metrics shown. |
 | — | Lab grid: ReAct agent, RAG tools, Personality Search, AI Chatbot, File Intelligence, Spendly, spam classifier | Solo | Mixed | Only Spendly and the spam classifier are public | Each card appears only once its repo is public, labelled *Experiment*, *In progress* or *Concept* |
@@ -70,6 +70,8 @@ Every item on the site carries one of three evidence labels. **Verified** means 
 - **Per-request GIS collection** went from about 90 s–4 min to about 30 s. This came from caching the parsed data at startup (changelog, Sprint 14.1.5).
 - **Regional data extraction** shrank the OSM file from 147.2 MiB to 4.2 MiB and the WorldPop raster from 134.9 MiB to 2.0 MiB. Local startup dropped from 5–6 min to 39 s, with analysis results bit-for-bit identical (Hotfix 14.4).
 - **Production GIS warm-up** takes about 2 s on Railway (Sprint 16.1).
+
+**Flood-Aware summary and title (content fixes before M9).** Summary: "LLM-driven multi-source flood monitoring and decision support for the River Swat Basin." Thesis title, shown once in Team & credit: "Flood-Aware: LLM-Driven Multi-Source Flood Monitoring and Decision Support System for the River Swat Basin". The "My role" card adds one line from `roleSummary`.
 
 **Flood-Aware team and your contributions (self-reported).** Team: Muhammad Ilyas and Abdullah Ahmad (no role given for Abdullah), supervised by Dr. Asim Jalal. Your own work, none of it attributed to Abdullah:
 
@@ -90,11 +92,10 @@ All community roles and contributions are self-reported. The President and AI/DS
 
 | Period | Role | Organization | What you did |
 | --- | --- | --- | --- |
-| Oct 2025 – Sep 2026 | President | Computing Students Society (CSS), UoP | Led a team of about 40 students: the presidential council (two vice presidents, chief secretary, information secretary), four clubs (AI & DS, Cyber Security, Software Engineering, Literary), and the PR, media, creative, content & graphics and management teams; led the CSS executive team and the Department of Computer Science's student activities as president of the department's official society; organized 18 events during the term, from the Supabase Meetup Peshawar (Nov 2025) to a Pentesting Masterclass (Sep 2026); initiated and planned TechRise '26 (held 22 Oct 2026, 300+ attendees) |
+| Oct 2025 – Sep 2026 | President | Computing Students Society (CSS), UoP | Led a team of about 40 students: the presidential council (President, Male Vice President and Female Vice President), the cabinet (Chief Secretary, Information Secretary and Creative Lead), four clubs (AI & DS, Cyber Security, Software Engineering, Literary), and the PR, media, content & graphics and management teams; led the CSS executive team and the Department of Computer Science's student activities as president of the department's official society; organized 18 events during the term, from the Supabase Meetup Peshawar (Nov 2025) to a Pentesting Masterclass (Sep 2026); initiated and planned TechRise '26 (held 22 Oct 2026, 300+ attendees) |
 | Dec 2024 – Sep 2025 | AI/DS Club Lead | CSS | Delivered a three-part AI session series (foundations of AI, Machine Learning, Deep Learning); co-led a GitHub session; co-led and taught the CSS AI Bootcamp 2025 (Jun–Aug 2025) |
-| Dec 2024 – Jan 2025 | Team Member | Connected Pakistan | Worked on the team for the Connected Pakistan Conference 2024 (CPC 2024) |
-| Oct – Dec 2024 | Ambassador | Connected Pakistan | None listed |
-| Oct 2024 – May 2025 | Executive Team Member | GDG on Campus, UoP | Co-led a career guidance and LinkedIn session; co-led a New Year session |
+| Oct 2024 – Jan 2025 | Team Member | Connected Pakistan | Selected as a Connected Pakistan Ambassador, then joined the Connected Pakistan team as a Team Member for the Connected Pakistan Conference 2024 (CPC 2024). One role since the content fixes before M9 (previously two: Ambassador and Team Member). |
+| Oct 2024 – May 2025 | Executive Team Member | GDG on Campus, UoP | Co-led a career guidance and LinkedIn session; co-led a New Year session; hosted the Cyber Security and Virtualization session; hosted the Hult Prize 2025: Turning Ideas into Impact session |
 | Sep 2023 – May 2024 | AI/ML Team Member | Google Developer Student Clubs (GDSC), UoP — the program's name before it became GDG on Campus | Co-led a LinkedIn session and the GDSC Solution Challenge event |
 
 ### Initiatives (self-reported)
@@ -132,6 +133,8 @@ Organized by the Computing Students Society. Your role is "Organized as CSS Pres
 
 ### Chapter 2 in numbers (self-reported)
 
+Shown on `/leadership` as "My presidency in numbers (2025–26)", with the intro line "Computing Students Society, University of Peshawar, during my term as President (Oct 2025 – Sep 2026)." and the source line "Source: CSS Progress Report 2025–26 (submitted Sep 2026) · Self-reported". A muted line under it, linking to the events section: "The All events and programmes section below also includes the CSS AI Bootcamp 2025 (before my term) and TechRise '26 (after the report)." Every role contribution ends with a full stop.
+
 Source: "CSS Chapter 2 Progress Report 2025–26 (submitted Sep 2026)", named but not linked. 18 events and programmes (11 online, 7 on campus) · 2,200+ total attendances (cumulative) · 14 guest speakers · 4 partner organizations: Supabase Peshawar, TechKhwa, SMIT and SheTech · ~300 freshers reached through class-to-class visits.
 - **CSS AI Bootcamp 2025:** you co-led and delivered an end-to-end AI learning program from Python fundamentals to Machine Learning and Agentic AI. You taught Python programming, NumPy, Pandas and Machine Learning, led academic planning (curriculum, assignments, quizzes, assessments and evaluation), and supervised the final student projects. Participants came from the department and other universities.
 
@@ -147,7 +150,9 @@ Replaced in full in M5. CSS certificates are issued by "Computing Students Socie
 | Certificate of Excellence — CSS (2025–26) | Award | Self-reported; certificate photo |
 | Certificate of Recognition — AI & DS Club Lead, CSS (2024–25) | Award | Self-reported; certificate photo |
 | Certificate of Excellence — CSS (2024–25) | Award | Self-reported; certificate photo |
+| Appreciation Award — Connected Pakistan Conference 2024 (CPC 2024), Connected Pakistan; no date (the certificate shows none) | Award | Self-reported; photo of the framed award |
 | HackVortex Codestorm 5, 1st place (StoryWeave, team of 4) | Award, team | **Verified** (Devpost) |
+| Certificate of Participation — HackVortex Codestorm #5, HackVortex, Oct 2025 ("Presented for an outstanding project") | Certificate | Self-reported; certificate photo. Not an award; the 1st place rests on Devpost |
 | Machine Learning Specialization (DeepLearning.AI & Stanford); Deep Learning Specialization (DeepLearning.AI); Generative AI Engineering with LLMs Specialization (IBM) | Specialization | Coursera share links |
 | Generative AI Essentials: Overview and Impact, Python Basics, Python Functions, Files, and Dictionaries (University of Michigan); AI For Everyone (DeepLearning.AI); Foundations of Data Science, AI for Brainstorming and Planning (Google) | Course | Coursera share links |
 | AI Foundations: How Artificial Intelligence Works; Data Science Foundations: Tools, Careers & Real-World Applications; Python for Data Science & AI: Hands-On Development (IBM) | Course | Coursera share links (issuer confirmed and published in M6) |

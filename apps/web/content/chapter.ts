@@ -3,9 +3,19 @@ import type { ChapterInput } from "./schema";
 // Owner-provided in the M5 prompt. Every figure is self-reported; the report
 // has no public URL, so the source is named but not linked.
 export const chapter: ChapterInput = {
-  title: "CSS Chapter 2 (2025–26) in numbers",
+  // Owner-provided wording, so visitors need not know what "Chapter 2" means.
+  title: "My presidency in numbers (2025–26)",
+  intro:
+    "Computing Students Society, University of Peshawar, during my term as President (Oct 2025 – Sep 2026).",
   source: {
-    label: "CSS Chapter 2 Progress Report 2025–26 (submitted Sep 2026)",
+    label: "CSS Progress Report 2025–26 (submitted Sep 2026)",
+  },
+  // Owner-provided: why the events table has 20 rows and the report 18.
+  note: {
+    before: "The ",
+    link: { label: "All events and programmes", href: "#events" },
+    after:
+      " section below also includes the CSS AI Bootcamp 2025 (before my term) and TechRise '26 (after the report).",
   },
   stats: [
     {

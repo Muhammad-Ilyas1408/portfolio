@@ -57,7 +57,7 @@ export default function LeadershipPage() {
     },
     {
       id: "chapter",
-      title: "Chapter 2 in numbers",
+      title: getChapter().title,
       body: <ChapterStats chapter={getChapter()} />,
     },
     (lead || bootcamps.length > 0) && {

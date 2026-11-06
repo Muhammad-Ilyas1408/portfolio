@@ -7,7 +7,7 @@ const pages = {
     title: "Leadership",
     headings: [
       "Progression",
-      "Chapter 2 in numbers",
+      "My presidency in numbers (2025–26)",
       "Featured initiatives",
       "All events and programmes",
       "Recognition",
@@ -15,7 +15,14 @@ const pages = {
   },
   "/credentials": {
     title: "Credentials",
-    headings: ["Degree", "Awards", "Specializations", "Courses", "Training"],
+    headings: [
+      "Degree",
+      "Awards",
+      "Certificates",
+      "Specializations",
+      "Courses",
+      "Training",
+    ],
   },
   "/about": {
     title: "About",
@@ -73,7 +80,77 @@ test("/credentials#awards resolves to the Awards section", async ({ page }) => {
   const awards = page.locator("#awards");
   await expect(awards).toBeInViewport();
   await expect(awards.getByRole("heading", { level: 2 })).toHaveText("Awards");
-  await expect(awards.locator("img")).toHaveCount(5);
+  await expect(awards.locator("img")).toHaveCount(6);
+});
+
+test("the HackVortex certificate shows under Certificates, not Awards", async ({
+  page,
+}) => {
+  await page.goto("/credentials#certificates");
+
+  const section = page.locator("#certificates");
+  await expect(section.getByRole("heading", { level: 2 })).toHaveText(
+    "Certificates",
+  );
+  await expect(section).toContainText(
+    "Certificate of Participation — HackVortex Codestorm #5",
+  );
+  await expect(section).toContainText(
+    "Presented for an outstanding project in HackVortex Codestorm #5.",
+  );
+  await expect(
+    section.getByRole("img", {
+      name: "HackVortex Codestorm #5 certificate of participation presented to Muhammad Ilyas for an outstanding project.",
+    }),
+  ).toBeVisible();
+  await expect(page.locator("#awards")).not.toContainText(
+    "Certificate of Participation",
+  );
+});
+
+test("the CPC 2024 award shows its whole portrait photo", async ({ page }) => {
+  await page.goto("/credentials#awards");
+
+  const award = page.locator("#awards article", {
+    hasText:
+      "Appreciation Award — Connected Pakistan Conference 2024 (CPC 2024)",
+  });
+  await expect(award).toContainText("Connected Pakistan");
+  await expect(award).toContainText(
+    "Presented by Connected Pakistan in appreciation of contributions to shaping Pakistan's tech industry.",
+  );
+  const img = award.getByRole("img", {
+    name: "Framed Connected Pakistan Conference 2024 appreciation award presented to Muhammad Ilyas, signed by the Founder CEO of Connected Pakistan.",
+  });
+  await expect(img).toHaveCSS("object-fit", "contain");
+});
+
+test("the presidency note links to the events section", async ({ page }) => {
+  await page.goto("/leadership");
+
+  const chapter = page.locator("#chapter");
+  await expect(chapter).toContainText(
+    "The All events and programmes section below also includes the CSS AI Bootcamp 2025 (before my term) and TechRise '26 (after the report).",
+  );
+  await chapter.getByRole("link", { name: "All events and programmes" }).click();
+  await expect(page).toHaveURL(/#events$/);
+  await expect(page.locator("#events")).toBeInViewport();
+});
+
+test("Connected Pakistan appears once on the leadership timeline", async ({
+  page,
+}) => {
+  await page.goto("/leadership");
+
+  const main = page.getByRole("main");
+  await expect(main).toContainText(
+    "Selected as a Connected Pakistan Ambassador, then joined the Connected Pakistan team as a Team Member for the Connected Pakistan Conference 2024 (CPC 2024).",
+  );
+  await expect(
+    main.getByText("Selected as a Connected Pakistan Ambassador", {
+      exact: false,
+    }),
+  ).toHaveCount(1);
 });
 
 test("/leadership#<id> resolves to that event's row", async ({ page }) => {

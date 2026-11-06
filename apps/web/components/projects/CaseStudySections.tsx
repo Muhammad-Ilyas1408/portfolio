@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 import { EvidenceChip } from "@/components/evidence/EvidenceChip";
 import { buttonClasses } from "@/components/ui/Button";
@@ -61,12 +62,22 @@ export function AtAGlance({
   project: Project;
   caseStudy: CaseStudy;
 }) {
-  const cells = [
+  const cells: [string, ReactNode][] = [
     ["Problem", caseStudy.problem],
     ["Approach", caseStudy.approach],
-    ["My role", project.role],
+    [
+      "My role",
+      <>
+        {project.role}
+        {project.roleSummary && (
+          <span className="mt-2 block text-text-muted">
+            {project.roleSummary}
+          </span>
+        )}
+      </>,
+    ],
     ["Outcome", caseStudy.outcome],
-  ] as const;
+  ];
 
   return (
     <dl className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -200,6 +211,12 @@ export function TeamAndCredit({ project }: { project: Project }) {
   const withRoles = project.team.some((member) => member.role);
   return (
     <div>
+      {project.thesisTitle && (
+        <dl className="mb-6">
+          <dt className="font-mono text-sm text-signal">Thesis title</dt>
+          <dd className="mt-1 max-w-[68ch]">{project.thesisTitle}</dd>
+        </dl>
+      )}
       {project.team.length > 0 && <p>{teamLine(project)}</p>}
       {withRoles && (
         <ul className="mt-3 grid gap-2 sm:grid-cols-2">

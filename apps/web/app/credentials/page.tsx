@@ -13,7 +13,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata: Metadata = pageMetadata({
   title: `Credentials — ${getProfile().name}`,
   description:
-    "Degree, awards, specializations, courses and training, each linked to its proof where one exists.",
+    "Degree, awards, certificates, specializations, courses and training, each linked to its proof where one exists.",
   path: "/credentials",
 });
 

@@ -81,6 +81,33 @@ test("Flood-Aware shows team credit and its own contributions", async ({
   ).toHaveAttribute("href", "/projects/storyweave");
 });
 
+test("Flood-Aware shows its role card, summary and thesis title", async ({
+  page,
+}) => {
+  await page.goto("/projects/flood-aware");
+
+  const roleCard = page
+    .locator("#at-a-glance dt", { hasText: "My role" })
+    .locator("..");
+  await expect(roleCard).toContainText(
+    "Co-developer, BS CS Final Year Project (team of 2)",
+  );
+  await expect(roleCard).toContainText(
+    "Built the LangGraph decision agent, the GIS pipeline, the RAG pipeline, the Next.js frontend, the deployment, and the backend test suite and evaluation.",
+  );
+  await expect(page.locator("header p.text-lg")).toHaveText(
+    "LLM-driven multi-source flood monitoring and decision support for the River Swat Basin.",
+  );
+  await expect(page.getByText("Thesis title", { exact: true })).toHaveCount(1);
+  await expect(
+    page.getByText(
+      "Flood-Aware: LLM-Driven Multi-Source Flood Monitoring and Decision Support System for the River Swat Basin",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await expect(page.getByRole("main")).not.toContainText("Swat River Basin");
+});
+
 test("StoryWeave shows the Devpost button and links back", async ({ page }) => {
   await page.goto("/projects/storyweave");
 

@@ -8,8 +8,15 @@ export const projects: ProjectInput[] = [
   {
     slug: "flood-aware",
     title: "Flood-Aware",
-    summary: "Grounded flood decision-support system for the Swat River Basin.",
-    role: "BS CS Final Year Project (team of 2)",
+    // Owner-provided: the official thesis title.
+    thesisTitle:
+      "Flood-Aware: LLM-Driven Multi-Source Flood Monitoring and Decision Support System for the River Swat Basin",
+    summary:
+      "LLM-driven multi-source flood monitoring and decision support for the River Swat Basin.",
+    // Owner-provided (self-reported).
+    role: "Co-developer, BS CS Final Year Project (team of 2)",
+    roleSummary:
+      "Built the LangGraph decision agent, the GIS pipeline, the RAG pipeline, the Next.js frontend, the deployment, and the backend test suite and evaluation.",
     // Abdullah's role was not given, so it stays empty.
     team: [{ name: "Muhammad Ilyas" }, { name: "Abdullah Ahmad" }],
     supervisor: "Dr. Asim Jalal",

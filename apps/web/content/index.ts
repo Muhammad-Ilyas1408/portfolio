@@ -106,6 +106,7 @@ const credentialGroups = (
   [
     { kind: "degree", id: "degree", title: "Degree" },
     { kind: "award", id: "awards", title: "Awards" },
+    { kind: "certificate", id: "certificates", title: "Certificates" },
     { kind: "specialization", id: "specializations", title: "Specializations" },
     { kind: "course", id: "courses", title: "Courses" },
     { kind: "training", id: "training", title: "Training" },

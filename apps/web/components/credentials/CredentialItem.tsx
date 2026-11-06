@@ -35,7 +35,7 @@ function Thumbnail({ photo }: { photo: NonNullable<Credential["photos"]>[0] }) {
         alt={photo.alt}
         fill
         sizes="(min-width: 640px) 160px, 100vw"
-        className="object-cover"
+        className="object-contain"
       />
       <span className="sr-only"> (opens the full image in a new tab)</span>
     </a>
