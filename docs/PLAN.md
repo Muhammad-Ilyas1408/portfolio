@@ -1,6 +1,6 @@
 # Portfolio Build Plan — Muhammad Ilyas
 
-Last updated: Nov 4, 2026 · Owner: Muhammad Ilyas
+Last updated: Nov 8, 2026 (M9 hosting decisions) · Owner: Muhammad Ilyas
 
 ## 1. How to use this plan
 
@@ -429,7 +429,7 @@ export const Explainer = z.object({ title: z.string(), sentences: z.array(z.stri
 
 ## 7. Technical architecture
 
-Every page is pre-rendered and served from Vercel's CDN. The FastAPI service does one job: it receives contact messages safely. The site therefore stays fast, cheap and hard to break. It also still shows your own Python backend stack.
+Every page is pre-rendered and served from Vercel's CDN. The FastAPI service runs as a Vercel Python Function in a second Vercel project (decided in M9) and does one job: it receives contact messages safely. The site therefore stays fast, cheap and hard to break. It also still shows your own Python backend stack.
 
 ```text
 Architecture — pages are static on Vercel; only the contact form calls the API
@@ -437,7 +437,7 @@ Architecture — pages are static on Vercel; only the contact form calls the API
 Visitor ──HTTPS──▶ Vercel · Next.js
                    ├── Static pages (SSG)
                    ├── Content files (Zod-checked)
-                   └── Contact form (client) ──JSON──▶ FastAPI (free-tier host, chosen in M9)
+                   └── Contact form (client) ──JSON──▶ Vercel · FastAPI (Python Function, M9)
                                                        ├── GET  /health
                                                        └── POST /contact ─▶ validate, rate-limit
                                                                               │
@@ -472,7 +472,7 @@ Visitor ──HTTPS──▶ Vercel · Next.js
 
 ### Backend — `apps/api`
 
-- **FastAPI with Pydantic v2 and pydantic-settings.** It runs on Python 3.11 under uv, the same tooling as Flood-Aware. `app/main.py` is an app factory, `create_app(settings)`; the full contract is in [`docs/API.md`](API.md) (built in M6).
+- **FastAPI with Pydantic v2 and pydantic-settings.** It runs on Python 3.12 under uv (3.11 until M9: Vercel's Python runtime supports 3.12, 3.13 and 3.14 only, and the owner chose 3.12). `app/main.py` is an app factory, `create_app(settings)`; the full contract is in [`docs/API.md`](API.md) (built in M6).
 
 | Endpoint | Request | Responses |
 | --- | --- | --- |
@@ -480,8 +480,8 @@ Visitor ──HTTPS──▶ Vercel · Next.js
 | `POST /contact` | `{name: 2–80 chars, no control characters; email: EmailStr; reason: "job" \| "collaboration" \| "speaking" \| "other"; message: 20–5000 chars; website: "" (honeypot)}`, trimmed | `202 {"ok":true}` · `422 {"ok":false,"errors":{"<field>":"<message>"}}` · `413 {"ok":false,"error":"payload_too_large"}` · `429 {"ok":false,"error":"rate_limited"}` with `Retry-After` · `503 {"ok":false,"error":"email_unavailable"}` (the client shows the mailto fallback) |
 
 - **Security:**
-  - CORS allows the exact origins in `CORS_ALLOW_ORIGINS`, plus an optional `CORS_ALLOW_ORIGIN_REGEX` pinned to your own Vercel previews (the same lesson as Flood-Aware's Sprint 16.3). Methods `GET`, `POST`, `OPTIONS`; header `Content-Type`; no credentials.
-  - Rate limiting allows 5 requests per IP per 10 minutes (`RATE_LIMIT`) on `POST /contact` only, through `slowapi` with in-memory storage. Behind a proxy, `TRUST_PROXY_HEADERS=true` keys on the first `X-Forwarded-For` address. Requests that fail validation are not counted.
+  - CORS allows the exact origins in `CORS_ALLOW_ORIGINS`, plus an optional `CORS_ALLOW_ORIGIN_REGEX` pinned to your own Vercel previews (the same lesson as Flood-Aware's Sprint 16.3). Starlette matches the regex against the whole origin; an invalid regex stops the app at startup (M9). Production default: empty (pattern and caveats in `DEPLOY.md`). Methods `GET`, `POST`, `OPTIONS`; header `Content-Type`; no credentials.
+  - Rate limiting allows 5 requests per IP per 10 minutes (`RATE_LIMIT`) on `POST /contact` only, through `slowapi` with in-memory storage. Behind a proxy, `TRUST_PROXY_HEADERS=true` keys on the first `X-Forwarded-For` address. On Vercel it is `true`: Vercel documents that it overwrites `X-Forwarded-For` with the client's public IP to prevent spoofing; `X-Real-IP` and `X-Vercel-Forwarded-For` are never read. Requests that fail validation are not counted. **The count is per function instance** (each Vercel instance has its own memory), so it is not a global limit; the owner accepted this in M9, with the honeypot and Resend's daily quota as the backstop.
   - A filled honeypot field returns a fake 202 and sends nothing, even when other fields are invalid.
   - Request bodies over 32 KB get a 413 before parsing (raised from 16 KB at the end of M6, so a 5,000-character message of 4-byte characters such as emoji always fits).
   - Message text is escaped before going into the email HTML, and CR/LF are stripped from the subject.
@@ -493,16 +493,18 @@ Visitor ──HTTPS──▶ Vercel · Next.js
 
 ### Hosting and cost
 
-v1 targets **$0 a month**. One rule applies to every deployment step: **Claude Code never creates accounts, enables billing, buys domains or deploys.** You do each step yourself in M9 by following `docs/DEPLOY.md`. Anything that can charge money needs your explicit OK first.
+v1 targets **$0 a month**. One rule applies to every deployment step: **Claude Code never creates accounts, enables billing, buys domains or deploys.** You do each step yourself by following [`docs/DEPLOY.md`](DEPLOY.md). Anything that can charge money needs your explicit OK first.
 
-| Piece | v1 default (free) | Paid option (only with your approval) |
+**Decided in M9 (8 Nov 2026):** two **Vercel Hobby** projects (free, no card) from the same GitHub repo, plus the **Resend** free plan. No paid service, no custom domain, no analytics.
+
+| Piece | Choice (free) | Planned URL / sender |
 | --- | --- | --- |
-| Website | Vercel Hobby plan (free, for personal, non-commercial sites) | Not needed |
-| Contact API | A free-tier host, chosen in M9 after checking each provider's current pricing page. Free hosts may sleep and take a few seconds on the first request. That's acceptable, because the form shows a loading state and a mailto fallback. | A paid plan (e.g. Railway), only if you want no cold starts |
-| Email | Resend free tier | Not needed |
-| Domain | Optional; the site works on its free `*.vercel.app` address | About $10–15 a year, bought by you |
+| Website | Vercel Hobby project, Root Directory `apps/web` | `https://muhammad-ilyas.vercel.app` |
+| Contact API | Vercel Hobby project, Root Directory `apps/api`, FastAPI as a Python Function (zero-config; entrypoint `app.main:app` named in `pyproject.toml` `[tool.vercel]`; dependencies from `pyproject.toml` + `uv.lock`, installed by Vercel with uv) | `https://muhammad-ilyas-api.vercel.app` |
+| Email | Resend free plan (100 emails a day, 3,000 a month), account `muhammadilyas.ai.eng@gmail.com` | From `Portfolio Contact <onboarding@resend.dev>` to `muhammadilyas.ai.eng@gmail.com` (the test sender delivers only to the account's own address, which is exactly the inbox we need) |
+| Domain | None in v1 | The free `*.vercel.app` addresses |
 
-Free-tier limits and prices change, so this plan doesn't state numbers that may go stale. Before M9, Claude Code reads each provider's official pricing page, lists the current free limits and any costs, and waits for your choice.
+If either project name is already taken on Vercel, you pick another name; the URLs then change, and so do `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_API_URL` and `CORS_ALLOW_ORIGINS` (`DEPLOY.md` explains each). The Hobby plan is for personal, non-commercial use, which fits a personal portfolio. On Hobby, going over a limit pauses that feature until 30 days have passed; it is never billed. The limits verified in M9 are listed in `DEPLOY.md` ("Costs").
 
 ## 8. Repository structure
 
@@ -556,6 +558,7 @@ portfolio/
 ├── docs/
 │   ├── PLAN.md                      # this document
 │   └── API.md  DEPLOY.md  CONTENT-GUIDE.md   (API.md written in M6; the rest in M9)
+│                                    # apps/web/tests/smoke + playwright.smoke.config.ts: live smoke test (M9)
 ├── .github/workflows/ci.yml         # web + api jobs
 ├── package.json                     # root scripts + "packageManager": "pnpm@…"
 ├── pnpm-workspace.yaml              # packages: [apps/web] + ignoredBuiltDependencies
@@ -589,7 +592,7 @@ A milestone is done only when its checks pass in CI. Each bar below is a concret
 | Security | No secrets in client bundles; CSP, HSTS, `X-Content-Type-Options`, `Referrer-Policy` and `Permissions-Policy` headers set; no CSP violations | A CI step after `pnpm build` fails if `apps/web/.next` matches `RESEND_API_KEY\|(^\|[^A-Za-z0-9_])re_[A-Za-z0-9_]{20,}` (the left anchor stops `…_workStore_pendingRevalidatedTags` in Next.js's own code from matching). E2E checks the headers on the built site and listens for `securitypolicyviolation` on every route; unit tests check the CSP string. A header check after deploy |
 | Responsive | Correct at 360, 390, 768, 1024, 1280 and 1536 px with no horizontal scroll | A manual check at each width, plus Playwright screenshots for design review |
 
-CI (GitHub Actions) has two jobs. **web** runs lint, typecheck, unit tests, build and the Chromium end-to-end tests. **api** runs ruff (lint and format check), mypy in strict mode and pytest. Pull requests must pass CI before merging to `main`. Auto-deploy from `main` is switched on by you in M9. Deferred to v1.1: Lighthouse CI, the weekly link checker and WebKit runs.
+CI (GitHub Actions) has two jobs. **web** runs lint, typecheck, unit tests, build and the Chromium end-to-end tests. **api** runs ruff (lint and format check), mypy in strict mode and pytest. Pull requests must pass CI before merging to `main`. Auto-deploy from `main` is switched on by you in M9 (Vercel deploys each push to `main`; see `DEPLOY.md`). The live smoke test (`pnpm --filter web test:smoke`, M9) is never part of CI. Deferred to v1.1: Lighthouse CI, the weekly link checker and WebKit runs.
 
 ## 10. Milestones and Claude Code prompts
 
@@ -608,7 +611,7 @@ Run the milestones in order, one Claude Code session each. After M1 and M3, brin
 | M8 | SEO, accessibility and performance pass | Every target in section 9 met |
 | M8.5 | Design polish (A: foundations + home, B: inner pages) | A: fluid display type, eyebrow/section/card/stat primitives, sticky header, multi-column footer and the redesigned home, axe clean, Lighthouse ≥ 95 on `/`. B: inner pages on the same primitives. **Done 2026-11-06** |
 | M8.6 | Visual identity, motion and copy | Motion policy recorded; owner-chosen palette in `@theme`; FlowLines, Reveal and Spotlight (paused off-screen, static under reduced motion, content visible without JS); owner's hero copy; copy pass; tech stack, durations, back to top; Lighthouse ≥ 95 with CLS 0 on `/`, `/projects/flood-aware`, `/leadership` |
-| M9 | Deploy and docs | Current costs confirmed by you; deployed by you on free tiers; `API.md`, `DEPLOY.md`, `CONTENT-GUIDE.md` and the README written |
+| M9 | Deploy preparation and docs (Vercel for web and API) | Vercel and Resend docs verified; API on Python 3.12 and deployable on Vercel; production build fails without real public URLs; read-only live smoke test; `DEPLOY.md`, `CONTENT-GUIDE.md` and the README written. **Ready to deploy**: the deploy itself is done by you, following `DEPLOY.md` |
 
 **M0 — setup**
 
@@ -703,10 +706,17 @@ Wire components/contact/ContactForm to POST /contact using react-hook-form with 
 Meet every v1 target in section 9 of docs/PLAN.md. Add the Metadata API per page, opengraph-image.tsx per route, sitemap.ts, robots.ts, JSON-LD Person (sameAs GitHub, LinkedIn, Kaggle) and CreativeWork per project. Add the security headers in next.config. Run Lighthouse locally against `pnpm build && pnpm start`, and axe on every route; fix anything under target and report the scores in a table. No analytics.
 ```
 
-**M9 — deploy and docs**
+**M9 — deploy preparation and docs** (rewritten 8 Nov 2026 with the hosting decisions above)
 
 ```text
-Prepare deployment without deploying anything. Write docs/DEPLOY.md: the Vercel project (Root Directory apps/web, env vars), the API host setup from apps/api (health check path /health, env vars), Resend sender verification, and the optional custom domain. Write docs/CONTENT-GUIDE.md (how to add a project, role, initiative or credential by editing content/ only) and finish README.md. Then read each provider's official pricing page and give me a table of current free-tier limits and any costs, and WAIT for my choice. Do not create accounts, enable billing, buy domains or deploy. I will do each step myself following DEPLOY.md.
+Session: M9 Deploy preparation and docs (Vercel for web AND API). Claude Code prepares the repo and writes the docs; the owner creates the accounts and does every deploy click. Do not deploy, sign up, log in to any service, or run any vercel CLI command that talks to Vercel.
+Hosting: two Vercel Hobby projects from the same repo (web: apps/web, https://muhammad-ilyas.vercel.app; API: apps/api, https://muhammad-ilyas-api.vercel.app; if a name is taken, the owner picks another and the env vars change). Email: Resend free plan, account muhammadilyas.ai.eng@gmail.com, sender onboarding@resend.dev. No paid service, custom domain or analytics.
+1) Verify the current Vercel (Python/FastAPI, limits, client-IP headers, monorepos/pnpm) and Resend (test sender, free limits, key permissions) docs; stop and ask before changing the Python version.
+2) Make apps/api deployable on Vercel (minimal config, deps from pyproject/uv.lock, client-IP key from the header Vercel documents, production settings, tests).
+3) Web: NEXT_PUBLIC_SITE_URL and NEXT_PUBLIC_API_URL checked at build time; .env.example; /styleguide stays noindex.
+4) A read-only Playwright smoke test for the live site, run only with SMOKE_BASE_URL, outside e2e and CI.
+5) docs/DEPLOY.md (click-by-click, Windows), docs/CONTENT-GUIDE.md, README.
+6) All checks plus the full e2e suite; PROGRESS.md; Session report.
 ```
 
 ## 11. Open items and assets
@@ -722,7 +732,7 @@ None of these block M0–M2. Each one fills in or unhides a piece of content whe
 - [ ] **7. Portrait.** A high-resolution headshot, at least 1200px, plain or blurred background. The thesis photo can go on the Flood-Aware case study.
 - [ ] **8. Final CV PDF.** Fix the StoryWeave bullet and split the Flood-Aware performance line first (section 1).
 - [x] **9. Degree status.** Resolved in M5: completed Nov 2026 (self-reported). Original question: Conferred, or awaiting results? This decides whether the site says "BS CS, 2026" or "BS CS (2022–2026), results pending".
-- [ ] **10. Domain and hosting.** Decided in M9 after Claude Code lists current prices: a free API host, or a paid one only with your approval. A domain is optional and bought by you.
+- [x] **10. Domain and hosting.** Decided in M9: two Vercel Hobby projects (web and API) and the Resend free plan; no custom domain in v1 (section 7). The deploy itself is your step, following `DEPLOY.md`.
 - [ ] **11. Profile cleanups.** Fix the GitHub sidebar LinkedIn link (it points to `/muhammad-ilyas-d14m08`), change the GitHub bio away from "Data Science Freshman", and add READMEs and screenshots to the repos you want in the Lab grid.
 - [ ] **12. Optional, high value.** A public notebook reproducing DP-SGD with Opacus on a small dataset. It turns the internship from a claim into something people can see.
 - [x] **13. About text.** Resolved in M5: one five-sentence paragraph (section 2). Original request: The three story paragraphs for `/about` (section 5), in your words.

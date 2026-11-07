@@ -7,7 +7,7 @@ The FastAPI service in `apps/api` does one job: it accepts messages from the sit
 | Environment | Base URL | Notes |
 | --- | --- | --- |
 | Local development | `http://localhost:8000` | `pnpm api` (runs `fastapi dev app/main.py`). Interactive docs at `/docs` and `/redoc`. |
-| Production | TODO: chosen in M9 (free-tier host) | `ENV=production`: `/docs`, `/redoc` and `/openapi.json` return 404. |
+| Production | `https://muhammad-ilyas-api.vercel.app` (planned, pending first deploy; a Vercel Python Function, see [`DEPLOY.md`](DEPLOY.md)) | `ENV=production`: `/docs`, `/redoc` and `/openapi.json` return 404. |
 
 The web app reads the base URL from `NEXT_PUBLIC_API_URL`.
 
@@ -107,12 +107,12 @@ Retry-After: 412
 
 - `RATE_LIMIT` per client IP (default `5/10minutes`, a fixed window), on `POST /contact` only. `GET /health` and CORS preflights are not counted.
 - Requests rejected with 422 or 413 never reach the limiter, so typos don't use up a visitor's attempts. Honeypot submissions that are otherwise valid are counted.
-- The client IP is the connection's address. Set `TRUST_PROXY_HEADERS=true` only when the API runs behind a proxy that sets `X-Forwarded-For`; the first address in that header is then used. Without a proxy, leave it off, or anyone could pick their own key.
-- Counts are kept in memory: per process, and reset on restart. That fits the single instance planned for v1.
+- The client IP is the connection's address. Set `TRUST_PROXY_HEADERS=true` only when the API runs behind a proxy that sets `X-Forwarded-For`; the first address in that header is then used. Without a proxy, leave it off, or anyone could pick their own key. On Vercel it is `true`: Vercel overwrites `X-Forwarded-For` with the client's public IP "to prevent IP spoofing" ([request headers](https://vercel.com/docs/headers/request-headers)). `X-Real-IP` and `X-Vercel-Forwarded-For` are never read.
+- Counts are kept in memory: per process, and reset on restart. On Vercel each function instance has its own counts, so the limit is **per instance, not global**. Accepted for v1 (M9): the honeypot and Resend's daily quota (100 emails) back it up.
 
 ## CORS
 
-- Exact origins from `CORS_ALLOW_ORIGINS` (comma-separated), plus any origin that fully matches `CORS_ALLOW_ORIGIN_REGEX` (for example, the site's own Vercel preview URLs; pin the regex to your project name).
+- Exact origins from `CORS_ALLOW_ORIGINS` (comma-separated), plus any origin that fully matches `CORS_ALLOW_ORIGIN_REGEX` (for example, the site's own Vercel preview URLs; pin the regex to your project name and account slug, as in [`DEPLOY.md`](DEPLOY.md)). An invalid regex stops the app at startup.
 - Methods `GET`, `POST`, `OPTIONS`; request header `Content-Type`; no credentials. Preflights are cached for 10 minutes.
 - `Retry-After` and `X-Request-ID` are exposed, so the browser form can read them.
 - A disallowed origin gets no `Access-Control-Allow-Origin` header, so the browser blocks the response.
@@ -133,7 +133,7 @@ Retry-After: 412
 
 ## Environment variables
 
-Set these in the host's environment, or in `apps/api/.env` for local work (see `apps/api/.env.example`; never commit `.env`).
+Set these in the host's environment (on Vercel: the API project's Environment Variables; production values in [`DEPLOY.md`](DEPLOY.md)), or in `apps/api/.env` for local work (see `apps/api/.env.example`; never commit `.env`).
 
 | Variable | Default | Notes |
 | --- | --- | --- |

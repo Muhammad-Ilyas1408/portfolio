@@ -1,5 +1,6 @@
 """Settings, read from environment variables or a local `.env` file."""
 
+import re
 from functools import lru_cache
 from typing import Literal, Self
 
@@ -32,6 +33,19 @@ class Settings(BaseSettings):
             parse_rate_limit(value)
         except ValueError as exc:
             raise ValueError(f"RATE_LIMIT is not a valid rate limit: {value!r}") from exc
+        return value
+
+    @field_validator("cors_allow_origin_regex")
+    @classmethod
+    def _valid_origin_regex(cls, value: str | None) -> str | None:
+        # Starlette matches the whole origin (re.fullmatch), so the pattern is anchored even
+        # without ^ and $. A typo should stop the app at startup, not silently block CORS.
+        if value is None:
+            return None
+        try:
+            re.compile(value)
+        except re.error as exc:
+            raise ValueError(f"CORS_ALLOW_ORIGIN_REGEX is not a valid regex: {exc}") from exc
         return value
 
     @model_validator(mode="after")

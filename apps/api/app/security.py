@@ -74,7 +74,15 @@ async def _too_large(send: Send) -> None:
 
 
 def client_ip_key(trust_proxy_headers: bool) -> Callable[[Request], str]:
-    """Key by client IP; behind a trusted proxy, by the first X-Forwarded-For address."""
+    """Key by client IP; behind a trusted proxy, by the first X-Forwarded-For address.
+
+    On Vercel, set TRUST_PROXY_HEADERS=true. Vercel documents `X-Forwarded-For` as "the public
+    IP address of the client" and overwrites any value the client sends, "to prevent IP
+    spoofing" (https://vercel.com/docs/headers/request-headers). `X-Real-IP` and
+    `X-Vercel-Forwarded-For` carry the same address, but no Vercel page says a client-sent
+    copy of those is replaced, so they are never read. Elsewhere, enable it only behind a
+    proxy that overwrites X-Forwarded-For in the same way.
+    """
 
     def key(request: Request) -> str:
         if trust_proxy_headers:
@@ -87,7 +95,9 @@ def client_ip_key(trust_proxy_headers: bool) -> Callable[[Request], str]:
 
 
 def create_limiter(trust_proxy_headers: bool) -> Limiter:
-    # In-memory storage: counts are per process and reset on restart (one instance in v1).
+    # In-memory storage: counts are per process and reset on restart. On Vercel each function
+    # instance keeps its own counts, so the limit is per instance, not global (accepted for v1:
+    # the honeypot and Resend's daily quota back it up; see docs/DEPLOY.md).
     return Limiter(
         key_func=client_ip_key(trust_proxy_headers),
         storage_uri="memory://",
