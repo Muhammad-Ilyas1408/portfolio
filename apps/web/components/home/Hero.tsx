@@ -1,10 +1,9 @@
-import Image from "next/image";
-
 import { cvHref } from "@/components/layout/nav";
 import { FlowLines } from "@/components/motion/FlowLines";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
+import { Portrait } from "@/components/ui/Portrait";
 import type { Home, Profile } from "@/content/schema";
 
 /** The headline segments after the title: the hero's focus tags. */
@@ -71,10 +70,9 @@ export function Hero({
               </span>
             </span>
           </p>
-          <div className="mt-6 max-w-[60ch] space-y-3 md:mt-7">
-            <p className="text-text/85">{profile.intro}</p>
-            <p className="text-text-muted">{hero.community}</p>
-          </div>
+          <p className="mt-6 max-w-[60ch] text-text/85 md:mt-7">
+            {profile.intro}
+          </p>
           {tags.length > 0 && (
             <ul aria-label="Focus areas" className="mt-6 flex flex-wrap gap-2">
               {tags.map((tag) => (
@@ -110,28 +108,10 @@ export function Hero({
           </div>
         </div>
         {portrait && (
-          <div className="relative mx-auto w-full max-w-[260px] sm:max-w-[300px] lg:mr-0 lg:max-w-[360px]">
-            <div
-              aria-hidden="true"
-              className="portrait-glow absolute -inset-10 -z-10"
-            />
-            <div className="edge-highlight rounded-2xl border border-border bg-surface p-2.5">
-              <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-surface-raised">
-                <Image
-                  src={portrait.src}
-                  alt={portrait.alt}
-                  fill
-                  preload
-                  sizes="(min-width: 1024px) 360px, 300px"
-                  className="object-cover"
-                />
-              </div>
-              <p className="flex items-center justify-between px-2 pt-3 pb-1 font-mono text-xs text-text-muted">
-                <span>{profile.name}</span>
-                <span>{profile.location}</span>
-              </p>
-            </div>
-          </div>
+          <Portrait
+            portrait={portrait}
+            sizes="(min-width: 1024px) 320px, 280px"
+          />
         )}
       </Container>
     </section>

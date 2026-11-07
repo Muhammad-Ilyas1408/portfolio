@@ -81,15 +81,12 @@ describe("TechStack", () => {
 describe("hero copy in metadata", () => {
   it("builds the description from the owner's tagline and first sentence", () => {
     expect(getSiteDescription()).toBe(
-      "Engineering Intelligent Systems, Creating Real-World Impact. I'm an AI/ML Engineer with a background in Computer Science and a passion for building practical AI applications.",
+      "Engineering Intelligent Systems, Creating Real-World Impact. I build practical AI applications with Generative AI, LLMs and agentic systems, including RAG-based solutions, on a strong foundation in Machine Learning and Deep Learning.",
     );
   });
 
-  it("keeps the owner's facts in the community line", () => {
-    const { community } = getHomeHero();
-    expect(community).toContain("about 40");
-    expect(community).toContain("18 events");
-    expect(community).toContain("2025–26");
+  it("has no second hero paragraph (removed in the pre-M9 polish)", () => {
+    expect(Object.keys(getHomeHero()).sort()).toEqual(["greeting", "tagline"]);
   });
 });
 
@@ -164,7 +161,11 @@ describe("lime accents and gradients (M8.6 follow-up)", () => {
         .match(/([a-z-]+)\s*:/g);
       found.push({
         property: property ? property[property.length - 1] : "",
-        body: css.slice(match.index + match[0].length, end - 1).trim(),
+        // Whitespace collapsed, so a rule wrapped over lines still matches.
+        body: css
+          .slice(match.index + match[0].length, end - 1)
+          .trim()
+          .replace(/\s+/g, " "),
       });
     }
     return found;
@@ -178,13 +179,16 @@ describe("lime accents and gradients (M8.6 follow-up)", () => {
         !/ 1px,\s*transparent 1px$/.test(body),
     );
     expect(colour.length).toBeGreaterThan(10);
-    // The one documented exception: the owner chose the palette A preview's
-    // plain-sRGB violet-to-lime look for the hero tagline (text-gradient)
-    // over the oklch version. Every other colour gradient uses oklch.
+    // The two documented exceptions, both owner choices of a plain-sRGB
+    // violet-to-lime look over the oklch version (which turns teal): the
+    // hero tagline (text-gradient) and the portrait ring (portrait-ring,
+    // pre-M9 polish). Every other colour gradient uses oklch.
     const TAGLINE = "90deg, var(--signal), var(--ember) 85%";
-    const exceptions = colour.filter(({ body }) => body === TAGLINE);
-    expect(exceptions).toHaveLength(1);
-    for (const { body } of colour.filter(({ body }) => body !== TAGLINE)) {
+    const RING = "135deg, var(--signal), var(--signal) 30%, var(--ember) 95%";
+    const SRGB = [TAGLINE, RING];
+    const exceptions = colour.filter(({ body }) => SRGB.includes(body));
+    expect(exceptions.map(({ body }) => body).sort()).toEqual(SRGB.sort());
+    for (const { body } of colour.filter(({ body }) => !SRGB.includes(body))) {
       expect(body, body).toMatch(/^(var\(--in-oklch,\)|in oklch)/);
     }
     expect(css).toMatch(

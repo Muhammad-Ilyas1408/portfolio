@@ -221,7 +221,7 @@ test("home metadata keeps the name", async ({ page }) => {
   await expect(page).toHaveTitle("Muhammad Ilyas — AI/ML Engineer");
   // M8.6: the owner's tagline and the first sentence of the intro.
   const description =
-    "Engineering Intelligent Systems, Creating Real-World Impact. I'm an AI/ML Engineer with a background in Computer Science and a passion for building practical AI applications.";
+    "Engineering Intelligent Systems, Creating Real-World Impact. I build practical AI applications with Generative AI, LLMs and agentic systems, including RAG-based solutions, on a strong foundation in Machine Learning and Deep Learning.";
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
     "content",
     description,

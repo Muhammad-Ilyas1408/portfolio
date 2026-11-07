@@ -165,7 +165,7 @@ describe("getters", () => {
     expect(result.headline).toMatch(/^AI\/ML Engineer \| Generative AI/);
     // M8.6: the owner's first hero paragraph.
     expect(result.intro).toMatch(
-      /^I'm an AI\/ML Engineer with a background in Computer Science/,
+      /^I build practical AI applications with Generative AI, LLMs and agentic systems/,
     );
     expect(result).not.toHaveProperty("availability");
   });

@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 
 import { ContactForm } from "@/components/contact/ContactForm";
 import { cvHref } from "@/components/layout/nav";
+import { buttonClasses } from "@/components/ui/Button";
 import { cardClasses } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { PageHero } from "@/components/ui/PageHero";
 import { getHomeContact, getProfile } from "@/content";
+import { formatPhone } from "@/lib/phone";
 import { pageMetadata } from "@/lib/seo";
 
 const profile = getProfile();
@@ -64,6 +66,31 @@ function DirectLink({
   );
 }
 
+function WhatsAppLink({ href }: { href: string }) {
+  return (
+    <li className="py-4 first:pt-0 last:pb-0">
+      <span className="block font-mono text-xs tracking-[0.16em] text-text-muted uppercase">
+        WhatsApp
+      </span>
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Message on WhatsApp (opens in a new tab)"
+        className={buttonClasses("outline", "group/arrow mt-2 w-full", "md")}
+      >
+        Message on WhatsApp
+        <span
+          aria-hidden="true"
+          className="inline-block text-signal transition-transform duration-150 group-hover/arrow:translate-x-0.5"
+        >
+          ↗
+        </span>
+      </a>
+    </li>
+  );
+}
+
 export default function ContactPage() {
   const { links } = profile;
   const address = links.email.replace(/^mailto:/, "");
@@ -99,6 +126,15 @@ export default function ContactPage() {
                 text={address}
                 mono
               />
+              {links.whatsapp && <WhatsAppLink href={links.whatsapp} />}
+              {links.phone && (
+                <DirectLink
+                  label="Phone"
+                  href={links.phone}
+                  text={formatPhone(links.phone)}
+                  mono
+                />
+              )}
               <DirectLink
                 label="LinkedIn"
                 href={links.linkedin}

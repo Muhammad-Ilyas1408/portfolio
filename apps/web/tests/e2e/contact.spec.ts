@@ -99,6 +99,20 @@ test.describe("/contact", () => {
     await expect(
       aside.getByRole("link", { name: "Download CV" }),
     ).toHaveAttribute("href", "/cv.pdf");
+
+    // Pre-M9 polish: WhatsApp and a call link, on /contact only.
+    const whatsapp = aside.getByRole("link", {
+      name: "Message on WhatsApp (opens in a new tab)",
+    });
+    await expect(whatsapp).toHaveAttribute(
+      "href",
+      "https://wa.me/923154710472?text=Hi%20Muhammad%2C%20I%20found%20your%20portfolio%20and%20would%20like%20to%20connect.",
+    );
+    await expect(whatsapp).toHaveAttribute("target", "_blank");
+    await expect(whatsapp).toHaveAttribute("rel", "noopener noreferrer");
+    const call = aside.getByRole("link", { name: "+92 315 4710472" });
+    await expect(call).toHaveAttribute("href", "tel:+923154710472");
+    await expect(call).not.toHaveAttribute("target");
   });
 
   test("success flow moves focus to the success panel", async ({ page }) => {

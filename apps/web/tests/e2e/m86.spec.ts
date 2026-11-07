@@ -7,9 +7,11 @@ const frame = (page: Page, selector = 'canvas[data-flow="hero"]') =>
     .evaluate((canvas: HTMLCanvasElement) => canvas.toDataURL());
 
 const OWNER_INTRO =
-  "I'm an AI/ML Engineer with a background in Computer Science and a passion for building practical AI applications. My work focuses on Machine Learning, Deep Learning, and LLM-powered systems, including RAG and agentic applications. I enjoy taking ideas from experimentation to working software, combining AI engineering with backend development to solve real-world problems.";
-const OWNER_COMMUNITY =
-  "Outside of code, I was President of the Computing Students Society at the University of Peshawar for 2025–26, where our team of about 40 ran 18 events.";
+  "I build practical AI applications with Generative AI, LLMs and agentic systems, including RAG-based solutions, on a strong foundation in Machine Learning and Deep Learning. I also work on the backend, integrating AI into software that solves real-world problems.";
+// Removed from the hero in the pre-M9 polish (the stats row and the
+// leadership band cover it).
+const REMOVED_COMMUNITY =
+  "Outside of code, I was President of the Computing Students Society";
 
 test.describe("M8.6 hero", () => {
   test.use({ viewport: { width: 1440, height: 900 } });
@@ -29,7 +31,6 @@ test.describe("M8.6 hero", () => {
       "Engineering Intelligent Systems,",
       "Creating Real-World Impact",
       OWNER_INTRO,
-      OWNER_COMMUNITY,
     ]) {
       await expect(hero.getByText(text, { exact: true })).toBeVisible();
     }
@@ -41,6 +42,7 @@ test.describe("M8.6 hero", () => {
       "Deep Learning & NLP",
     ]);
     await expect(hero).not.toContainText("Muhammad Ilyas · AI/ML Engineer");
+    await expect(hero).not.toContainText(REMOVED_COMMUNITY);
     // The name is the largest text, the role line clearly smaller.
     const size = (text: string) =>
       hero

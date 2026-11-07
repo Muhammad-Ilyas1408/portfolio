@@ -20,7 +20,7 @@ type FooterLink = {
 const columns: { title: string; links: FooterLink[] }[] = [
   {
     title: "Navigate",
-    links: [{ href: "/", label: "Home" }, ...navLinks],
+    links: navLinks,
   },
   {
     title: "Work",

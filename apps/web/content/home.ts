@@ -36,8 +36,6 @@ export const home: HomeInput = {
   hero: {
     greeting: "Hello, I'm",
     tagline: ["Engineering Intelligent Systems,", "Creating Real-World Impact"],
-    community:
-      "Outside of code, I was President of the Computing Students Society at the University of Peshawar for 2025–26, where our team of about 40 ran 18 events.",
   },
   // M8.5 stats row (owner-chosen in the follow-up). Text stats are split
   // out of existing claims (`from` is the exact source text); counted stats

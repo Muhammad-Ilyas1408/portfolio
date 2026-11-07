@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 
 import { SkillGroups, type UsedInTarget } from "@/components/about/SkillGroups";
 import { DegreeItem } from "@/components/credentials/CredentialItem";
@@ -8,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { PageHero } from "@/components/ui/PageHero";
 import { PageSection, sectionNumber } from "@/components/ui/PageSection";
+import { Portrait } from "@/components/ui/Portrait";
 import {
   getPrinciples,
   getProfile,
@@ -35,36 +35,6 @@ const usedInTargets: Record<string, UsedInTarget> = {
   ),
   internship: { label: "Internship", href: "/experience#industry" },
 };
-
-/** The framed portrait, as on the home hero. */
-function Portrait() {
-  const { portrait } = profile;
-  if (!portrait) return null;
-  return (
-    <div className="relative mx-auto w-full max-w-[260px] sm:max-w-[300px] lg:mr-0 lg:max-w-[360px]">
-      <div
-        aria-hidden="true"
-        className="portrait-glow absolute -inset-10 -z-10"
-      />
-      <div className="edge-highlight rounded-2xl border border-border bg-surface p-2.5">
-        <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-surface-raised">
-          <Image
-            src={portrait.src}
-            alt={portrait.alt}
-            fill
-            preload
-            sizes="(min-width: 1024px) 340px, 300px"
-            className="object-cover"
-          />
-        </div>
-        <p className="flex items-center justify-between px-2 pt-3 pb-1 font-mono text-xs text-text-muted">
-          <span>{profile.title}</span>
-          <span>{profile.location}</span>
-        </p>
-      </div>
-    </div>
-  );
-}
 
 export default function AboutPage() {
   const principles = getPrinciples();
@@ -139,11 +109,19 @@ export default function AboutPage() {
         eyebrow="About"
         title={profile.name}
         intro={
-          <p className="text-lg leading-relaxed text-text/85">
-            {profile.about}
-          </p>
+          <div className="space-y-4 text-lg leading-relaxed text-text/85">
+            <p>{profile.about}</p>
+            {profile.aboutLeadership && <p>{profile.aboutLeadership}</p>}
+          </div>
         }
-        aside={<Portrait />}
+        aside={
+          profile.portrait && (
+            <Portrait
+              portrait={profile.portrait}
+              sizes="(min-width: 1024px) 320px, 280px"
+            />
+          )
+        }
       />
       <Container>
         {sections.map((section, index) => (

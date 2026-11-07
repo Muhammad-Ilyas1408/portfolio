@@ -87,6 +87,8 @@ export const Profile = z.object({
   intro: z.string().min(1),
   // The /about story, one paragraph.
   about: z.string().min(1),
+  // Optional second /about paragraph, shown directly after `about`.
+  aboutLeadership: z.string().min(1).optional(),
   // Used for page metadata.
   positioning: z.string().min(1),
   location: z.string().min(1),
@@ -100,6 +102,15 @@ export const Profile = z.object({
     linkedin: HttpsUrl,
     // Optional: the owner chose to skip Kaggle (M8.5 B).
     kaggle: HttpsUrl.optional(),
+    // Optional (pre-M9 polish): shown on /contact only.
+    phone: z
+      .string()
+      .regex(/^tel:\+\d{8,15}$/)
+      .optional(),
+    whatsapp: HttpsUrl.refine(
+      (url) => url.startsWith("https://wa.me/"),
+      "whatsapp must be a wa.me link",
+    ).optional(),
     source: HttpsUrl,
   }),
 });
@@ -349,8 +360,6 @@ export const Home = z.object({
     greeting: z.string().min(1),
     // Two display lines.
     tagline: z.tuple([z.string().min(1), z.string().min(1)]),
-    // The second, slightly muted intro paragraph.
-    community: z.string().min(1),
   }),
   stats: z.array(HomeStat).max(5),
   // "What I build": owner-provided in the M8.5 prompt.

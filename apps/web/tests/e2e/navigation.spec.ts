@@ -25,6 +25,7 @@ test.describe("at 1280px", () => {
     await expect(page.getByRole("button", { name: "Menu" })).toBeHidden();
     // Contact is the header's primary button, not a nav link, on desktop.
     await expect(nav.getByRole("link")).toHaveText([
+      "Home",
       "Work",
       "Experience",
       "Leadership",
@@ -51,6 +52,41 @@ test.describe("at 1280px", () => {
     expect(underline).toBe("1");
   });
 
+  test("Home is the first nav link, current on / only; the logo links home too", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const nav = page.getByRole("navigation", { name: "Main" });
+    const home = nav.getByRole("link").first();
+    await expect(home).toHaveText("Home");
+    await expect(home).toHaveAttribute("href", "/");
+    await expect(home).toHaveAttribute("aria-current", "page");
+    await expect(nav.locator('[aria-current="page"]')).toHaveCount(1);
+    await expect(
+      page.getByRole("banner").locator('a[href="/"]').first(),
+    ).toContainText("Muhammad Ilyas");
+
+    await page.goto("/projects");
+    await expect(nav.getByRole("link", { name: "Home" })).not.toHaveAttribute(
+      "aria-current",
+    );
+    await expect(nav.getByRole("link", { name: "Work" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+  });
+
+  test("the header and footer never show the phone or WhatsApp", async ({
+    page,
+  }) => {
+    await page.goto("/contact");
+    for (const region of ["banner", "contentinfo"] as const) {
+      const links = page.getByRole(region).locator('a[href^="tel:"], a[href*="wa.me"]');
+      await expect(links).toHaveCount(0);
+      await expect(page.getByRole(region)).not.toContainText("315 4710472");
+    }
+  });
+
   test("the skip link moves focus to main", async ({ page }) => {
     await page.goto("/");
 
@@ -75,6 +111,11 @@ test.describe("at 375px", () => {
     const button = await openMenu(page);
     const panel = page.locator("#mobile-nav-panel");
     await expect(panel.getByRole("link", { name: "Work" })).toBeVisible();
+    await expect(panel.getByRole("link").first()).toHaveText("Home");
+    await expect(panel.getByRole("link", { name: "Home" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
 
     await page.keyboard.press("Escape");
     await expect(panel).toBeHidden();

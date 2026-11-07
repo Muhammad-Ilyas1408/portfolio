@@ -267,6 +267,19 @@
   );
 }
 
+/* The portrait's thin violet-to-lime ring (owner choice, pre-M9 polish,
+   option b). The second plain-sRGB gradient, approved with it: in oklch the
+   ring turns teal between violet and lime. Unit-tested exception, like
+   text-gradient. Decorative only; no text sits on it. */
+@utility portrait-ring {
+  background-image: linear-gradient(
+    135deg,
+    var(--signal),
+    var(--signal) 30%,
+    var(--ember) 95%
+  );
+}
+
 /* The leadership band's warm glow. */
 @utility ember-glow {
   background-image: radial-gradient(
